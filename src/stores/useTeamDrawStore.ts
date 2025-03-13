@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { Player } from '@/utils/types';
 import { PositionEnum } from '@/utils/enums';
@@ -30,7 +29,7 @@ export const useTeamDrawStore = create<TeamDrawState>((set, get) => ({
     
     console.log(`Generating teams with ${actualPlayersPerTeam} players per team`);
     
-    // Filtrar apenas jogadores disponíveis
+    // Filter only available players (excluding goalkeepers, which should be handled separately)
     const availablePlayers = players.filter(p => p.includeInDraw && p.present);
     console.log(`Available players: ${availablePlayers.length}`);
     
@@ -41,60 +40,34 @@ export const useTeamDrawStore = create<TeamDrawState>((set, get) => ({
       };
     }
 
-    // Separar goleiros e jogadores de linha
-    const goalkeepers = availablePlayers.filter(p => 
-      p.selectedPositions.includes(PositionEnum.GOALKEEPER)
-    );
-    const fieldPlayers = availablePlayers.filter(p => 
-      !p.selectedPositions.includes(PositionEnum.GOALKEEPER)
-    );
+    // All players are field players since goalkeepers are filtered out in the TeamDraw component
+    const fieldPlayers = availablePlayers;
 
-    console.log(`Goalkeepers: ${goalkeepers.length}, Field Players: ${fieldPlayers.length}`);
+    console.log(`Field Players: ${fieldPlayers.length}`);
 
-    // Calcular número de times
+    // Calculate number of teams
     const numTeams = Math.floor(availablePlayers.length / actualPlayersPerTeam);
     console.log(`Number of teams: ${numTeams}`);
-    
-    // Verificar se há goleiros suficientes - só se houver goleiros no jogo
-    // MODIFICAÇÃO: Se há pelo menos um goleiro, vamos permitir que os times não tenham goleiros
-    // em vez de exigir que todos os times tenham goleiro
-    if (goalkeepers.length > 0 && goalkeepers.length < numTeams) {
-      console.log(`Warning: Not enough goalkeepers (${goalkeepers.length}) for ${numTeams} teams. Some teams may not have a goalkeeper.`);
-      // Não retornamos erro, apenas continuamos com os goleiros que temos
-    }
 
-    // Ordenar jogadores por rating para distribuição equilibrada
+    // Sort players by rating for balanced distribution
     const sortedFieldPlayers = [...fieldPlayers].sort((a, b) => b.rating - a.rating);
-    const shuffledGoalkeepers = [...goalkeepers].sort(() => Math.random() - 0.5);
     
     if (numTeams < 2) {
       return {
         success: false,
-        error: "Número insuficiente de jogadores para formar times"
+        error: "Número insuficiente de jogadores para formar pelo menos 2 times"
       };
     }
     
-    // Inicializar times vazios
+    // Initialize empty teams
     let newTeams: Player[][] = Array(numTeams).fill(null).map(() => []);
 
-    // Distribuir goleiros primeiro (se houver)
-    if (goalkeepers.length > 0) {
-      shuffledGoalkeepers.forEach((goalkeeper, index) => {
-        if (index < numTeams) {
-          newTeams[index].push(goalkeeper);
-        } else {
-          // Adicionar goleiros extras como jogadores de linha
-          sortedFieldPlayers.push(goalkeeper);
-        }
-      });
-    }
-
-    // Distribuir jogadores de linha usando método "serpentina" para equilibrar os times
+    // Distribute players using "snake draft" method to balance the teams
     let goingForward = true;
     let currentIndex = 0;
     
     for (const player of sortedFieldPlayers) {
-      // Determinar o índice do time baseado na direção atual
+      // Determine team index based on current direction
       let teamIndex;
       if (goingForward) {
         teamIndex = currentIndex % numTeams;
@@ -102,21 +75,21 @@ export const useTeamDrawStore = create<TeamDrawState>((set, get) => ({
         teamIndex = numTeams - 1 - (currentIndex % numTeams);
       }
       
-      // Adicionar o jogador se o time não estiver completo
+      // Add player if team is not full
       if (newTeams[teamIndex].length < actualPlayersPerTeam) {
         newTeams[teamIndex].push(player);
         
-        // Incrementar o índice
+        // Increment the index
         currentIndex++;
         
-        // Alternar direção a cada rodada completa
+        // Switch direction after each complete round
         if (currentIndex % numTeams === 0) {
           goingForward = !goingForward;
         }
       }
     }
 
-    // Calcular equilíbrio dos times
+    // Calculate team strengths
     const teamStrengths = newTeams.map(team => ({
       strength: team.reduce((acc, player) => acc + player.rating, 0) / team.length,
       numPlayers: team.length
@@ -124,13 +97,13 @@ export const useTeamDrawStore = create<TeamDrawState>((set, get) => ({
 
     console.log("Team strengths:", teamStrengths);
 
-    // Verificar se todos os times têm o número adequado de jogadores
+    // Check if all teams have the right number of players
     const teamsWithNotEnoughPlayers = newTeams.filter(team => team.length < actualPlayersPerTeam);
     if (teamsWithNotEnoughPlayers.length > 0) {
       console.log(`Warning: ${teamsWithNotEnoughPlayers.length} teams have less than ${actualPlayersPerTeam} players`);
     }
 
-    // Atualizar o state
+    // Update state
     set({ teams: newTeams });
     return { 
       success: true 

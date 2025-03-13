@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
-import { Shuffle } from "lucide-react";
+import { Shuffle, Info, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTeamDrawStore } from "@/stores/useTeamDrawStore";
 import { usePlayerStore } from "@/stores/usePlayerStore";
@@ -12,6 +11,7 @@ import { PositionEnum } from "../utils/enums";
 import clsx from "clsx";
 import { springConfig } from '../utils/animations';
 import BackToDashboard from './BackToDashboard';
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const TeamDraw = () => {
   const { players, updatePlayer } = usePlayerStore();
@@ -41,11 +41,18 @@ const TeamDraw = () => {
     return team.reduce((acc, player) => acc + player.rating, 0) / team.length;
   };
 
+  // Filter out goalkeepers from available players
   const handleGenerateTeams = async () => {
     setIsGenerating(true);
     try {
-      const availablePlayers = players.filter(p => p.includeInDraw && p.present);
-      console.log("Available players for draw:", availablePlayers);
+      // Get only field players (non-goalkeepers) for the draw
+      const availablePlayers = players.filter(p => 
+        p.includeInDraw && 
+        p.present && 
+        !p.selectedPositions.includes(PositionEnum.GOALKEEPER)
+      );
+      
+      console.log("Available field players for draw:", availablePlayers);
       console.log("Current playersPerTeam:", playersPerTeam);
       
       // Call generateTeams with the current selected playersPerTeam
@@ -76,6 +83,12 @@ const TeamDraw = () => {
       setIsGenerating(false);
     }
   };
+
+  // Get separate list of available goalkeepers
+  const availableGoalkeepers = players.filter(p => 
+    p.present && 
+    p.selectedPositions.includes(PositionEnum.GOALKEEPER)
+  );
 
   console.log("Current teams:", teams);
   console.log("Current players in store:", players);
@@ -118,6 +131,50 @@ const TeamDraw = () => {
           </div>
         </div>
 
+        <Alert variant="default" className="bg-blue-50 border-blue-200">
+          <Info className="h-4 w-4" />
+          <AlertTitle>Instruções</AlertTitle>
+          <AlertDescription className="text-sm">
+            Apenas jogadores marcados como <strong>presentes</strong> na página de Presença serão incluídos no sorteio.
+            <br />
+            Goleiros não são incluídos no sorteio automático de times e são exibidos separadamente abaixo.
+          </AlertDescription>
+        </Alert>
+
+        {/* Goalkeepers Section */}
+        <Card className="border-blue-300">
+          <CardHeader className="bg-blue-50">
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-blue-600" />
+              Goleiros Disponíveis
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {availableGoalkeepers.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {availableGoalkeepers.map((goalkeeper) => (
+                  <div
+                    key={goalkeeper.id}
+                    className="p-3 bg-blue-50 rounded-lg"
+                  >
+                    <div className="font-medium">{goalkeeper.name}</div>
+                    <div className="text-sm text-gray-600">
+                      {goalkeeper.selectedPositions.join(", ")}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Rating: {goalkeeper.rating}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-gray-500">
+                Nenhum goleiro marcado como presente
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {players.length === 0 ? (
           <div className="bg-white p-8 rounded-lg shadow text-center">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Nenhum jogador disponível</h2>
@@ -126,48 +183,46 @@ const TeamDraw = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teams.length > 0 ? (
-              teams.map((team, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <CardTitle className="flex justify-between">
-                      Time {index + 1}
-                      <span className="text-sm">
-                        Força: {calculateTeamStrength(team).toFixed(1)}
-                      </span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {team.map((player) => (
-                        <div
-                          key={player.id}
-                          className={clsx(
-                            "p-3 rounded-lg",
-                            player.selectedPositions.includes(PositionEnum.GOALKEEPER)
-                              ? "bg-blue-50"
-                              : "bg-gray-50"
-                          )}
-                        >
-                          <div className="font-medium">{player.name}</div>
-                          <div className="text-sm text-gray-600">
-                            {player.selectedPositions.join(", ")}
+          <div className="mt-6">
+            <h2 className="text-xl font-bold mb-4">Times Sorteados</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {teams.length > 0 ? (
+                teams.map((team, index) => (
+                  <Card key={index}>
+                    <CardHeader>
+                      <CardTitle className="flex justify-between">
+                        Time {index + 1}
+                        <span className="text-sm">
+                          Força: {calculateTeamStrength(team).toFixed(1)}
+                        </span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {team.map((player) => (
+                          <div
+                            key={player.id}
+                            className="p-3 bg-gray-50 rounded-lg"
+                          >
+                            <div className="font-medium">{player.name}</div>
+                            <div className="text-sm text-gray-600">
+                              {player.selectedPositions.join(", ")}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Rating: {player.rating}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-600">
-                            Rating: {player.rating}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <div className="lg:col-span-3 text-center p-6 bg-white rounded-lg shadow">
-                <p className="text-gray-500">Clique em "Sortear Times" para gerar os times</p>
-              </div>
-            )}
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="lg:col-span-3 text-center p-6 bg-white rounded-lg shadow">
+                  <p className="text-gray-500">Clique em "Sortear Times" para gerar os times</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
