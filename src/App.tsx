@@ -1,7 +1,7 @@
 
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Login from './pages/Login';
+import Login from './components/pages/Login';
 import Menu from './components/menu/Menu';
 import PlayerForm from './components/PlayerForm';
 import PlayerList from './components/PlayerList';
@@ -18,11 +18,12 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isMenuPage = location.pathname === '/menu' || location.pathname === '/';
+  const isLoginPage = location.pathname === '/login';
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4">
-        {!isMenuPage && <PagesTitle />}
+        {!isMenuPage && !isLoginPage && <PagesTitle />}
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -32,7 +33,7 @@ const AppContent = () => {
             transition={springConfig}
           >
             <Routes location={location}>
-              <Route path="/" element={<Navigate to="/menu" replace />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/login" element={<Login />} />
               <Route path="/menu" element={<Menu />} />
               <Route path="/player/new" element={<PlayerForm />} />
@@ -41,7 +42,7 @@ const AppContent = () => {
               <Route path="/presence" element={<PresenceList />} />
               <Route path="/statistics" element={<Statistics />} />
               <Route path="/championship" element={<Championship />} />
-              <Route path="*" element={<Navigate to="/menu" replace />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
