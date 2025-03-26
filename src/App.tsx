@@ -17,8 +17,8 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const location = useLocation();
-  const isMenuPage = location.pathname === '/menu' || location.pathname === '/';
-  const isLoginPage = location.pathname === '/login';
+  const isMenuPage = location.pathname === '/menu';
+  const isLoginPage = location.pathname === '/login' || location.pathname === '/';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,7 +33,7 @@ const AppContent = () => {
             transition={springConfig}
           >
             <Routes location={location}>
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/menu" element={<Menu />} />
               <Route path="/player/new" element={<PlayerForm />} />
@@ -42,7 +42,7 @@ const AppContent = () => {
               <Route path="/presence" element={<PresenceList />} />
               <Route path="/statistics" element={<Statistics />} />
               <Route path="/championship" element={<Championship />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </motion.div>
         </AnimatePresence>

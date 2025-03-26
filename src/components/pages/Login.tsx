@@ -26,7 +26,7 @@ const Login = () => {
     try {
       // Simulação de login com email
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate('/dashboard');
+      navigate('/menu');
     } catch (err) {
       setError("Erro ao fazer login");
     } finally {
@@ -40,7 +40,7 @@ const Login = () => {
     try {
       // Simulação de login com Google
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate('/dashboard');
+      navigate('/menu');
     } catch (err) {
       setError("Erro ao fazer login com Google");
     } finally {
@@ -53,7 +53,7 @@ const Login = () => {
     setError(null);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate('/dashboard');
+      navigate('/menu');
     } catch (err) {
       setError("Erro ao fazer login com Microsoft");
     } finally {
@@ -66,7 +66,7 @@ const Login = () => {
     setError(null);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate('/dashboard');
+      navigate('/menu');
     } catch (err) {
       setError("Erro ao fazer login com Apple");
     } finally {
@@ -79,7 +79,7 @@ const Login = () => {
     setError(null);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate('/dashboard');
+      navigate('/menu');
     } catch (err) {
       setError("Erro ao fazer login com telefone");
     } finally {
