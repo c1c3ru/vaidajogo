@@ -12,6 +12,7 @@ import Championship from './components/pages/Championship';
 import { PagesTitle } from './components/shared/PagesTitle';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { springConfig } from './utils/animations';
+import { Toaster } from './components/ui/toaster';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const AppContent = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+      <Toaster />
     </div>
   );
 };
