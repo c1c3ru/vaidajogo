@@ -1,11 +1,25 @@
+/**
+ * utils/pdf.ts
+ *
+ * Este arquivo contém funções para gerar documentos PDF usando jsPDF.
+ * Inclui relatórios de presença e resumos de torneios.
+ */
 
 import jsPDF from 'jspdf';
-import { Group, KnockoutMatches, Player } from '@/utils/types';
+import { Group, KnockoutMatches, Player, Team, Match } from '@/utils/types'; // Importando todos os tipos necessários
+import { MatchType } from './enums'; // Importando MatchType para clareza
 
-// Corrigir a assinatura da função
+/**
+ * Gera um relatório de presença em formato PDF.
+ * @param {string} eventName - O nome do evento ou da sessão.
+ * @param {string} date - A data do relatório (já formatada como string).
+ * @param {Player[]} players - A lista de jogadores a ser incluída no relatório.
+ * @param {number} presentCount - O número total de jogadores presentes.
+ * @param {number} paidCount - O número total de pagamentos registrados.
+ */
 export const generatePresencePDF = (
   eventName: string,
-  date: string, // Alterado de Date para string
+  date: string,
   players: Player[],
   presentCount: number,
   paidCount: number
@@ -13,66 +27,86 @@ export const generatePresencePDF = (
   const doc = new jsPDF();
   const margin = 20;
   const lineSpacing = 10;
+  let yPosition = margin;
 
-  // Adicionar cabeçalho
-  doc.setFontSize(18);
-  doc.text(eventName, margin, margin);
+  // Título do Relatório
+  doc.setFontSize(22);
+  doc.text("Relatório de Presença", margin, yPosition);
+  yPosition += lineSpacing * 2;
+
+  // Informações do Evento/Data
+  doc.setFontSize(14);
+  doc.text(`Evento: ${eventName}`, margin, yPosition);
+  yPosition += lineSpacing;
+  doc.text(`Data: ${date}`, margin, yPosition);
+  yPosition += lineSpacing * 2;
+
+  // Estatísticas de Resumo
   doc.setFontSize(12);
-  doc.text(`Data: ${date}`, margin, margin + lineSpacing);
+  doc.text(`Total de Jogadores: ${players.length}`, margin, yPosition);
+  yPosition += lineSpacing;
+  doc.text(`Total de Presentes: ${presentCount}`, margin, yPosition);
+  yPosition += lineSpacing;
+  doc.text(`Total de Pagamentos Recebidos: ${paidCount}`, margin, yPosition);
+  yPosition += lineSpacing * 2;
 
-  // Adicionar estatísticas
-  doc.text(`Total de Presentes: ${presentCount}`, margin, margin + (3 * lineSpacing));
-  doc.text(`Total de Pagamentos: ${paidCount}`, margin, margin + (4 * lineSpacing));
-
-  // Adicionar lista de jogadores
-  let yPosition = margin + (6 * lineSpacing);
+  // Tabela de Jogadores
+  doc.setFontSize(16);
   doc.text("Lista de Jogadores:", margin, yPosition);
   yPosition += lineSpacing;
-  
+
+  // Cabeçalho da Tabela
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text("Nome do Jogador", margin, yPosition);
+  doc.text("Presença", margin + 80, yPosition);
+  doc.text("Pagamento", margin + 130, yPosition);
+  yPosition += lineSpacing;
+  doc.setLineWidth(0.1);
+  doc.line(margin, yPosition, doc.internal.pageSize.width - margin, yPosition); // Linha separadora
+  yPosition += 5; // Espaçamento após a linha
+
+  // Dados dos Jogadores
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
   players.forEach((player) => {
     const presenceText = player.present ? '✅ Presente' : '❌ Ausente';
     const paymentText = player.paid ? '✔️ Pago' : '⚠️ Pendente';
-    doc.text(`${player.name}: ${presenceText} - ${paymentText}`, margin, yPosition);
+
+    doc.text(player.name, margin, yPosition);
+    doc.text(presenceText, margin + 80, yPosition);
+    doc.text(paymentText, margin + 130, yPosition);
     yPosition += lineSpacing;
-    
-    // Quebra de página se necessário
-    if (yPosition > 280) {
+
+    // Adicionar nova página se o conteúdo exceder a altura da página
+    if (yPosition > doc.internal.pageSize.height - margin) {
       doc.addPage();
-      yPosition = margin;
+      yPosition = margin; // Reinicia a posição Y na nova página
+      // Repete o cabeçalho da tabela em novas páginas para clareza
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.text("Nome do Jogador", margin, yPosition);
+      doc.text("Presença", margin + 80, yPosition);
+      doc.text("Pagamento", margin + 130, yPosition);
+      yPosition += lineSpacing;
+      doc.setLineWidth(0.1);
+      doc.line(margin, yPosition, doc.internal.pageSize.width - margin, yPosition);
+      yPosition += 5;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
     }
   });
 
   // Salvar o PDF
-  doc.save(`relatorio_presenca_${date}.pdf`);
+  doc.save(`relatorio_presenca_${eventName.replace(/\s/g, '_')}_${date.replace(/\//g, '-')}.pdf`);
 };
 
-// Corrigir a chamada da função
-const handleGeneratePDF = () => {
-  const formattedDate = new Date().toLocaleDateString(); // Definir formattedDate
-  const filteredPlayers: Player[] = []; // Definir filteredPlayers
-  const presentCount = filteredPlayers.filter(player => player.present).length;
-  const paidCount = filteredPlayers.filter(player => player.paid).length;
-  try {
-    generatePresencePDF(
-      "Relatório de Presença", // Nome do evento fixo ou variável
-      formattedDate,           // Data formatada como string
-      filteredPlayers, 
-      presentCount, 
-      paidCount
-    );
-    toast({
-      title: "Relatório gerado",
-      description: "O PDF foi baixado com sucesso!",
-    });
-  } catch (error) {
-    toast({
-      title: "Erro ao gerar PDF",
-      description: "Não foi possível gerar o relatório.",
-      variant: "destructive",
-    });
-  }
-};
-
+/**
+ * Gera um resumo de torneio em formato PDF.
+ * @param {string} tournamentName - O nome do torneio.
+ * @param {Group[]} groups - Os grupos do torneio (se aplicável).
+ * @param {KnockoutMatches} [knockoutMatches] - As fases eliminatórias do torneio (opcional).
+ */
 export const generateTournamentPDF = (
   tournamentName: string,
   groups: Group[],
@@ -81,39 +115,79 @@ export const generateTournamentPDF = (
   const doc = new jsPDF();
   const margin = 20;
   const lineSpacing = 10;
+  let yPosition = margin;
 
-  doc.text(`Torneio: ${tournamentName}`, margin, margin + lineSpacing);
+  // Título do Torneio
+  doc.setFontSize(22);
+  doc.text(`Torneio: ${tournamentName}`, margin, yPosition);
+  yPosition += lineSpacing * 2;
 
-  let yPosition = margin + (2 * lineSpacing);
-  groups.forEach((group) => {
-    doc.text(`${group.name}`, margin, yPosition);
+  // Fase de Grupos
+  if (groups && groups.length > 0) {
+    doc.setFontSize(16);
+    doc.text('Fase de Grupos', margin, yPosition);
     yPosition += lineSpacing;
 
-    group.matches.forEach((match) => {
-      doc.text(`${match.team1.name} vs ${match.team2.name}`, margin + lineSpacing, yPosition);
+    groups.forEach((group) => {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Grupo: ${group.name}`, margin + 5, yPosition);
       yPosition += lineSpacing;
-    });
 
-    yPosition += lineSpacing;
-  });
-
-  if (knockoutMatches) {
-    doc.text('Fase Eliminatória', margin, yPosition);
-    yPosition += lineSpacing;
-
-    Object.keys(knockoutMatches).forEach((round) => {
-      doc.text(`${round.charAt(0).toUpperCase() + round.slice(1)}`, margin, yPosition);
-      yPosition += lineSpacing;
-      knockoutMatches[round].forEach((match) => {
-        doc.text(`${match.team1.name} vs ${match.team2.name}`, margin + lineSpacing, yPosition);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      group.matches.forEach((match) => {
+        doc.text(`${match.team1.name} ${match.score1 || '-'} x ${match.score2 || '-'} ${match.team2.name}`, margin + 10, yPosition);
         yPosition += lineSpacing;
       });
+      yPosition += lineSpacing; // Espaço entre grupos
+
+      if (yPosition > doc.internal.pageSize.height - margin) {
+        doc.addPage();
+        yPosition = margin;
+      }
     });
   }
 
-  doc.save(`${tournamentName}campeonato.pdf`);
-};
-function toast(arg0: { title: string; description: string; variant?: string; }) {
-  throw new Error('Function not implemented.');
-}
+  // Fases Eliminatórias
+  if (knockoutMatches) {
+    doc.setFontSize(16);
+    doc.text('Fase Eliminatória', margin, yPosition);
+    yPosition += lineSpacing * 2;
 
+    const renderStage = (stageName: string, matches: Match[]) => {
+      if (matches && matches.length > 0) {
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text(`${stageName}`, margin + 5, yPosition);
+        yPosition += lineSpacing;
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        matches.forEach((match) => {
+          doc.text(`${match.team1.name} ${match.score1 || '-'} x ${match.score2 || '-'} ${match.team2.name}`, margin + 10, yPosition);
+          yPosition += lineSpacing;
+        });
+        yPosition += lineSpacing; // Espaço entre as rodadas
+
+        if (yPosition > doc.internal.pageSize.height - margin) {
+          doc.addPage();
+          yPosition = margin;
+        }
+      }
+    };
+
+    renderStage('Oitavas de Final', knockoutMatches.roundOf16);
+    renderStage('Quartas de Final', knockoutMatches.quarterFinals);
+    renderStage('Semifinais', knockoutMatches.semiFinals);
+    renderStage('Disputa pelo 3º Lugar', [knockoutMatches.thirdPlace]); // thirdPlace é um único Match
+    renderStage('Final', [knockoutMatches.final]); // final é um único Match
+  }
+
+  // Salvar o PDF
+  doc.save(`${tournamentName.replace(/\s/g, '_')}_campeonato.pdf`);
+};
+
+// A função 'toast' não deve ser definida aqui, pois é um efeito colateral da UI.
+// Ela deve ser chamada no componente React que usa generatePresencePDF/generateTournamentPDF.
+// Removido o exemplo de handleGeneratePDF que estava duplicado e com 'toast' não definido.

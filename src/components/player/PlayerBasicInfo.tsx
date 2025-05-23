@@ -1,11 +1,11 @@
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertTriangle } from 'lucide-react';
 import { ErrorState } from '@/utils/types';
-import { springConfig } from '../../utils/animations';
-
+import { springConfig } from '../../utils/animations'; // Importado springConfig
 
 interface PlayerBasicInfoProps {
   name: string;
@@ -30,19 +30,19 @@ export const PlayerBasicInfo = ({
   errors
 }: PlayerBasicInfoProps) => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springConfig}
-      className="space-y-6"
+      className="space-y-6 p-4 sm:p-0" // Adicionado padding para telas menores
     >
-      {/* Name Field */}
+      {/* Campo Nome Completo */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ ...springConfig, delay: 0.1 }}
       >
-        <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="name" className="text-sm font-medium text-gray-700 mb-1 block">
           Nome Completo *
         </Label>
         <Input
@@ -51,9 +51,10 @@ export const PlayerBasicInfo = ({
           value={name}
           onChange={onChange}
           placeholder="Ex: João da Silva"
-          className={`mt-1 ${errors.name ? "border-red-500 focus:ring-red-200" : "focus:ring-blue-200"}`}
+          className={`mt-1 h-10 ${errors.name ? "border-red-500 focus:ring-red-200" : "focus:ring-blue-200 border-gray-300"}`}
           aria-invalid={errors.name ? "true" : "false"}
           aria-describedby={errors.name ? "name-error" : undefined}
+          autoComplete="name" // Adicionado autocomplete
         />
         <AnimatePresence>
           {errors.name && (
@@ -61,24 +62,24 @@ export const PlayerBasicInfo = ({
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
-              className="flex items-center gap-1 mt-1"
+              className="flex items-center gap-1 mt-1 text-red-600"
               id="name-error"
               role="alert"
             >
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-              <p className="text-sm text-red-600">Nome é obrigatório</p>
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              <p className="text-sm">Nome é obrigatório.</p>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* Nickname Field */}
+      {/* Campo Apelido */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ ...springConfig, delay: 0.2 }}
       >
-        <Label htmlFor="nickname" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="nickname" className="text-sm font-medium text-gray-700 mb-1 block">
           Apelido
         </Label>
         <Input
@@ -87,17 +88,18 @@ export const PlayerBasicInfo = ({
           value={nickname}
           onChange={onChange}
           placeholder="Ex: Jão"
-          className="mt-1 focus:ring-blue-200"
+          className="mt-1 h-10 focus:ring-blue-200 border-gray-300"
+          autoComplete="nickname" // Adicionado autocomplete
         />
       </motion.div>
 
-      {/* Birth Date Field */}
+      {/* Campo Data de Nascimento */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ ...springConfig, delay: 0.3 }}
       >
-        <Label htmlFor="birthDate" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="birthDate" className="text-sm font-medium text-gray-700 mb-1 block">
           Data de Nascimento
         </Label>
         <Input
@@ -106,12 +108,13 @@ export const PlayerBasicInfo = ({
           type="date"
           value={birthDate}
           onChange={onChange}
-          className="mt-1 focus:ring-blue-200"
-          max={new Date().toISOString().split('T')[0]}
+          className="mt-1 h-10 focus:ring-blue-200 border-gray-300"
+          max={new Date().toISOString().split('T')[0]} // Garante que não é possível selecionar datas futuras
+          aria-label="Data de Nascimento do jogador"
         />
       </motion.div>
 
-      {/* Guest Status */}
+      {/* Status de Convidado */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -124,17 +127,18 @@ export const PlayerBasicInfo = ({
           </legend>
           <div className="flex gap-6">
             {[true, false].map((value) => (
-              <label 
+              <label
                 key={String(value)}
-                className="flex items-center gap-2 cursor-pointer"
+                className="flex items-center gap-2 cursor-pointer text-gray-700"
               >
                 <Checkbox
                   checked={isGuest === value}
                   onCheckedChange={() => onGuestChange(value)}
-                  className={`h-5 w-5 ${errors.isGuest ? "border-red-500" : "border-gray-300"}`}
+                  className={`h-5 w-5 rounded-md ${errors.isGuest ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-blue-200 focus:ring-offset-2`}
                   aria-invalid={errors.isGuest ? "true" : "false"}
+                  aria-label={value ? 'Sim, é convidado' : 'Não, é membro'}
                 />
-                <span className="text-sm text-gray-700">
+                <span className="text-base">
                   {value ? 'Sim' : 'Não'}
                 </span>
               </label>
@@ -147,11 +151,11 @@ export const PlayerBasicInfo = ({
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 text-red-600"
               role="alert"
             >
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-              <p className="text-sm text-red-600">Selecione o status de convidado</p>
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              <p className="text-sm">Selecione o status de convidado.</p>
             </motion.div>
           )}
         </AnimatePresence>

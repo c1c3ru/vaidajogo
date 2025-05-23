@@ -1,12 +1,13 @@
-
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, StarHalf, Brush, Gauge } from 'lucide-react';
 import { toast } from "sonner";
-import { springConfig } from '@/utils/animations';
+import { springConfig } from '@/utils/animations'; // Assumindo que springConfig é bem definido aqui
 
+// Interface para as props do MenuSettings
 interface MenuSettingsProps {
   selectedRatingSystem: string;
   setSelectedRatingSystem: (value: string) => void;
@@ -14,15 +15,16 @@ interface MenuSettingsProps {
   setGuestHighlight: (value: string) => void;
 }
 
-const SettingsCard = ({ children, title, icon }: { 
-  children: React.ReactNode; 
+// Componente genérico para um card de configuração
+const SettingsCard = ({ children, title, icon }: {
+  children: React.ReactNode;
   title: string;
   icon: React.ReactNode;
 }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    transition={{ ...springConfig }} // Usando springConfig para consistência
   >
     <Card className="p-6 hover:shadow-lg transition-shadow duration-200 group">
       <div className="flex items-center gap-3 mb-4">
@@ -36,33 +38,35 @@ const SettingsCard = ({ children, title, icon }: {
   </motion.div>
 );
 
+// Dados para os sistemas de avaliação
 const ratingSystems = [
-  { 
-    value: "stars", 
+  {
+    value: "stars",
     label: "Estrelas",
     icon: <Star className="h-4 w-4" />,
-    description: "Avaliação por estrelas completas"
+    description: "Avaliação por estrelas completas (1 a 5)."
   },
-  { 
-    value: "numeric10", 
+  {
+    value: "numeric10",
     label: "Escala 1-10",
     icon: <Gauge className="h-4 w-4" />,
-    description: "Escala numérica detalhada"
+    description: "Escala numérica detalhada (1 a 10)."
   },
-  { 
-    value: "numeric5", 
+  {
+    value: "numeric5",
     label: "Escala 1-5",
     icon: <Gauge className="h-4 w-4" />,
-    description: "Escala numérica simplificada"
+    description: "Escala numérica simplificada (1 a 5)."
   },
-  { 
-    value: "halfStars", 
+  {
+    value: "halfStars",
     label: "Meia Estrela",
     icon: <StarHalf className="h-4 w-4" />,
-    description: "Permite meias estrelas na avaliação"
+    description: "Permite meias estrelas na avaliação (ex: 3.5)."
   }
 ];
 
+// Dados para os estilos de destaque de convidados
 const highlightStyles = [
   { value: "orange", label: "Laranja", color: "bg-orange-400" },
   { value: "purple", label: "Roxo", color: "bg-purple-500" },
@@ -93,18 +97,20 @@ export const MenuSettings = ({
         });
       }
     } catch (error) {
-      toast.error("Erro ao salvar configuração");
+      // Usar console.error para erros, útil para depuração
+      console.error(`Erro ao salvar configuração de ${type}:`, error);
+      toast.error("Erro ao salvar configuração. Tente novamente.");
     }
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-4">
       <SettingsCard title="Sistema de Avaliação" icon={<Star className="h-5 w-5" />}>
-        <div className="space-y-4">
+        <div className="space-y-4"> {/* Mantenha o space-y para espaçamento consistente */}
           <div className="space-y-2">
             <Label className="text-gray-600">Tipo de Avaliação</Label>
-            <Select 
-              value={selectedRatingSystem} 
+            <Select
+              value={selectedRatingSystem}
               onValueChange={(v) => handleChange('rating', v)}
             >
               <SelectTrigger className="hover:border-teal-100 focus:ring-2 focus:ring-teal-200">
@@ -112,8 +118,8 @@ export const MenuSettings = ({
               </SelectTrigger>
               <SelectContent>
                 {ratingSystems.map((system) => (
-                  <SelectItem 
-                    key={system.value} 
+                  <SelectItem
+                    key={system.value}
                     value={system.value}
                     className="hover:bg-teal-50 focus:bg-teal-50"
                   >
@@ -135,8 +141,8 @@ export const MenuSettings = ({
       <SettingsCard title="Destaque para Convidados" icon={<Brush className="h-5 w-5" />}>
         <div className="space-y-2">
           <Label className="text-gray-600">Estilo de Destaque</Label>
-          <Select 
-            value={guestHighlight} 
+          <Select
+            value={guestHighlight}
             onValueChange={(v) => handleChange('highlight', v)}
           >
             <SelectTrigger className="hover:border-teal-100 focus:ring-2 focus:ring-teal-200">
@@ -144,8 +150,8 @@ export const MenuSettings = ({
             </SelectTrigger>
             <SelectContent>
               {highlightStyles.map((style) => (
-                <SelectItem 
-                  key={style.value} 
+                <SelectItem
+                  key={style.value}
                   value={style.value}
                   className="hover:bg-teal-50 focus:bg-teal-50"
                 >

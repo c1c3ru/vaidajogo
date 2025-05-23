@@ -2,6 +2,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Shuffle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { motion } from 'framer-motion';
+import { springConfig } from '../utils/animations'; // Importando springConfig
 
 interface GenerateMatchupsButtonProps {
   onGenerate: () => void;
@@ -17,20 +19,28 @@ const GenerateMatchupsButton: React.FC<GenerateMatchupsButtonProps> = ({
   children,
 }) => {
   return (
-    <TooltipProvider>
+    <TooltipProvider> {/* Envolve o Tooltip para fornecer contexto */}
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={onGenerate}
-            disabled={disabled}
-            className={`gap-2 ${className}`}
-            variant="default"
+        <TooltipTrigger asChild> {/* Permite que o Tooltip seja acionado pelo Button */}
+          <motion.div
+            whileHover={{ scale: 1.05 }} // Animação de hover
+            whileTap={{ scale: 0.95 }} // Animação de tap
+            transition={springConfig} // Usando a configuração de mola
+            className="inline-block" // Garante que a div não ocupe toda a largura
           >
-            <Shuffle className="h-4 w-4" />
-            {children || 'Gerar Confrontos'}
-          </Button>
+            <Button
+              onClick={onGenerate}
+              disabled={disabled}
+              className={`gap-2 px-6 py-3 text-lg font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out ${className}`} // Estilos aprimorados
+              variant="default" // Variante padrão do botão
+              aria-label={children ? `${children}` : 'Gerar Confrontos'} // Acessibilidade
+            >
+              <Shuffle className="h-5 w-5" aria-hidden="true" /> {/* Ícone com tamanho aprimorado */}
+              {children || 'Gerar Confrontos'}
+            </Button>
+          </motion.div>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent className="bg-black text-white text-sm px-3 py-1 rounded-md shadow-lg"> {/* Estilos aprimorados para o Tooltip */}
           <p>Gerar novos confrontos aleatórios</p>
         </TooltipContent>
       </Tooltip>

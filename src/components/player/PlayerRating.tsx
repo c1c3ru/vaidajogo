@@ -1,10 +1,11 @@
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RatingEnum } from "@/utils/types";
 import { RatingInput } from "./RatingInput";
 import { AlertTriangle } from "lucide-react";
-import { ErrorState } from '@/utils/types';
+// CORREÇÃO: Importar RatingEnum diretamente de '@/utils/enums'
+import { RatingEnum } from '@/utils/enums'; // Importando RatingEnum
+import { ErrorState } from '@/utils/types'; // ErrorState continua vindo de types
 import { springConfig } from '../../utils/animations';
-
 
 interface PlayerRatingProps {
   rating: RatingEnum;
@@ -24,16 +25,18 @@ export const PlayerRating: React.FC<PlayerRatingProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springConfig}
-      className="space-y-2"
+      className="space-y-3 p-4 sm:p-0"
     >
-      <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+      <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
         <span>⭐ Avaliação</span>
         <AnimatePresence>
           {error && (
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="text-red-500"
+              exit={{ scale: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className="text-red-500 ml-1"
               aria-hidden="true"
             >
               *
@@ -58,10 +61,11 @@ export const PlayerRating: React.FC<PlayerRatingProps> = ({
             exit={{ opacity: 0, y: -5 }}
             id="rating-error"
             role="alert"
-            className="flex items-center gap-2 text-red-600"
+            aria-live="polite"
+            className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-md border border-red-200"
           >
-            <AlertTriangle className="h-4 w-4" />
-            <p className="text-sm">Avaliação é obrigatória</p>
+            <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+            <p className="text-sm">A avaliação é obrigatória.</p>
           </motion.div>
         )}
       </AnimatePresence>
