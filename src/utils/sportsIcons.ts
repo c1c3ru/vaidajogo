@@ -8,10 +8,11 @@
 import React from 'react';
 // Importa os ícones do conjunto Font Awesome (Fa) do 'react-icons'
 import {
-  FaFootballBall, // Ícone de bola de futebol (para Futebol e Futsal)
+  FaFootballBall, // Ícone de bola de futebol (para Futebol americano)
   FaBasketballBall, // Ícone de bola de basquetebol
   FaVolleyballBall, // Ícone de bola de voleibol
 } from 'react-icons/fa'; // Importa do sub-caminho 'fa' para Font Awesome
+import { GiSoccerKick,GiSoccerBall } from 'react-icons/gi'; // Importa GiSoccerKick do conjunto Game Icons
 
 // Importa o ícone específico de handebol do conjunto Material Design (Md)
 import { MdSportsHandball } from 'react-icons/md';
@@ -32,13 +33,12 @@ interface IconProps {
  * Usamos ícones de diferentes conjuntos conforme a disponibilidade.
  */
 export const SportsIcons: Record<SportEnum, React.ComponentType<IconProps>> = {
-  [SportEnum.FUTSAL]: FaFootballBall, // Usando FaFootballBall para Futsal
-  [SportEnum.SOCCER]: FaFootballBall, // Usando FaFootballBall para Futebol
+  [SportEnum.FUTSAL]: GiSoccerBall, // Usando FaFootballBall para Futsal
+  [SportEnum.SOCCER]: GiSoccerKick, // Usando FaFootballBall para Futebol
   [SportEnum.VOLLEYBALL]: FaVolleyballBall,
   [SportEnum.BASKETBALL]: FaBasketballBall,
   [SportEnum.HANDBALL]: MdSportsHandball, // Usando MdSportsHandball para Handebol
 };
-
 /**
  * Retorna o componente de ícone correspondente a um SportEnum.
  * @param {SportEnum} sport - O enum do desporto.
