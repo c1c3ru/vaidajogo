@@ -153,17 +153,23 @@ const Championship = () => {
         </div>
 
         {/* Configuração do Torneio */}
-        <Card className="border-2 border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-blue-600" />
-              Configuração do Torneio
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TournamentForm />
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="border-2 border-blue-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-blue-600" />
+                Configuração do Torneio
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TournamentForm />
+            </CardContent>
+          </Card>
+        </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Adicionar Times */}
@@ -171,76 +177,91 @@ const Championship = () => {
             className="space-y-6"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <Card className="border-2 border-green-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-green-600" />
-                  {editingTeam ? 'Editar Time' : 'Adicionar Time'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="teamName">Nome do Time</Label>
-                  <Input
-                    id="teamName"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="Digite o nome do time..."
-                    className="border-2 border-green-200 focus:border-green-500"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="responsible">Responsável</Label>
-                  <Input
-                    id="responsible"
-                    value={responsible}
-                    onChange={(e) => setResponsible(e.target.value)}
-                    placeholder="Nome do responsável..."
-                    className="border-2 border-green-200 focus:border-green-500"
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={handleAddTeam} 
-                    className="flex-1 bg-green-600 hover:bg-green-700"
-                    disabled={!teamName.trim() || !responsible.trim()}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    {editingTeam ? 'Atualizar Time' : 'Adicionar Time'}
-                  </Button>
-                  
-                  {editingTeam && (
-                    <Button 
-                      onClick={handleCancelEdit} 
-                      variant="outline"
-                      className="border-orange-200 text-orange-600 hover:bg-orange-50"
-                    >
-                      Cancelar
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="border-2 border-green-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-green-600" />
+                    {editingTeam ? 'Editar Time' : 'Adicionar Time'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="teamName">Nome do Time</Label>
+                    <Input
+                      id="teamName"
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                      placeholder="Digite o nome do time..."
+                      className="border-2 border-green-200 focus:border-green-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="responsible">Responsável</Label>
+                    <Input
+                      id="responsible"
+                      value={responsible}
+                      onChange={(e) => setResponsible(e.target.value)}
+                      placeholder="Nome do responsável..."
+                      className="border-2 border-green-200 focus:border-green-500"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }} className="flex-1">
+                      <Button 
+                        onClick={handleAddTeam} 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={!teamName.trim() || !responsible.trim()}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        {editingTeam ? 'Atualizar Time' : 'Adicionar Time'}
+                      </Button>
+                    </motion.div>
+                    {editingTeam && (
+                      <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }}>
+                        <Button 
+                          onClick={handleCancelEdit} 
+                          variant="outline"
+                          className="border-orange-200 text-orange-600 hover:bg-orange-50"
+                        >
+                          Cancelar
+                        </Button>
+                      </motion.div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
             {/* Lista de Times */}
-            <Card className="border-2 border-purple-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-purple-600" />
-                  Times ({teams.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <TeamList 
-                  teams={teams}
-                  onEdit={handleEditTeam}
-                  onRemove={handleRemoveTeam}
-                />
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Card className="border-2 border-purple-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-purple-600" />
+                    Times ({teams.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <motion.div layout>
+                    <TeamList 
+                      teams={teams}
+                      onEdit={handleEditTeam}
+                      onRemove={handleRemoveTeam}
+                    />
+                  </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
 
           {/* Geração de Confrontos */}
@@ -248,65 +269,76 @@ const Championship = () => {
             className="space-y-6"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ duration: 0.5 }}
           >
-            <Card className="border-2 border-orange-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-orange-600" />
-                  Geração de Confrontos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-600 flex items-center gap-2">
-                    Tipo de torneio: <Badge variant="secondary">{tournamentType}</Badge>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="border-2 border-orange-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-orange-600" />
+                    Geração de Confrontos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="text-sm text-gray-600 flex items-center gap-2">
+                      Tipo de torneio: <Badge variant="secondary">{tournamentType}</Badge>
+                    </div>
+                    <div className="text-sm text-gray-600 flex items-center gap-2">
+                      Times cadastrados: <Badge variant="secondary">{teams.length}</Badge>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600 flex items-center gap-2">
-                    Times cadastrados: <Badge variant="secondary">{teams.length}</Badge>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={handleGenerateMatches} 
-                  className="w-full bg-orange-600 hover:bg-orange-700"
-                  disabled={teams.length < 2}
-                >
-                  <Trophy className="mr-2 h-4 w-4" />
-                  Gerar Confrontos
-                </Button>
-
-                {teams.length < 2 && (
-                  <p className="text-sm text-orange-600 text-center">
-                    Adicione pelo menos 2 times para gerar confrontos
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Estatísticas */}
-            <Card className="border-2 border-blue-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Save className="h-5 w-5 text-blue-600" />
-                  Estatísticas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">{teams.length}</p>
-                    <p className="text-sm text-gray-600">Times</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">
-                      {groups.reduce((total, group) => total + group.matches.length, 0)}
+                  <motion.div whileTap={{ scale: 0.97 }} whileHover={{ scale: 1.04 }}>
+                    <Button 
+                      onClick={handleGenerateMatches} 
+                      className="w-full bg-orange-600 hover:bg-orange-700"
+                      disabled={teams.length < 2}
+                    >
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Gerar Confrontos
+                    </Button>
+                  </motion.div>
+                  {teams.length < 2 && (
+                    <p className="text-sm text-orange-600 text-center">
+                      Adicione pelo menos 2 times para gerar confrontos
                     </p>
-                    <p className="text-sm text-gray-600">Partidas</p>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+            {/* Estatísticas */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Card className="border-2 border-blue-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Save className="h-5 w-5 text-blue-600" />
+                    Estatísticas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-blue-600">{teams.length}</p>
+                      <p className="text-sm text-gray-600">Times</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-600">
+                        {groups.reduce((total, group) => total + group.matches.length, 0)}
+                      </p>
+                      <p className="text-sm text-gray-600">Partidas</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
         </div>
 
