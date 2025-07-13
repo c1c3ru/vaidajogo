@@ -259,12 +259,12 @@ const Championship = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 flex items-center gap-2">
                     Tipo de torneio: <Badge variant="secondary">{tournamentType}</Badge>
-                  </p>
-                  <p className="text-sm text-gray-600">
+                  </div>
+                  <div className="text-sm text-gray-600 flex items-center gap-2">
                     Times cadastrados: <Badge variant="secondary">{teams.length}</Badge>
-                  </p>
+                  </div>
                 </div>
 
                 <Button 
