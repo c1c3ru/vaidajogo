@@ -1,39 +1,33 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { PlayerProvider } from './context/PlayerContext';
-import Dashboard from './components/pages/Dashboard';
-import PlayerForm from './components/PlayerForm';
-import PlayerList from './components/PlayerList';
-import TeamDraw from './components/TeamDraw';
-import PresenceList from './components/PresenceList';
-import Statistics from './components/Statistics';
-import Championship from './components/pages/Championship';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from '@/components/ui/toaster';
+import Dashboard from '@/components/pages/Dashboard';
+import PlayerForm from '@/components/PlayerForm';
+import PlayerList from '@/components/PlayerList';
+import PresenceList from '@/components/PresenceList';
+import TeamDraw from '@/components/TeamDraw';
+import Statistics from '@/components/Statistics';
+import Championship from '@/components/pages/Championship';
+import './App.css';
 
-const App = () => {
+function App() {
   return (
-    <PlayerProvider>
-      <AnimatePresence mode="wait">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/player/new" element={<PlayerForm />} />
-            <Route path="/players" element={<PlayerList />} />
-            <Route path="/teams/draw" element={<TeamDraw />} />
-            <Route path="/presence" element={<PresenceList />} />
-            <Route path="/statistics" element={<Statistics />} />
-            <Route path="/championship" element={<Championship />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </motion.div>
-      </AnimatePresence>
-    </PlayerProvider>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/player-form" element={<PlayerForm />} />
+          <Route path="/players" element={<PlayerList />} />
+          <Route path="/presence" element={<PresenceList />} />
+          <Route path="/team-draw" element={<TeamDraw />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/championship" element={<Championship />} />
+        </Routes>
+        <Toaster />
+      </div>
+    </Router>
   );
-};
+}
 
 export default App;

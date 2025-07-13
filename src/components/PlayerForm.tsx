@@ -1,472 +1,383 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Checkbox } from "./ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
-import { usePlayerStore } from "@/stores/usePlayerStore";
-import { SportEnum, PositionEnum, RatingEnum } from "@/utils/enums";
-import { springConfig } from "@/utils/animations";
-import { BackToDashboard } from "./BackToDashboard";
-import { TEXTS, CONFIG, COLORS } from "@/constants";
-import { Player } from "@/types/types";
-import { generateId, formatDate } from "@/lib";
-import { RatingInput } from "./player/RatingInput";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import { usePlayerStore } from '@/stores/usePlayerStore';
+import { TEXTS } from '@/constants/texts';
+import { Player } from '@/types/types';
+import { CalendarIcon, User, Users, Star, AlertCircle } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import SportRatingSelector from './player/SportRatingSelector';
+import PlayerPositions from './player/PlayerPositions';
+import RatingInput from './player/RatingInput';
 
 const PlayerForm = () => {
-  const { 
-    addPlayer, 
-    newPlayer, 
-    setNewPlayer, 
-    errors, 
-    setErrors, 
-    resetForm, 
+  const { toast } = useToast();
+  const {
+    currentSport,
+    currentRatingSystem,
     sportLocked,
     ratingSystemLocked,
-    currentSport,
-    currentRatingSystem
+    addPlayer,
+    setCurrentSport,
+    setCurrentRatingSystem,
+    setSportLocked,
+    setRatingSystemLocked,
+    resetSportAndRating,
   } = usePlayerStore();
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Validação do formulário
-  const validateForm = (): boolean => {
-    const newErrors = {
-      name: { hasError: false, message: "" },
-      isGuest: { hasError: false, message: "" },
-      selectedPositions: { hasError: false, message: "" },
-      rating: { hasError: false, message: "" },
-    };
+  const [formData, setFormData] = useState({
+    name: '',
+    nickname: '',
+    birthDate: '',
+    isGuest: false,
+    selectedPositions: [] as string[],
+    rating: 0,
+    includeInDraw: true,
+  });
 
-    // Validação do nome
-    if (!newPlayer.name || newPlayer.name.trim().length < CONFIG.VALIDATION.MIN_NAME_LENGTH) {
-      newErrors.name = {
-        hasError: true,
-        message: `O nome deve ter pelo menos ${CONFIG.VALIDATION.MIN_NAME_LENGTH} caracteres.`,
-      };
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [date, setDate] = useState<Date>();
+
+  // Validar se esporte e sistema de avaliação foram selecionados
+  const validateSportAndRating = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!currentSport) {
+      newErrors.sport = TEXTS.PLAYER_FORM.SPORT.ERROR_REQUIRED;
     }
 
-    // Validação do esporte (se já há jogadores cadastrados)
-    if (sportLocked && newPlayer.sport !== currentSport) {
-      newErrors.name = {
-        hasError: true,
-        message: `Todos os jogadores devem ser do mesmo esporte (${currentSport}). Use o botão "Limpar" para alterar o esporte.`,
-      };
-    }
-
-    // Validação das posições
-    if (newPlayer.selectedPositions.length === 0) {
-      newErrors.selectedPositions = {
-        hasError: true,
-        message: "Selecione pelo menos uma posição.",
-      };
-    }
-
-    // Validação da avaliação
-    if (!newPlayer.rating || newPlayer.rating < 1 || newPlayer.rating > 10) {
-      newErrors.rating = {
-        hasError: true,
-        message: "A avaliação deve estar entre 1 e 10.",
-      };
+    if (!currentRatingSystem) {
+      newErrors.rating = TEXTS.PLAYER_FORM.RATING.ERROR_REQUIRED;
     }
 
     setErrors(newErrors);
-
-    // Retorna true se não há erros
-    return !Object.values(newErrors).some(error => error.hasError);
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Manipulador de envio do formulário
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validação adicional para esporte consistente
-    if (sportLocked && newPlayer.sport !== currentSport) {
-      toast({
-        title: "Esporte Inconsistente",
-        description: `Todos os jogadores devem ser do mesmo esporte (${currentSport}). Use o botão "Limpar" para alterar o esporte.`,
-        variant: "destructive",
-        className: "bg-red-500 text-white border-red-600",
-      });
-      return;
+  // Validar formulário
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = TEXTS.PLAYER_FORM.NAME.ERROR_REQUIRED;
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = TEXTS.PLAYER_FORM.NAME.ERROR_MIN_LENGTH;
     }
-    
+
+    if (!currentSport) {
+      newErrors.sport = TEXTS.PLAYER_FORM.SPORT.ERROR_REQUIRED;
+    }
+
+    if (!currentRatingSystem) {
+      newErrors.rating = TEXTS.PLAYER_FORM.RATING.ERROR_REQUIRED;
+    }
+
+    if (formData.selectedPositions.length === 0) {
+      newErrors.positions = TEXTS.PLAYER_FORM.POSITIONS.ERROR_REQUIRED;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Salvar jogador
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!validateForm()) {
       toast({
-        title: TEXTS.ERROR.VALIDATION,
+        title: "❌ Erro de Validação",
         description: "Por favor, corrija os erros no formulário.",
         variant: "destructive",
-        className: "bg-red-500 text-white border-red-600",
+        className: "bg-gradient-to-r from-red-500 to-pink-600 text-white border-red-600 shadow-lg",
       });
       return;
     }
 
-    setIsSubmitting(true);
+    const newPlayer: Player = {
+      id: Date.now(),
+      name: formData.name.trim(),
+      nickname: formData.nickname.trim(),
+      birthDate: date ? format(date, 'dd/MM/yyyy') : '',
+      isGuest: formData.isGuest,
+      sport: currentSport!,
+      selectedPositions: formData.selectedPositions,
+      rating: formData.rating as any,
+      includeInDraw: formData.includeInDraw,
+      createdAt: new Date().toISOString(),
+      selected: false,
+      present: false,
+      paid: false,
+      registered: true,
+    };
 
-    try {
-      const player: Player = {
-        id: Date.now(), // Usar timestamp como ID numérico
-        name: newPlayer.name.trim(),
-        nickname: newPlayer.nickname?.trim() || "",
-        birthDate: newPlayer.birthDate || "",
-        isGuest: newPlayer.isGuest,
-        sport: newPlayer.sport,
-        selectedPositions: newPlayer.selectedPositions.map(pos => pos.toString()),
-        rating: newPlayer.rating as RatingEnum,
-        includeInDraw: newPlayer.includeInDraw,
-        createdAt: formatDate(new Date()),
-        selected: false,
-        present: false,
-        paid: false,
-        registered: false,
-      };
+    addPlayer(newPlayer);
 
-      addPlayer(player);
-      
-      toast({
-        title: TEXTS.SUCCESS.PLAYER_ADDED,
-        description: `${player.name} foi cadastrado com sucesso!`,
-        className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
-        duration: 4000,
-      });
+    toast({
+      title: "✅ Jogador Salvo",
+      description: TEXTS.PLAYER_FORM.MESSAGES.SUCCESS_SAVE,
+      className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
+    });
 
-      resetForm();
-    } catch (error) {
-      console.error("Erro ao cadastrar jogador:", error);
-      toast({
-        title: TEXTS.ERROR.UNEXPECTED_ERROR,
-        description: "Ocorreu um erro ao cadastrar o jogador. Tente novamente.",
-        variant: "destructive",
-        className: "bg-red-500 text-white border-red-600 shadow-lg",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Resetar formulário
+    handleClearForm();
   };
 
-  // Manipuladores específicos para cada campo
-  const handleBasicInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewPlayer({ [name]: value });
-    
-    if (errors[name as keyof typeof errors]?.hasError) {
-      setErrors({
-        [name]: { hasError: false, message: "" },
-      });
-    }
+  // Limpar formulário
+  const handleClearForm = () => {
+    setFormData({
+      name: '',
+      nickname: '',
+      birthDate: '',
+      isGuest: false,
+      selectedPositions: [],
+      rating: 0,
+      includeInDraw: true,
+    });
+    setDate(undefined);
+    setErrors({});
+    resetSportAndRating();
   };
 
-  const handleGuestChange = (checked: boolean) => {
-    setNewPlayer({ isGuest: checked });
+  // Atualizar campo
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
     
-    if (errors.isGuest?.hasError) {
-      setErrors({
-        isGuest: { hasError: false, message: "" },
-      });
-    }
-  };
-
-  const handleSportChange = (value: SportEnum) => {
-    setNewPlayer({ sport: value, selectedPositions: [] });
-  };
-
-  const handlePositionChange = (position: PositionEnum, checked: boolean) => {
-    const currentPositions = newPlayer.selectedPositions || [];
-    const updatedPositions = checked
-      ? [...currentPositions, position]
-      : currentPositions.filter(p => p !== position);
-    
-    setNewPlayer({ selectedPositions: updatedPositions });
-    
-    if (errors.selectedPositions?.hasError) {
-      setErrors({
-        selectedPositions: { hasError: false, message: "" },
-      });
-    }
-  };
-
-  const handleRatingChange = (rating: RatingEnum) => {
-    setNewPlayer({ rating });
-    
-    if (errors.rating?.hasError) {
-      setErrors({
-        rating: { hasError: false, message: "" },
-      });
+    // Limpar erro do campo
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={springConfig}
-      className="min-h-screen p-4 sm:p-0"
-    >
-      <BackToDashboard />
-      <div className="max-w-4xl mx-auto space-y-6">
-        <Card className="shadow-lg border border-gray-100 rounded-xl">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
-            <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-              <span style={{ color: COLORS.PRIMARY[600] }}>👤</span>
-              {TEXTS.PAGE_TITLES.PLAYER_NEW}
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="border-2 border-blue-200 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b-2 border-blue-200">
+            <CardTitle className="flex items-center gap-3 text-2xl font-bold text-blue-800">
+              <User className="h-8 w-8" />
+              {TEXTS.PLAYER_FORM.TITLE}
             </CardTitle>
-            <p className="text-gray-600 mt-2">
-              {TEXTS.INSTRUCTIONS.PLAYER_REGISTRATION}
+            <p className="text-blue-600 font-medium">
+              {TEXTS.PLAYER_FORM.SUBTITLE}
             </p>
           </CardHeader>
+          
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Informações Básicas */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Informações Básicas</h3>
-                
-                <div>
-                  <Label htmlFor="name">Nome Completo *</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={newPlayer.name || ""}
-                    onChange={handleBasicInfoChange}
-                    placeholder="Digite o nome completo"
-                    className={`transition-all duration-300 ${
-                      errors.name?.hasError 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-200 bg-red-50' 
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
-                    }`}
-                  />
-                  {errors.name?.hasError && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2"
-                    >
-                      <span className="text-red-500">⚠️</span>
-                      {errors.name.message}
-                    </motion.p>
-                  )}
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Seletor de Esporte e Avaliação */}
+              <SportRatingSelector />
 
-                <div>
-                  <Label htmlFor="nickname">Apelido</Label>
-                  <Input
-                    id="nickname"
-                    name="nickname"
-                    value={newPlayer.nickname || ""}
-                    onChange={handleBasicInfoChange}
-                    placeholder="Apelido (opcional)"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="birthDate">Data de Nascimento</Label>
-                  <Input
-                    id="birthDate"
-                    name="birthDate"
-                    type="date"
-                    value={newPlayer.birthDate || ""}
-                    onChange={handleBasicInfoChange}
-                  />
-                </div>
-
-                <div>
-                  <Label>É convidado?</Label>
-                  <div className="flex gap-4 mt-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="isGuest-true"
-                        checked={newPlayer.isGuest === true}
-                        onCheckedChange={(checked) => handleGuestChange(checked === true)}
+              {/* Informações Pessoais */}
+              <Card className="border-2 border-purple-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-purple-800">
+                    <User className="h-5 w-5" />
+                    Informações Pessoais
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Nome */}
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-sm font-semibold">
+                        {TEXTS.PLAYER_FORM.NAME.LABEL}
+                      </Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        placeholder={TEXTS.PLAYER_FORM.NAME.PLACEHOLDER}
+                        className={cn(
+                          "border-2 transition-all duration-200",
+                          errors.name 
+                            ? "border-red-300 focus:border-red-500 bg-red-50" 
+                            : "border-gray-300 focus:border-purple-500 focus:bg-purple-50"
+                        )}
                       />
-                      <Label htmlFor="isGuest-true">Sim</Label>
+                      {errors.name && (
+                        <motion.p
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="text-sm text-red-600 flex items-center gap-1"
+                        >
+                          <AlertCircle className="h-4 w-4" />
+                          {errors.name}
+                        </motion.p>
+                      )}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="isGuest-false"
-                        checked={newPlayer.isGuest === false}
-                        onCheckedChange={(checked) => handleGuestChange(checked === true)}
+
+                    {/* Apelido */}
+                    <div className="space-y-2">
+                      <Label htmlFor="nickname" className="text-sm font-semibold">
+                        {TEXTS.PLAYER_FORM.NICKNAME.LABEL}
+                      </Label>
+                      <Input
+                        id="nickname"
+                        value={formData.nickname}
+                        onChange={(e) => handleInputChange('nickname', e.target.value)}
+                        placeholder={TEXTS.PLAYER_FORM.NICKNAME.PLACEHOLDER}
+                        className="border-2 border-gray-300 focus:border-purple-500 focus:bg-purple-50 transition-all duration-200"
                       />
-                      <Label htmlFor="isGuest-false">Não</Label>
                     </div>
                   </div>
-                  {errors.isGuest?.hasError && (
-                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.isGuest.message}</p>
-                  )}
-                </div>
-              </div>
 
-              {/* Informações Esportivas */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Informações Esportivas</h3>
-                
-                <div>
-                  <Label htmlFor="sport">Esporte *</Label>
-                  <select
-                    id="sport"
-                    value={newPlayer.sport || ""}
-                    onChange={(e) => handleSportChange(e.target.value as SportEnum)}
-                    disabled={sportLocked}
-                    className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${
-                      sportLocked 
-                        ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300 cursor-not-allowed opacity-80' 
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200 hover:border-blue-400'
-                    }`}
-                  >
-                    <option value="">Selecione um esporte</option>
-                    <option value={SportEnum.SOCCER}>Futebol</option>
-                    <option value={SportEnum.FUTSAL}>Futsal</option>
-                    <option value={SportEnum.VOLLEYBALL}>Vôlei</option>
-                    <option value={SportEnum.BASKETBALL}>Basquete</option>
-                    <option value={SportEnum.HANDBALL}>Handebol</option>
-                  </select>
-                  {sportLocked && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-2 p-3 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-lg"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center justify-center w-6 h-6 bg-orange-500 rounded-full">
-                          <span className="text-white text-xs font-bold">⚽</span>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-orange-800">
-                            Esporte atual: <span className="text-orange-600">{currentSport}</span>
-                          </p>
-                          <p className="text-xs text-orange-600 mt-1">
-                            Todos os jogadores devem ser do mesmo esporte. Use "Limpar" para alterar.
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-
-                <div>
-                  <Label>Posições *</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                    {Object.values(PositionEnum).map((position) => (
-                      <div key={position} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={position}
-                          checked={newPlayer.selectedPositions?.includes(position) || false}
-                          onCheckedChange={(checked) => handlePositionChange(position, checked === true)}
+                  {/* Data de Nascimento */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">
+                      {TEXTS.PLAYER_FORM.BIRTH_DATE.LABEL}
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal border-2 transition-all duration-200",
+                            !date && "text-muted-foreground",
+                            date 
+                              ? "border-purple-300 focus:border-purple-500 focus:bg-purple-50" 
+                              : "border-gray-300 focus:border-purple-500 focus:bg-purple-50"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {date ? format(date, 'dd/MM/yyyy', { locale: ptBR }) : TEXTS.PLAYER_FORM.BIRTH_DATE.PLACEHOLDER}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          initialFocus
+                          locale={ptBR}
                         />
-                        <Label htmlFor={position} className="text-sm">{position}</Label>
-                      </div>
-                    ))}
+                      </PopoverContent>
+                    </Popover>
                   </div>
-                  {errors.selectedPositions?.hasError && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2"
-                    >
-                      <span className="text-red-500">⚠️</span>
-                      {errors.selectedPositions.message}
-                    </motion.p>
-                  )}
-                </div>
-              </div>
+
+                  {/* Opções */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="isGuest"
+                        checked={formData.isGuest}
+                        onCheckedChange={(checked) => handleInputChange('isGuest', checked)}
+                      />
+                      <Label htmlFor="isGuest" className="text-sm font-medium">
+                        {TEXTS.PLAYER_FORM.IS_GUEST.LABEL}
+                      </Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="includeInDraw"
+                        checked={formData.includeInDraw}
+                        onCheckedChange={(checked) => handleInputChange('includeInDraw', checked)}
+                      />
+                      <Label htmlFor="includeInDraw" className="text-sm font-medium">
+                        {TEXTS.PLAYER_FORM.INCLUDE_IN_DRAW.LABEL}
+                      </Label>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Posições */}
+              {currentSport && (
+                <Card className="border-2 border-green-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-green-800">
+                      <Users className="h-5 w-5" />
+                      {TEXTS.PLAYER_FORM.POSITIONS.LABEL}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <PlayerPositions
+                      sport={currentSport}
+                      selectedPositions={formData.selectedPositions}
+                      onPositionsChange={(positions) => handleInputChange('selectedPositions', positions)}
+                      error={errors.positions}
+                    />
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Avaliação */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Avaliação</h3>
-                
-                <div>
-                  <Label>Avaliação *</Label>
-                  <div className="mt-2">
-                    <RatingInput />
-                  </div>
-                  {errors.rating?.hasError && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2"
-                    >
-                      <span className="text-red-500">⚠️</span>
-                      {errors.rating.message}
-                    </motion.p>
-                  )}
-                </div>
-              </div>
+              {currentRatingSystem && (
+                <Card className="border-2 border-orange-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-orange-800">
+                      <Star className="h-5 w-5" />
+                      {TEXTS.PLAYER_FORM.RATING.LABEL}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <RatingInput
+                      ratingSystem={currentRatingSystem}
+                      value={formData.rating}
+                      onChange={(rating) => handleInputChange('rating', rating)}
+                      error={errors.rating}
+                    />
+                  </CardContent>
+                </Card>
+              )}
 
-              {/* Configurações Adicionais */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="includeInDraw"
-                    checked={newPlayer.includeInDraw}
-                    onCheckedChange={(checked) =>
-                      setNewPlayer({ includeInDraw: checked === true })
-                    }
-                  />
-                  <Label htmlFor="includeInDraw" className="text-sm font-medium text-gray-700">
-                    {TEXTS.LABELS.INCLUDE_IN_DRAW}
-                  </Label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Marque esta opção se o jogador deve ser incluído no sorteio automático de times.
-                </p>
-              </div>
+              {!currentSport && (
+                <Card className="border-2 border-gray-200">
+                  <CardContent className="p-6">
+                    <div className="text-center py-8">
+                      <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                        Sistema de Avaliação
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {TEXTS.PLAYER_FORM.MESSAGES.SELECT_SPORT_FIRST}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-              {/* Botões de Ação */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                <motion.div className="flex-1">
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {isSubmitting ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        {TEXTS.STATUS.SAVING}
-                      </div>
-                    ) : (
-                      TEXTS.BUTTONS.SAVE
-                    )}
-                  </Button>
-                </motion.div>
+              {/* Botões */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                <Button
+                  type="submit"
+                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105"
+                >
+                  {TEXTS.PLAYER_FORM.BUTTONS.SAVE}
+                </Button>
                 
-                <motion.div className="flex-1">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={resetForm}
-                    disabled={isSubmitting}
-                    className="w-full h-12 text-lg font-semibold border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {sportLocked || ratingSystemLocked ? "Limpar e Alterar Configurações" : TEXTS.BUTTONS.CLEAR}
-                  </Button>
-                </motion.div>
+                <Button
+                  type="button"
+                  onClick={handleClearForm}
+                  variant="outline"
+                  className="flex-1 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200"
+                >
+                  {TEXTS.PLAYER_FORM.BUTTONS.CLEAR}
+                </Button>
               </div>
             </form>
           </CardContent>
         </Card>
-
-        {/* Informações de Ajuda */}
-        <Card className="shadow-lg border rounded-xl" style={{ borderColor: COLORS.PRIMARY[100], backgroundColor: COLORS.PRIMARY[50] }}>
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold mb-3" style={{ color: COLORS.PRIMARY[800] }}>
-              💡 Dicas para um Cadastro Completo
-            </h3>
-            <ul className="space-y-2 text-sm" style={{ color: COLORS.PRIMARY[700] }}>
-              <li>• Preencha o nome completo do jogador</li>
-              <li>• Selecione todas as posições que o jogador pode jogar</li>
-              <li>• Avalie o jogador de forma justa (1-10)</li>
-              <li>• Marque se é um jogador convidado ou regular</li>
-              <li>• Inclua a data de nascimento para estatísticas de idade</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 

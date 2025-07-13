@@ -1,172 +1,267 @@
 import React from 'react';
-import { Star, StarHalf } from 'lucide-react';
-import { usePlayerStore } from '@/stores/usePlayerStore';
-import { Rating } from '@/types/types';
 import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { TEXTS } from '@/constants/texts';
+import { Star, Hash, AlertCircle } from 'lucide-react';
 
-const ratingSystems = {
-  stars: {
-    maxRating: 5,
-    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
-      <div className="flex gap-3">
-        {[1, 2, 3, 4, 5].map((star) => (
+interface RatingInputProps {
+  ratingSystem: string;
+  value: number;
+  onChange: (rating: number) => void;
+  error?: string;
+}
+
+const RatingInput: React.FC<RatingInputProps> = ({
+  ratingSystem,
+  value,
+  onChange,
+  error
+}) => {
+  const getRatingSystemConfig = (systemId: string) => {
+    switch (systemId) {
+      case 'stars':
+        return {
+          name: TEXTS.RATING_SYSTEMS.STARS.NAME,
+          max: TEXTS.RATING_SYSTEMS.STARS.MAX,
+          icon: Star,
+          type: 'stars',
+          levels: TEXTS.RATING_SYSTEMS.STARS.LEVELS
+        };
+      case 'halfStars':
+        return {
+          name: TEXTS.RATING_SYSTEMS.HALF_STARS.NAME,
+          max: TEXTS.RATING_SYSTEMS.HALF_STARS.MAX,
+          icon: Star,
+          type: 'halfStars',
+          levels: TEXTS.RATING_SYSTEMS.HALF_STARS.LEVELS
+        };
+      case 'numeric10':
+        return {
+          name: TEXTS.RATING_SYSTEMS.NUMERIC_10.NAME,
+          max: TEXTS.RATING_SYSTEMS.NUMERIC_10.MAX,
+          icon: Hash,
+          type: 'numeric',
+          levels: TEXTS.RATING_SYSTEMS.NUMERIC_10.LEVELS
+        };
+      case 'numeric5':
+        return {
+          name: TEXTS.RATING_SYSTEMS.NUMERIC_5.NAME,
+          max: TEXTS.RATING_SYSTEMS.NUMERIC_5.MAX,
+          icon: Hash,
+          type: 'numeric',
+          levels: TEXTS.RATING_SYSTEMS.NUMERIC_5.LEVELS
+        };
+      default:
+        return {
+          name: TEXTS.RATING_SYSTEMS.STARS.NAME,
+          max: 5,
+          icon: Star,
+          type: 'stars',
+          levels: TEXTS.RATING_SYSTEMS.STARS.LEVELS
+        };
+    }
+  };
+
+  const config = getRatingSystemConfig(ratingSystem);
+  const IconComponent = config.icon;
+
+  const renderStars = () => {
+    const stars = [];
+    const maxStars = config.max;
+    const currentRating = value || 0;
+
+    for (let i = 1; i <= maxStars; i++) {
+      const isFilled = i <= currentRating;
+      const isHalf = config.type === 'halfStars' && i === Math.ceil(currentRating) && currentRating % 1 !== 0;
+
+      stars.push(
+        <motion.button
+          key={i}
+          type="button"
+          onClick={() => onChange(i)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className={`p-1 transition-all duration-200 ${
+            isFilled 
+              ? 'text-yellow-500' 
+              : 'text-gray-300 hover:text-yellow-300'
+          }`}
+        >
+          <IconComponent 
+            className={`h-8 w-8 ${
+              isHalf ? 'text-yellow-400' : ''
+            }`}
+            fill={isFilled ? 'currentColor' : 'none'}
+          />
+        </motion.button>
+      );
+    }
+
+    return stars;
+  };
+
+  const renderHalfStars = () => {
+    const stars = [];
+    const maxStars = config.max;
+    const currentRating = value || 0;
+
+    for (let i = 1; i <= maxStars; i++) {
+      const isFilled = i <= currentRating;
+      const isHalf = i === Math.ceil(currentRating) && currentRating % 1 !== 0;
+
+      stars.push(
+        <motion.button
+          key={i}
+          type="button"
+          onClick={() => onChange(i)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className={`p-1 transition-all duration-200 ${
+            isFilled 
+              ? 'text-yellow-500' 
+              : 'text-gray-300 hover:text-yellow-300'
+          }`}
+        >
+          <IconComponent 
+            className={`h-8 w-8 ${
+              isHalf ? 'text-yellow-400' : ''
+            }`}
+            fill={isFilled ? 'currentColor' : 'none'}
+          />
+        </motion.button>
+      );
+
+      // Adicionar meia estrela se não for a última
+      if (i < maxStars) {
+        const halfValue = i + 0.5;
+        const isHalfFilled = halfValue <= currentRating;
+
+        stars.push(
           <motion.button
-            key={star}
-            onClick={() => onRatingChange(star)}
-            whileHover={{ scale: 1.2, rotate: 5 }}
+            key={`${i}-half`}
+            type="button"
+            onClick={() => onChange(halfValue)}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="focus:outline-none transition-all duration-200"
+            className={`p-1 transition-all duration-200 ${
+              isHalfFilled 
+                ? 'text-yellow-500' 
+                : 'text-gray-300 hover:text-yellow-300'
+            }`}
           >
-            <Star
-              size={40}
-              className={`${
-                rating >= star
-                  ? "fill-yellow-400 text-yellow-400 drop-shadow-lg"
-                  : "fill-gray-200 text-gray-300"
-              } transition-all duration-300 hover:scale-110`}
+            <IconComponent 
+              className="h-8 w-8"
+              fill={isHalfFilled ? 'currentColor' : 'none'}
             />
           </motion.button>
-        ))}
-      </div>
-    ),
-  },
-  halfStars: {
-    maxRating: 5,
-    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
-      <div className="flex gap-2">
-        {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((star) => (
-          <motion.button
-            key={star}
-            onClick={() => onRatingChange(star)}
-            whileHover={{ scale: 1.15, rotate: 3 }}
-            whileTap={{ scale: 0.9 }}
-            className="focus:outline-none transition-all duration-200"
-          >
-            {Number.isInteger(star) ? (
-              <Star
-                size={36}
-                className={`${
-                  rating >= star
-                    ? "fill-yellow-400 text-yellow-400 drop-shadow-md"
-                    : "fill-gray-200 text-gray-300"
-                } transition-all duration-300 hover:scale-110`}
-              />
-            ) : (
-              <StarHalf
-                size={36}
-                className={`${
-                  rating >= star
-                    ? "fill-yellow-400 text-yellow-400 drop-shadow-md"
-                    : "fill-gray-200 text-gray-300"
-                } transition-all duration-300 hover:scale-110`}
-              />
-            )}
-          </motion.button>
-        ))}
-      </div>
-    ),
-  },
-  numeric10: {
-    maxRating: 10,
-    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
-      <div className="flex flex-wrap gap-2">
-        {[...Array(10)].map((_, i) => (
-          <motion.button
-            key={i + 1}
-            onClick={() => onRatingChange(i + 1)}
-            whileHover={{ scale: 1.1, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            className={`w-12 h-12 rounded-xl font-bold text-white transition-all duration-300 shadow-md hover:shadow-lg ${
-              rating >= i + 1
-                ? i + 1 <= 3
-                  ? "bg-gradient-to-br from-red-500 to-red-600"
-                  : i + 1 <= 7
-                  ? "bg-gradient-to-br from-green-500 to-green-600"
-                  : "bg-gradient-to-br from-blue-500 to-blue-600"
-                : "bg-gradient-to-br from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500"
-            }`}
-          >
-            {i + 1}
-          </motion.button>
-        ))}
-      </div>
-    ),
-  },
-  numeric5: {
-    maxRating: 5,
-    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
-      <div className="flex gap-3">
-        {[...Array(5)].map((_, i) => (
-          <motion.button
-            key={i + 1}
-            onClick={() => onRatingChange(i + 1)}
-            whileHover={{ scale: 1.15, y: -3 }}
-            whileTap={{ scale: 0.9 }}
-            className={`w-14 h-14 rounded-xl font-bold text-white transition-all duration-300 shadow-lg hover:shadow-xl ${
-              rating >= i + 1
-                ? i + 1 <= 2
-                  ? "bg-gradient-to-br from-red-500 to-red-600"
-                  : i + 1 <= 4
-                  ? "bg-gradient-to-br from-green-500 to-green-600"
-                  : "bg-gradient-to-br from-blue-500 to-blue-600"
-                : "bg-gradient-to-br from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500"
-            }`}
-          >
-            {i + 1}
-          </motion.button>
-        ))}
-      </div>
-    ),
-  },
-};
+        );
+      }
+    }
 
-export const RatingInput: React.FC = () => {
-  const { newPlayer, setNewPlayer, ratingSystemLocked, currentRatingSystem } = usePlayerStore();
-  
-  // Usar sistema de avaliação padrão (estrelas)
-  const defaultRatingSystem = 'stars';
-  
-  const setRating = (rating: Rating) => {
-    setNewPlayer({ rating });
+    return stars;
   };
-  
-  const ratingSystemConfig = ratingSystems[defaultRatingSystem];
 
-  if (!ratingSystemConfig) {
-    return null;
-  }
+  const renderNumeric = () => {
+    const numbers = [];
+    const maxNumber = config.max;
+
+    for (let i = 1; i <= maxNumber; i++) {
+      const isSelected = i === value;
+
+      numbers.push(
+        <motion.button
+          key={i}
+          type="button"
+          onClick={() => onChange(i)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`w-12 h-12 rounded-full border-2 font-bold text-lg transition-all duration-200 ${
+            isSelected
+              ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+              : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400 hover:text-blue-600'
+          }`}
+        >
+          {i}
+        </motion.button>
+      );
+    }
+
+    return numbers;
+  };
+
+  const getLevelDescription = (rating: number) => {
+    return config.levels[rating as keyof typeof config.levels] || '';
+  };
 
   return (
     <div className="space-y-4">
-      {ratingSystemLocked && (
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <IconComponent className="h-5 w-5 text-blue-600" />
+          <span className="text-sm font-semibold text-gray-700">
+            {config.name}
+          </span>
+        </div>
+        
+        {value > 0 && (
+          <Badge variant="default" className="bg-green-100 text-green-700">
+            Avaliação: {value}/{config.max}
+          </Badge>
+        )}
+      </div>
+
+      <Card className="border-2 border-blue-200">
+        <CardContent className="p-6">
+          <div className="text-center space-y-4">
+            <Label className="text-sm font-medium text-gray-600">
+              Clique para selecionar a avaliação
+            </Label>
+            
+            <div className="flex justify-center items-center gap-2">
+              {config.type === 'halfStars' ? renderHalfStars() : 
+               config.type === 'numeric' ? renderNumeric() : renderStars()}
+            </div>
+
+            {value > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg"
+              >
+                <p className="text-sm font-semibold text-green-800">
+                  Avaliação selecionada: <span className="text-green-600">{value}</span>
+                </p>
+                <p className="text-xs text-green-600 mt-1">
+                  {getLevelDescription(value)}
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {error && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl shadow-sm"
+          className="flex items-center gap-2 p-3 bg-red-50 border-2 border-red-200 rounded-lg"
         >
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-full">
-              <span className="text-white text-sm font-bold">📊</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-blue-800">
-                Sistema de Avaliação: <span className="text-blue-600">Estrelas (1-5)</span>
-              </p>
-              <p className="text-xs text-blue-600 mt-1">
-                Todos os jogadores devem usar o mesmo sistema. Use "Limpar" para alterar.
-              </p>
-            </div>
-          </div>
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <p className="text-sm text-red-700 font-medium">{error}</p>
         </motion.div>
       )}
-      
-      <motion.div 
-        className={ratingSystemLocked ? 'opacity-70' : ''}
-        animate={{ opacity: ratingSystemLocked ? 0.7 : 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        {ratingSystemConfig.renderRating(newPlayer.rating, setRating)}
-      </motion.div>
+
+      {value === 0 && !error && (
+        <div className="text-center py-4">
+          <p className="text-sm text-gray-500">
+            Selecione uma avaliação para o jogador
+          </p>
+        </div>
+      )}
     </div>
   );
 };
+
+export default RatingInput;
