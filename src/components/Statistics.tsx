@@ -62,7 +62,7 @@ const Statistics = () => {
   }, [players]);
 
   // Renderiza o gráfico baseado no tipo selecionado
-  const renderChart = (data: any[]) => {
+  const renderChart = (data: Array<{ name: string; value: number }>) => {
     const commonProps = {
       data,
       margin: { top: 5, right: 30, left: 20, bottom: 5 },
@@ -231,7 +231,7 @@ const Statistics = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700">Tipo de Gráfico</label>
-                <Select value={chartType} onValueChange={(value: any) => setChartType(value)}>
+                <Select value={chartType} onValueChange={(value: "bar" | "pie" | "line" | "area") => setChartType(value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
@@ -245,7 +245,7 @@ const Statistics = () => {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Métrica</label>
-                <Select value={selectedMetric} onValueChange={(value: any) => setSelectedMetric(value)}>
+                <Select value={selectedMetric} onValueChange={(value: "presence" | "position" | "rating") => setSelectedMetric(value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione a métrica" />
                   </SelectTrigger>

@@ -13,6 +13,7 @@ import TournamentHeader from '@/components/tournament/TournamentHeader';
 import { TournamentForm } from '@/components/tournament/TournamentForm';
 import TeamList from '@/components/tournament/TeamList';
 import { Team } from '@/types/types';
+import { TournamentType } from '@/utils/enums';
 
 const Championship = () => {
   const [teamName, setTeamName] = useState('');
@@ -24,7 +25,7 @@ const Championship = () => {
     teams,
     groups,
     knockoutMatches,
-    tournamentType
+    type: tournamentType
   } = useTournamentStore((state) => ({
     addTeam: state.addTeam,
     editTeam: state.editTeam, 
@@ -33,7 +34,7 @@ const Championship = () => {
     teams: state.teams,
     groups: state.groups,
     knockoutMatches: state.knockoutMatches,
-    tournamentType: state.tournament?.type
+    type: state.type
   }));
 
   const handleAddTeam = () => {
@@ -63,7 +64,7 @@ const Championship = () => {
   };
 
   useEffect(() => {
-    if (tournamentType === 'worldCup' && teams.length > 0) {
+    if (tournamentType === TournamentType.CHAMPIONSHIP && teams.length > 0) {
       generateMatches(teams, tournamentType);
     }
   }, [tournamentType, teams, generateMatches]);

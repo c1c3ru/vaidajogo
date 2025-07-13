@@ -1,5 +1,7 @@
+import { TournamentType } from '@/utils/enums';
+
 // Define a type for the rating system
-export type Rating = 1 | 2 | 3 | 4 | 5;
+export type Rating = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 // Define the Player interface
 export interface Player {
@@ -25,13 +27,14 @@ export interface PlayerState {
   players: Player[];
   newPlayer: Omit<Player, "id" | "createdAt">;
   errors: {
-    name: boolean;
-    isGuest: boolean;
-    selectedPositions: boolean;
-    rating: boolean;
+    name: { hasError: boolean; message: string };
+    isGuest: { hasError: boolean; message: string };
+    selectedPositions: { hasError: boolean; message: string };
+    rating: { hasError: boolean; message: string };
   };
   editingPlayer: { id: number } | null;
   editValue: string;
+  sportLocked: boolean;
   addPlayer: (player: Player) => void;
   setNewPlayer: (player: Partial<Omit<Player, "id" | "createdAt">>) => void;
   setErrors: (errors: Partial<PlayerState["errors"]>) => void;
@@ -41,6 +44,7 @@ export interface PlayerState {
   setPlayers: (players: Player[]) => void;
   setEditingPlayer: (player: { id: number } | null) => void;
   setEditValue: (value: string) => void;
+  setSportLocked: (locked: boolean) => void;
 }
 export interface Team {
   id: string;
@@ -127,7 +131,7 @@ export interface Tournament {
   id: string;
   tournament: Tournament | null;
   name: string;
-  type: "league" | "worldCup" | "homeAway";
+  type: TournamentType;
   teams: Team[];
   matches: Group[];
   groups?: Group[];
@@ -136,10 +140,10 @@ export interface Tournament {
   editTeam: (id: string, updatedTeam: Partial<Team>) => void;
   removeTeam: (id: string) => void;
   setTournamentName: (name: string) => void;
-  setTournamentType: (type: string) => void;
+  setTournamentType: (type: TournamentType) => void;
   generateMatches: (
     teams: Team[],
-    type: "league" | "worldCup" | "homeAway"
+    type: TournamentType
   ) => void;
   updateMatch: (matchId: string, score1: number, score2: number) => void;
 }
@@ -148,7 +152,7 @@ export interface Tournament {
 export interface TournamentState {
   tournament: Tournament | null;
   name: string;
-  type: "league" | "worldCup" | "homeAway";
+  type: TournamentType;
   teams: Team[];
   matches: Group[];
   groups?: Group[];
@@ -157,10 +161,10 @@ export interface TournamentState {
   editTeam: (id: string, updatedTeam: Partial<Team>) => void;
   removeTeam: (id: string) => void;
   setTournamentName: (name: string) => void;
-  setTournamentType: (type: string) => void;
+  setTournamentType: (type: TournamentType) => void;
   generateMatches: (
     teams: Team[],
-    type: "league" | "worldCup" | "homeAway"
+    type: TournamentType
   ) => void;
   updateMatch: (matchId: string, score1: number, score2: number) => void;
 }

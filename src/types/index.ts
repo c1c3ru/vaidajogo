@@ -281,7 +281,7 @@ export interface ListComponentProps<T> {
  */
 export interface FormChangeEvent {
   name: string;
-  value: any;
+  value: unknown;
 }
 
 /**
@@ -298,7 +298,7 @@ export interface ValidationEvent {
 /**
  * Resposta padrão da API
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;

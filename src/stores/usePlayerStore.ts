@@ -20,16 +20,18 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     selected: false,
   },
   errors: {
-    name: false,
-    isGuest: false,
-    selectedPositions: false,
-    rating: false,
+    name: { hasError: false, message: "" },
+    isGuest: { hasError: false, message: "" },
+    selectedPositions: { hasError: false, message: "" },
+    rating: { hasError: false, message: "" },
   },
   editingPlayer: null,
   editValue: '',
+  sportLocked: false,
   addPlayer: (player) =>
     set((state) => ({
       players: [...state.players, player],
+      sportLocked: true, // Bloqueia o esporte após adicionar o primeiro jogador
     })),
   setNewPlayer: (player) => set((state) => ({
     newPlayer: { ...state.newPlayer, ...player },
@@ -53,11 +55,12 @@ export const usePlayerStore = create<PlayerState>((set) => ({
       selected: false,
     },
     errors: {
-      name: false,
-      isGuest: false,
-      selectedPositions: false,
-      rating: false,
+      name: { hasError: false, message: "" },
+      isGuest: { hasError: false, message: "" },
+      selectedPositions: { hasError: false, message: "" },
+      rating: { hasError: false, message: "" },
     },
+    sportLocked: false, // Desbloqueia o esporte ao resetar
   }),
   updatePlayer: (id, updatedPlayer) =>
     set((state) => ({
@@ -72,5 +75,5 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   setPlayers: (players) => set({ players }),
   setEditingPlayer: (editingPlayer) => set({ editingPlayer }),
   setEditValue: (editValue) => set({ editValue }),
-
+  setSportLocked: (locked) => set({ sportLocked: locked }),
 }));

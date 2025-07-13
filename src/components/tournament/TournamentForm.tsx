@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useTournamentStore } from '@/stores/useTournamentStore';
+import { TournamentType } from '@/utils/enums';
 
 export const TournamentForm: React.FC = () => {
   const { tournamentName, tournamentType, setTournamentName, setTournamentType } = useTournamentStore();
@@ -20,23 +21,31 @@ export const TournamentForm: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        <Label>Tipo de Torneio</Label>
+        <Label>Tipo de Disputa</Label>
         <RadioGroup
           value={tournamentType}
           onValueChange={setTournamentType}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="league" id="league" />
-            <Label htmlFor="league">Pontos Corridos</Label>
+            <RadioGroupItem value={TournamentType.LEAGUE} id="league" />
+            <Label htmlFor="league">Liga (Pontos Corridos)</Label>
+            <span className="text-xs text-gray-500 ml-2">Todos contra todos, sem mata-mata</span>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="worldCup" id="worldCup" />
-            <Label htmlFor="worldCup">Copa do Mundo (Grupos + Mata-mata)</Label>
+            <RadioGroupItem value={TournamentType.CUP} id="cup" />
+            <Label htmlFor="cup">Copa (Mata-Mata)</Label>
+            <span className="text-xs text-gray-500 ml-2">Sistema eliminatório direto</span>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="homeAway" id="homeAway" />
-            <Label htmlFor="homeAway">Mata-mata (Ida e Volta)</Label>
+            <RadioGroupItem value={TournamentType.CHAMPIONSHIP} id="championship" />
+            <Label htmlFor="championship">Campeonato (Grupos + Mata-Mata)</Label>
+            <span className="text-xs text-gray-500 ml-2">Fase de grupos seguida de eliminatórias</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value={TournamentType.FRIENDLY} id="friendly" />
+            <Label htmlFor="friendly">Amistoso</Label>
+            <span className="text-xs text-gray-500 ml-2">Jogos sem competição oficial</span>
           </div>
         </RadioGroup>
       </div>

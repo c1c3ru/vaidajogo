@@ -4,6 +4,8 @@
  * Configurações de animação para a aplicação
  */
 
+import { CONFIG } from '@/constants';
+
 // Configuração de animação spring para Framer Motion
 export const springConfig = {
   type: "spring",

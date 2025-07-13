@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { generateGroups, generateKnockoutMatches } from '@/utils/tournament';
 import { TournamentState, Team } from '@/types/types';
+import { TournamentType } from '@/utils/enums';
 
 export const useTournamentStore = create<TournamentState>((set) => ({
   tournament: null,
@@ -8,7 +9,7 @@ export const useTournamentStore = create<TournamentState>((set) => ({
   groups: [],
   knockoutMatches: null,
   name: '',
-  type: 'league',
+  type: TournamentType.LEAGUE,
   matches: [],
 
   // Métodos para manipular o estado
@@ -16,8 +17,7 @@ export const useTournamentStore = create<TournamentState>((set) => ({
 
   setTournamentName: (name) => set({ name }),
 
-  setTournamentType: (type: 'league' | 'worldCup' | 'homeAway') => set({ type }),
-
+  setTournamentType: (type: TournamentType) => set({ type }),
 
   addTeam: (team) =>
     set((state) => ({ teams: [...state.teams, team] })),
@@ -37,7 +37,7 @@ export const useTournamentStore = create<TournamentState>((set) => ({
   generateMatches: (teams, type) =>
     set((state) => {
       const groups = generateGroups(teams.map((team) => team.name));
-      const knockoutMatches = type === 'worldCup' ? generateKnockoutMatches(teams) : null;
+      const knockoutMatches = type === TournamentType.CHAMPIONSHIP ? generateKnockoutMatches(teams) : null;
       return { ...state, groups, knockoutMatches };
     }),
 

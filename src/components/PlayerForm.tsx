@@ -10,12 +10,12 @@ import { usePlayerStore } from "@/stores/usePlayerStore";
 import { SportEnum, PositionEnum, RatingEnum } from "@/utils/enums";
 import { springConfig } from "@/utils/animations";
 import { BackToDashboard } from "./BackToDashboard";
-import { TEXTS, CONFIG } from "@/constants";
-import { Player } from "@/types";
+import { TEXTS, CONFIG, COLORS } from "@/constants";
+import { Player } from "@/types/types";
 import { generateId, formatDate } from "@/lib";
 
 const PlayerForm = () => {
-  const { addPlayer, newPlayer, setNewPlayer, errors, setErrors, resetForm } = usePlayerStore();
+  const { addPlayer, newPlayer, setNewPlayer, errors, setErrors, resetForm, sportLocked } = usePlayerStore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -75,14 +75,14 @@ const PlayerForm = () => {
 
     try {
       const player: Player = {
-        id: generateId(),
+        id: Date.now(), // Usar timestamp como ID numérico
         name: newPlayer.name.trim(),
-        nickname: newPlayer.nickname?.trim() || undefined,
-        birthDate: newPlayer.birthDate,
+        nickname: newPlayer.nickname?.trim() || "",
+        birthDate: newPlayer.birthDate || "",
         isGuest: newPlayer.isGuest,
         sport: newPlayer.sport,
-        selectedPositions: newPlayer.selectedPositions,
-        rating: newPlayer.rating,
+        selectedPositions: newPlayer.selectedPositions.map(pos => pos.toString()),
+        rating: newPlayer.rating as RatingEnum,
         includeInDraw: newPlayer.includeInDraw,
         createdAt: formatDate(new Date()),
         selected: false,
@@ -175,7 +175,7 @@ const PlayerForm = () => {
         <Card className="shadow-lg border border-gray-100 rounded-xl">
           <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
             <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-              <span className="text-blue-600">👤</span>
+              <span style={{ color: COLORS.PRIMARY[600] }}>👤</span>
               {TEXTS.PAGE_TITLES.PLAYER_NEW}
             </CardTitle>
             <p className="text-gray-600 mt-2">
@@ -199,7 +199,7 @@ const PlayerForm = () => {
                     className={errors.name?.hasError ? "border-red-500" : ""}
                   />
                   {errors.name?.hasError && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.name.message}</p>
                   )}
                 </div>
 
@@ -246,7 +246,7 @@ const PlayerForm = () => {
                     </div>
                   </div>
                   {errors.isGuest?.hasError && (
-                    <p className="text-red-500 text-sm mt-1">{errors.isGuest.message}</p>
+                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.isGuest.message}</p>
                   )}
                 </div>
               </div>
@@ -261,7 +261,10 @@ const PlayerForm = () => {
                     id="sport"
                     value={newPlayer.sport || ""}
                     onChange={(e) => handleSportChange(e.target.value as SportEnum)}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    disabled={sportLocked}
+                    className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      sportLocked ? 'bg-gray-100 cursor-not-allowed opacity-60' : ''
+                    }`}
                   >
                     <option value="">Selecione um esporte</option>
                     <option value={SportEnum.SOCCER}>Futebol</option>
@@ -270,6 +273,11 @@ const PlayerForm = () => {
                     <option value={SportEnum.BASKETBALL}>Basquete</option>
                     <option value={SportEnum.HANDBALL}>Handebol</option>
                   </select>
+                  {sportLocked && (
+                    <p className="text-sm text-orange-600 mt-1">
+                      ⚠️ O esporte foi bloqueado após o primeiro jogador. Use o botão "Limpar" para alterar o esporte.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -287,7 +295,7 @@ const PlayerForm = () => {
                     ))}
                   </div>
                   {errors.selectedPositions?.hasError && (
-                    <p className="text-red-500 text-sm mt-1">{errors.selectedPositions.message}</p>
+                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.selectedPositions.message}</p>
                   )}
                 </div>
               </div>
@@ -312,7 +320,7 @@ const PlayerForm = () => {
                     ))}
                   </div>
                   {errors.rating?.hasError && (
-                    <p className="text-red-500 text-sm mt-1">{errors.rating.message}</p>
+                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.rating.message}</p>
                   )}
                 </div>
               </div>
@@ -352,7 +360,7 @@ const PlayerForm = () => {
                   disabled={isSubmitting}
                   className="flex-1 h-12 text-lg font-semibold border-gray-300 hover:bg-gray-50 transition-colors duration-200 rounded-lg"
                 >
-                  {TEXTS.BUTTONS.CLEAR}
+                  {sportLocked ? "Limpar e Alterar Esporte" : TEXTS.BUTTONS.CLEAR}
                 </Button>
               </div>
             </form>
@@ -360,12 +368,12 @@ const PlayerForm = () => {
         </Card>
 
         {/* Informações de Ajuda */}
-        <Card className="shadow-lg border border-blue-100 rounded-xl bg-blue-50">
+        <Card className="shadow-lg border rounded-xl" style={{ borderColor: COLORS.PRIMARY[100], backgroundColor: COLORS.PRIMARY[50] }}>
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">
+            <h3 className="text-lg font-semibold mb-3" style={{ color: COLORS.PRIMARY[800] }}>
               💡 Dicas para um Cadastro Completo
             </h3>
-            <ul className="space-y-2 text-sm text-blue-700">
+            <ul className="space-y-2 text-sm" style={{ color: COLORS.PRIMARY[700] }}>
               <li>• Preencha o nome completo do jogador</li>
               <li>• Selecione todas as posições que o jogador pode jogar</li>
               <li>• Avalie o jogador de forma justa (1-10)</li>

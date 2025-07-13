@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Match, Group } from '@/types/types';
 import { TournamentBracketProps } from '@/utils/tournament';
+import { COLORS } from '@/constants';
 
 
 
@@ -94,7 +95,8 @@ const FinalAndThirdPlace = ({ final, thirdPlace }: { final: Match; thirdPlace: M
 export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracketProps) => {
   return (
     <motion.div
-      className="w-full bg-[#9b87f5] rounded-lg shadow-lg p-6 overflow-x-auto"
+      className="w-full rounded-lg shadow-lg p-6 overflow-x-auto"
+      style={{ backgroundColor: COLORS.PURPLE[500] }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >

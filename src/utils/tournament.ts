@@ -1,4 +1,5 @@
 import { Team, KnockoutMatches, Match, Group } from '../types/types';
+import { TournamentType } from './enums';
 
 export interface TournamentBracketProps {
   groups: Group[];
@@ -10,10 +11,11 @@ export interface TournamentBracketProps {
     thirdPlace: Match;
   };
 }
+
 export interface Tournament {
   id: string;
   name: string;
-  type: 'league' | 'worldCup' | 'homeAway';
+  type: TournamentType;
   teams: Team[];
   matches: Match[];
   groups?: Group[];
@@ -25,23 +27,29 @@ export const generateKnockoutMatches = (teams: Team[]): KnockoutMatches => {
   const shuffledTeams = [...teams].sort(() => Math.random() - 0.5);
   
   return {
-    roundOf16: Array(8).fill(null).map(() => ({
+    id: 'knockout-matches',
+    roundOf16: Array(8).fill(null).map((_, index) => ({
+      id: `round16-${index}`,
       team1: { id: 'tbd', name: 'A Definir', responsible: '' },
       team2: { id: 'tbd', name: 'A Definir', responsible: '' }
     })),
-    quarterFinals: Array(4).fill(null).map(() => ({
+    quarterFinals: Array(4).fill(null).map((_, index) => ({
+      id: `quarter-${index}`,
       team1: { id: 'tbd', name: 'A Definir', responsible: '' },
       team2: { id: 'tbd', name: 'A Definir', responsible: '' }
     })),
-    semiFinals: Array(2).fill(null).map(() => ({
+    semiFinals: Array(2).fill(null).map((_, index) => ({
+      id: `semi-${index}`,
       team1: { id: 'tbd', name: 'A Definir', responsible: '' },
       team2: { id: 'tbd', name: 'A Definir', responsible: '' }
     })),
     final: {
+      id: 'final',
       team1: { id: 'tbd', name: 'A Definir', responsible: '' },
       team2: { id: 'tbd', name: 'A Definir', responsible: '' }
     },
     thirdPlace: {
+      id: 'third-place',
       team1: { id: 'tbd', name: 'A Definir', responsible: '' },
       team2: { id: 'tbd', name: 'A Definir', responsible: '' }
     }
@@ -66,6 +74,7 @@ export const generateGroups = (teams: string[]): Group[] => {
     for (let j = 0; j < groupTeams.length; j++) {
       for (let k = j + 1; k < groupTeams.length; k++) {
         matches.push({
+          id: `group-${i}-match-${j}-${k}`,
           team1: groupTeams[j],
           team2: groupTeams[k]
         });
@@ -73,6 +82,7 @@ export const generateGroups = (teams: string[]): Group[] => {
     }
 
     groups.push({
+      id: `group-${i}`,
       name: `Grupo ${String.fromCharCode(65 + i)}`,
       matches
     });
@@ -87,7 +97,11 @@ export const generateTournamentMatches = (teams: Team[], tournamentType: string)
   if (tournamentType === "league") {
     for (let i = 0; i < teams.length; i++) {
       for (let j = i + 1; j < teams.length; j++) {
-        matches.push({ team1: teams[i], team2: teams[j] });
+        matches.push({ 
+          id: `league-match-${i}-${j}`,
+          team1: teams[i], 
+          team2: teams[j] 
+        });
       }
     }
   } else if (tournamentType === "knockout") {
