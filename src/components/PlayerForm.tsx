@@ -6,7 +6,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { usePlayerStore } from "@/stores/zustand_stores";
+import { usePlayerStore } from "@/stores/usePlayerStore";
 import { SportEnum, PositionEnum, RatingEnum } from "@/utils/enums";
 import { springConfig } from "@/utils/animations";
 import { BackToDashboard } from "./BackToDashboard";
