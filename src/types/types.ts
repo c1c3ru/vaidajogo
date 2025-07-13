@@ -35,6 +35,9 @@ export interface PlayerState {
   editingPlayer: { id: number } | null;
   editValue: string;
   sportLocked: boolean;
+  ratingSystemLocked: boolean;
+  currentSport: string;
+  currentRatingSystem: string;
   addPlayer: (player: Player) => void;
   setNewPlayer: (player: Partial<Omit<Player, "id" | "createdAt">>) => void;
   setErrors: (errors: Partial<PlayerState["errors"]>) => void;
@@ -45,6 +48,9 @@ export interface PlayerState {
   setEditingPlayer: (player: { id: number } | null) => void;
   setEditValue: (value: string) => void;
   setSportLocked: (locked: boolean) => void;
+  setRatingSystemLocked: (locked: boolean) => void;
+  setCurrentSport: (sport: string) => void;
+  setCurrentRatingSystem: (system: string) => void;
 }
 export interface Team {
   id: string;

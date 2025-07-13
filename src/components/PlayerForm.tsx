@@ -15,7 +15,18 @@ import { Player } from "@/types/types";
 import { generateId, formatDate } from "@/lib";
 
 const PlayerForm = () => {
-  const { addPlayer, newPlayer, setNewPlayer, errors, setErrors, resetForm, sportLocked } = usePlayerStore();
+  const { 
+    addPlayer, 
+    newPlayer, 
+    setNewPlayer, 
+    errors, 
+    setErrors, 
+    resetForm, 
+    sportLocked,
+    ratingSystemLocked,
+    currentSport,
+    currentRatingSystem
+  } = usePlayerStore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,6 +44,14 @@ const PlayerForm = () => {
       newErrors.name = {
         hasError: true,
         message: `O nome deve ter pelo menos ${CONFIG.VALIDATION.MIN_NAME_LENGTH} caracteres.`,
+      };
+    }
+
+    // Validação do esporte (se já há jogadores cadastrados)
+    if (sportLocked && newPlayer.sport !== currentSport) {
+      newErrors.name = {
+        hasError: true,
+        message: `Todos os jogadores devem ser do mesmo esporte (${currentSport}). Use o botão "Limpar" para alterar o esporte.`,
       };
     }
 
@@ -61,6 +80,16 @@ const PlayerForm = () => {
   // Manipulador de envio do formulário
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validação adicional para esporte consistente
+    if (sportLocked && newPlayer.sport !== currentSport) {
+      toast({
+        title: "Esporte Inconsistente",
+        description: `Todos os jogadores devem ser do mesmo esporte (${currentSport}). Use o botão "Limpar" para alterar o esporte.`,
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (!validateForm()) {
       toast({
@@ -275,7 +304,7 @@ const PlayerForm = () => {
                   </select>
                   {sportLocked && (
                     <p className="text-sm text-orange-600 mt-1">
-                      ⚠️ O esporte foi bloqueado após o primeiro jogador. Use o botão "Limpar" para alterar o esporte.
+                      ⚠️ Esporte atual: <strong>{currentSport}</strong>. Todos os jogadores devem ser do mesmo esporte. Use o botão "Limpar" para alterar.
                     </p>
                   )}
                 </div>
@@ -303,6 +332,17 @@ const PlayerForm = () => {
               {/* Avaliação */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800">Avaliação</h3>
+                
+                {ratingSystemLocked && (
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-sm text-blue-800">
+                      📊 <strong>Sistema de Avaliação:</strong> {currentRatingSystem}
+                    </p>
+                    <p className="text-xs text-blue-600 mt-1">
+                      Todos os jogadores devem usar o mesmo sistema de avaliação. Use o botão "Limpar" para alterar.
+                    </p>
+                  </div>
+                )}
                 
                 <div>
                   <Label>Avaliação (1-10) *</Label>
@@ -360,7 +400,7 @@ const PlayerForm = () => {
                   disabled={isSubmitting}
                   className="flex-1 h-12 text-lg font-semibold border-gray-300 hover:bg-gray-50 transition-colors duration-200 rounded-lg"
                 >
-                  {sportLocked ? "Limpar e Alterar Esporte" : TEXTS.BUTTONS.CLEAR}
+                  {sportLocked || ratingSystemLocked ? "Limpar e Alterar Configurações" : TEXTS.BUTTONS.CLEAR}
                 </Button>
               </div>
             </form>
