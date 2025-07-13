@@ -9,13 +9,15 @@ import { useSessionStore } from '@/stores/useSessionStore';
 import { useLargeDataStore } from '@/stores/useLargeDataStore';
 import { useStorage } from '@/utils/storage';
 import { cleanupExpiredData } from '@/utils/storage';
+import { BackToDashboard } from './BackToDashboard';
+import { Rating } from '@/types/types';
 
 export const StorageDemo = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'local' | 'session' | 'indexed'>('local');
   
   // Stores
-  const { players, addPlayer, removePlayer } = usePlayerStore();
+  const { players, addPlayer, deletePlayer } = usePlayerStore();
   const { temporaryData, setTemporaryData, clearTemporaryData } = useSessionStore();
   const { matchHistory, addMatch, removeMatch } = useLargeDataStore();
   
@@ -41,9 +43,9 @@ export const StorageDemo = () => {
     const indexedData = await indexedStorage.get('demo-data');
 
     setDemoData({
-      local: localData || '',
-      session: sessionData || '',
-      indexed: indexedData || '',
+      local: (localData as string) || '',
+      session: (sessionData as string) || '',
+      indexed: (indexedData as string) || '',
     });
   };
 
@@ -127,7 +129,7 @@ export const StorageDemo = () => {
       isGuest: false,
       sport: "futebol",
       selectedPositions: ["atacante"],
-      rating: 5,
+      rating: 5 as Rating,
       includeInDraw: true,
       present: true,
       paid: false,
@@ -177,6 +179,7 @@ export const StorageDemo = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      <BackToDashboard />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -107,7 +107,7 @@ export const TEXTS = {
         MIDFIELDER: 'Meio-campo',
         FORWARD: 'Atacante',
       },
-      AVAILABLE_RATING_SYSTEMS: ['stars', 'numeric10', 'numeric5']
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'halfStars', 'numeric10', 'numeric5']
     },
     FUTSAL: {
       NAME: 'Futsal',

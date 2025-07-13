@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import SportRatingSelector from './player/SportRatingSelector';
 import PlayerPositions from './player/PlayerPositions';
 import RatingInput from './player/RatingInput';
+import { BackToDashboard } from './BackToDashboard';
 
 const PlayerForm = () => {
   const { toast } = useToast();
@@ -164,6 +165,7 @@ const PlayerForm = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <BackToDashboard />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
