@@ -2,9 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Match, Group } from '@/types/types';
 import { TournamentBracketProps } from '@/utils/tournament';
-import { COLORS } from '@/constants';
-
-
 
 const KnockoutStage = ({ round, matches }: { round: string; matches: Match[] }) => {
   return (
@@ -67,12 +64,12 @@ const FinalAndThirdPlace = ({ final, thirdPlace }: { final: Match; thirdPlace: M
       </motion.div>
 
       <motion.div
-        className="bg-white/10 rounded-lg p-4 border-2 border-bronze"
+        className="bg-white/10 rounded-lg p-4 border-2 border-amber-600"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.1 }}
       >
-        <h3 className="text-center font-bold mb-3 text-bronze">Terceiro Lugar</h3>
+        <h3 className="text-center font-bold mb-3 text-amber-600">Terceiro Lugar</h3>
         <div className="flex flex-col space-y-2">
           <div className="flex justify-between items-center text-white">
             <span className="font-semibold">{thirdPlace.team1.name}</span>
@@ -95,8 +92,7 @@ const FinalAndThirdPlace = ({ final, thirdPlace }: { final: Match; thirdPlace: M
 export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracketProps) => {
   return (
     <motion.div
-      className="w-full rounded-lg shadow-lg p-6 overflow-x-auto"
-      style={{ backgroundColor: COLORS.PURPLE[500] }}
+      className="w-full rounded-lg shadow-lg p-6 overflow-x-auto bg-gradient-to-br from-purple-600 to-purple-800"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
