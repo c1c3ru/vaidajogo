@@ -23,9 +23,10 @@ const PresenceList = () => {
     const newPlayerName = newPlayerNameRef.current?.value.trim();
     if (!newPlayerName) {
       toast({
-        title: "Erro",
+        title: "❌ Erro",
         description: "O nome do jogador não pode estar vazio.",
         variant: "destructive",
+        className: "bg-gradient-to-r from-red-500 to-rose-600 text-white border-red-600 shadow-lg",
       });
       return;
     }
@@ -38,9 +39,10 @@ const PresenceList = () => {
 
     if (playerExists) {
       toast({
-        title: "Erro",
-        description: "Jogador já está cadastrado.",
+        title: "⚠️ Jogador Existente",
+        description: "Este jogador já está cadastrado no sistema.",
         variant: "destructive",
+        className: "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
       });
       return;
     }
@@ -48,14 +50,12 @@ const PresenceList = () => {
     const newPlayer: Player = {
       id: Date.now(),
       name: newPlayerName,
-
       nickname: "",
       birthDate: "",
       isGuest: false,
       sport: "",
       selectedPositions: [],
-      rating: 0 as Rating, // Garantir que o valor de rating seja do tipo Rating
-
+      rating: 0 as Rating,
       includeInDraw: false,
       createdAt: new Date().toISOString(),
       present: false,
@@ -66,21 +66,27 @@ const PresenceList = () => {
 
     addPlayer(newPlayer);
 
-
     toast({
-      title: "Jogador Adicionado",
-      description: "Novo jogador foi adicionado com sucesso.",
+      title: "✅ Jogador Adicionado",
+      description: `${newPlayerName} foi adicionado com sucesso!`,
+      className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
+      duration: 3000,
     });
   };
 
   const togglePresence = (id: number) => {
     const player = players.find((player) => player.id === id);
     if (player) {
-      updatePlayer(id, { present: !player.present });
+      const newStatus = !player.present;
+      updatePlayer(id, { present: newStatus });
 
       toast({
-        title: "Presença atualizada",
-        description: "Status de presença foi atualizado com sucesso.",
+        title: newStatus ? "✅ Presente" : "❌ Ausente",
+        description: `${player.name} está agora ${newStatus ? 'presente' : 'ausente'}.`,
+        className: newStatus 
+          ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
+          : "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-gray-600 shadow-lg",
+        duration: 2000,
       });
     }
   };
@@ -88,11 +94,16 @@ const PresenceList = () => {
   const togglePayment = (id: number) => {
     const player = players.find((player) => player.id === id);
     if (player) {
-      updatePlayer(id, { paid: !player.paid });
+      const newStatus = !player.paid;
+      updatePlayer(id, { paid: newStatus });
 
       toast({
-        title: "Pagamento atualizado",
-        description: "Status de pagamento foi atualizado com sucesso.",
+        title: newStatus ? "💰 Pago" : "💸 Pendente",
+        description: `Pagamento de ${player.name} marcado como ${newStatus ? 'pago' : 'pendente'}.`,
+        className: newStatus 
+          ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
+          : "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
+        duration: 2000,
       });
     }
   };
