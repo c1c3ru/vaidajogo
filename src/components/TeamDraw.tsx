@@ -5,14 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "./ui/button";
 import { Shuffle, Info, Shield, Users, AlertCircle, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useTeamDrawStore } from "@/stores/zustand_stores";
-import { usePlayerStore } from "@/stores/zustand_stores";
+import { useTeamDrawStore } from "@/stores/useTeamDrawStore";
+import { usePlayerStore } from "@/stores/usePlayerStore";
 import { PositionEnum } from "@/utils/enums";
 import clsx from "clsx";
 import { springConfig } from '@/utils/animations';
 import { BackToDashboard } from './BackToDashboard';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Player } from "@/types";
+import { Player } from "@/types/types";
 import { TEXTS } from "@/constants";
 import { Label } from "./ui/label";
 

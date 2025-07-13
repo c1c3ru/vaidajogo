@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useStatisticsStore } from "@/stores/zustand_stores";
-import { usePlayerStore } from "@/stores/zustand_stores";
+import { useStatisticsStore } from "@/stores/useStatisticsStore";
+import { usePlayerStore } from "@/stores/usePlayerStore";
 import {
   BarChart,
   Bar,
