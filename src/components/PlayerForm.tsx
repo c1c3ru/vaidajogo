@@ -13,6 +13,7 @@ import { BackToDashboard } from "./BackToDashboard";
 import { TEXTS, CONFIG, COLORS } from "@/constants";
 import { Player } from "@/types/types";
 import { generateId, formatDate } from "@/lib";
+import { RatingInput } from "./player/RatingInput";
 
 const PlayerForm = () => {
   const { 
@@ -87,6 +88,7 @@ const PlayerForm = () => {
         title: "Esporte Inconsistente",
         description: `Todos os jogadores devem ser do mesmo esporte (${currentSport}). Use o botão "Limpar" para alterar o esporte.`,
         variant: "destructive",
+        className: "bg-red-500 text-white border-red-600",
       });
       return;
     }
@@ -96,6 +98,7 @@ const PlayerForm = () => {
         title: TEXTS.ERROR.VALIDATION,
         description: "Por favor, corrija os erros no formulário.",
         variant: "destructive",
+        className: "bg-red-500 text-white border-red-600",
       });
       return;
     }
@@ -125,7 +128,8 @@ const PlayerForm = () => {
       toast({
         title: TEXTS.SUCCESS.PLAYER_ADDED,
         description: `${player.name} foi cadastrado com sucesso!`,
-        className: "bg-green-500 text-white",
+        className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
+        duration: 4000,
       });
 
       resetForm();
@@ -135,6 +139,7 @@ const PlayerForm = () => {
         title: TEXTS.ERROR.UNEXPECTED_ERROR,
         description: "Ocorreu um erro ao cadastrar o jogador. Tente novamente.",
         variant: "destructive",
+        className: "bg-red-500 text-white border-red-600 shadow-lg",
       });
     } finally {
       setIsSubmitting(false);
@@ -218,17 +223,28 @@ const PlayerForm = () => {
                 <h3 className="text-lg font-semibold text-gray-800">Informações Básicas</h3>
                 
                 <div>
-                  <Label htmlFor="name">Nome *</Label>
+                  <Label htmlFor="name">Nome Completo *</Label>
                   <Input
                     id="name"
                     name="name"
                     value={newPlayer.name || ""}
                     onChange={handleBasicInfoChange}
-                    placeholder="Nome completo do jogador"
-                    className={errors.name?.hasError ? "border-red-500" : ""}
+                    placeholder="Digite o nome completo"
+                    className={`transition-all duration-300 ${
+                      errors.name?.hasError 
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-200 bg-red-50' 
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
+                    }`}
                   />
                   {errors.name?.hasError && (
-                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.name.message}</p>
+                    <motion.p 
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2"
+                    >
+                      <span className="text-red-500">⚠️</span>
+                      {errors.name.message}
+                    </motion.p>
                   )}
                 </div>
 
@@ -291,8 +307,10 @@ const PlayerForm = () => {
                     value={newPlayer.sport || ""}
                     onChange={(e) => handleSportChange(e.target.value as SportEnum)}
                     disabled={sportLocked}
-                    className={`w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      sportLocked ? 'bg-gray-100 cursor-not-allowed opacity-60' : ''
+                    className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-offset-2 transition-all duration-300 ${
+                      sportLocked 
+                        ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300 cursor-not-allowed opacity-80' 
+                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200 hover:border-blue-400'
                     }`}
                   >
                     <option value="">Selecione um esporte</option>
@@ -303,9 +321,25 @@ const PlayerForm = () => {
                     <option value={SportEnum.HANDBALL}>Handebol</option>
                   </select>
                   {sportLocked && (
-                    <p className="text-sm text-orange-600 mt-1">
-                      ⚠️ Esporte atual: <strong>{currentSport}</strong>. Todos os jogadores devem ser do mesmo esporte. Use o botão "Limpar" para alterar.
-                    </p>
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2 p-3 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-lg"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-center w-6 h-6 bg-orange-500 rounded-full">
+                          <span className="text-white text-xs font-bold">⚽</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-orange-800">
+                            Esporte atual: <span className="text-orange-600">{currentSport}</span>
+                          </p>
+                          <p className="text-xs text-orange-600 mt-1">
+                            Todos os jogadores devem ser do mesmo esporte. Use "Limpar" para alterar.
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
                   )}
                 </div>
 
@@ -324,7 +358,14 @@ const PlayerForm = () => {
                     ))}
                   </div>
                   {errors.selectedPositions?.hasError && (
-                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.selectedPositions.message}</p>
+                    <motion.p 
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2"
+                    >
+                      <span className="text-red-500">⚠️</span>
+                      {errors.selectedPositions.message}
+                    </motion.p>
                   )}
                 </div>
               </div>
@@ -333,34 +374,20 @@ const PlayerForm = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800">Avaliação</h3>
                 
-                {ratingSystemLocked && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <p className="text-sm text-blue-800">
-                      📊 <strong>Sistema de Avaliação:</strong> {currentRatingSystem}
-                    </p>
-                    <p className="text-xs text-blue-600 mt-1">
-                      Todos os jogadores devem usar o mesmo sistema de avaliação. Use o botão "Limpar" para alterar.
-                    </p>
-                  </div>
-                )}
-                
                 <div>
-                  <Label>Avaliação (1-10) *</Label>
-                  <div className="flex gap-2 mt-2">
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((rating) => (
-                      <Button
-                        key={rating}
-                        type="button"
-                        variant={newPlayer.rating === rating ? "default" : "outline"}
-                        onClick={() => handleRatingChange(rating as RatingEnum)}
-                        className="w-10 h-10 p-0"
-                      >
-                        {rating}
-                      </Button>
-                    ))}
+                  <Label>Avaliação *</Label>
+                  <div className="mt-2">
+                    <RatingInput />
                   </div>
                   {errors.rating?.hasError && (
-                    <p style={{ color: COLORS.ERROR[500] }} className="text-sm mt-1">{errors.rating.message}</p>
+                    <motion.p 
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2"
+                    >
+                      <span className="text-red-500">⚠️</span>
+                      {errors.rating.message}
+                    </motion.p>
                   )}
                 </div>
               </div>
@@ -386,22 +413,38 @@ const PlayerForm = () => {
 
               {/* Botões de Ação */}
               <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 transition-colors duration-200 rounded-lg shadow-md"
-                >
-                  {isSubmitting ? TEXTS.STATUS.SAVING : TEXTS.BUTTONS.SAVE}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={resetForm}
-                  disabled={isSubmitting}
-                  className="flex-1 h-12 text-lg font-semibold border-gray-300 hover:bg-gray-50 transition-colors duration-200 rounded-lg"
-                >
-                  {sportLocked || ratingSystemLocked ? "Limpar e Alterar Configurações" : TEXTS.BUTTONS.CLEAR}
-                </Button>
+                <motion.div className="flex-1">
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        {TEXTS.STATUS.SAVING}
+                      </div>
+                    ) : (
+                      TEXTS.BUTTONS.SAVE
+                    )}
+                  </Button>
+                </motion.div>
+                
+                <motion.div className="flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={resetForm}
+                    disabled={isSubmitting}
+                    className="w-full h-12 text-lg font-semibold border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {sportLocked || ratingSystemLocked ? "Limpar e Alterar Configurações" : TEXTS.BUTTONS.CLEAR}
+                  </Button>
+                </motion.div>
               </div>
             </form>
           </CardContent>
