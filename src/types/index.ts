@@ -5,7 +5,7 @@
  */
 
 // Importa os enums
-import { SportEnum, PositionEnum, RatingEnum, TournamentType, MatchType, MatchStatus } from "../utils/enums";
+import { SportEnum, PositionEnum, RatingEnum, TournamentType, MatchType, MatchStatus } from "@/utils/enums";
 
 // ===== TIPOS BÁSICOS =====
 

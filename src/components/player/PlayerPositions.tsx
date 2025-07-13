@@ -18,15 +18,23 @@ const positions: Position = {
 };
 
 export const PlayerPositions: React.FC = () => {
-  const { sport, selectedPositions, togglePosition } = usePlayerStore();
+  const { newPlayer, setNewPlayer } = usePlayerStore();
+
+  const togglePosition = (position: string, checked: boolean) => {
+    const updatedPositions = checked
+      ? [...newPlayer.selectedPositions, position]
+      : newPlayer.selectedPositions.filter(p => p !== position);
+    
+    setNewPlayer({ selectedPositions: updatedPositions });
+  };
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {positions[sport].map((position) => (
+      {positions[newPlayer.sport as Sport].map((position) => (
         <div key={position} className="flex items-center space-x-2">
           <Checkbox
             id={position}
-            checked={selectedPositions.includes(position)}
+            checked={newPlayer.selectedPositions.includes(position)}
             onCheckedChange={(checked) => togglePosition(position, checked as boolean)}
           />
           <Label htmlFor={position} className="text-sm font-medium leading-none">

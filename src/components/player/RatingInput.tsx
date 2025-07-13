@@ -1,11 +1,13 @@
 import React from 'react';
 import { Star, StarHalf } from 'lucide-react';
-import useRatingStore from '@/stores/useRatingStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
+import { usePlayerStore } from '@/stores/usePlayerStore';
+import { Rating } from '@/types/types';
 
 const ratingSystems = {
   stars: {
     maxRating: 5,
-    renderRating: (rating, onRatingChange) => (
+    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
       <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
@@ -28,7 +30,7 @@ const ratingSystems = {
   },
   halfStars: {
     maxRating: 5,
-    renderRating: (rating, onRatingChange) => (
+    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
       <div className="flex gap-2">
         {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((star) => (
           <button
@@ -62,7 +64,7 @@ const ratingSystems = {
   },
   numeric10: {
     maxRating: 10,
-    renderRating: (rating, onRatingChange) => (
+    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
       <div className="flex gap-2">
         {[...Array(10)].map((_, i) => (
           <button
@@ -86,7 +88,7 @@ const ratingSystems = {
   },
   numeric5: {
     maxRating: 5,
-    renderRating: (rating, onRatingChange) => (
+    renderRating: (rating: Rating, onRatingChange: (rating: number) => void) => (
       <div className="flex gap-2">
         {[...Array(5)].map((_, i) => (
           <button
@@ -111,12 +113,18 @@ const ratingSystems = {
 };
 
 export const RatingInput: React.FC = () => {
-  const { ratingSystem, rating, setRating } = useRatingStore();
+  const { ratingSystem } = useSettingsStore();
+  const { newPlayer, setNewPlayer } = usePlayerStore();
+  
+  const setRating = (rating: Rating) => {
+    setNewPlayer({ rating });
+  };
+  
   const ratingSystemConfig = ratingSystems[ratingSystem];
 
   if (!ratingSystemConfig) {
     return null;
   }
 
-  return ratingSystemConfig.renderRating(rating, setRating);
+  return ratingSystemConfig.renderRating(newPlayer.rating, setRating);
 };

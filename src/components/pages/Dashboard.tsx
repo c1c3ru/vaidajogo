@@ -41,12 +41,22 @@ const Dashboard = () => {
           setDashboardTitle={setDashboardTitle}
         />
         <DashboardSettings
-          selectedRatingSystem={ratingSystem}
-          setSelectedRatingSystem={setRatingSystem}
-          guestHighlight={guestHighlight}
-          setGuestHighlight={setGuestHighlight}
+          settings={{
+            selectedRatingSystem: ratingSystem,
+            setSelectedRatingSystem: setRatingSystem,
+            guestHighlight: guestHighlight,
+            setGuestHighlight: setGuestHighlight
+          }}
         />
-        <DashboardMenu />
+        <DashboardMenu 
+          menuItems={[
+            { title: 'Cadastro de Jogadores', route: '/players' },
+            { title: 'Presença', route: '/presence' },
+            { title: 'Sorteio de Times', route: '/team-draw' },
+            { title: 'Estatísticas', route: '/statistics' },
+            { title: 'Campeonato', route: '/championship' }
+          ]}
+        />
       </div>
     </motion.div>
   );

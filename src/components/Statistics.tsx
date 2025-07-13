@@ -135,14 +135,19 @@ const Statistics = () => {
   // Obtém os dados do gráfico baseado na métrica selecionada
   const getChartData = () => {
     switch (selectedMetric) {
-      case 'presence':
-        return generatePlayerStats(players);
+      case 'presence': {
+        const stats = generatePlayerStats(players);
+        return [
+          { name: 'Presentes', value: stats.filter(s => s.presences).length },
+          { name: 'Ausentes', value: stats.filter(s => s.absences).length }
+        ];
+      }
       case 'position':
         return generatePositionStats(players);
       case 'rating':
         return generateRatingStats(players);
       default:
-        return generatePlayerStats(players);
+        return [];
     }
   };
 

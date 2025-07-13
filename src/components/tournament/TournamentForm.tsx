@@ -6,7 +6,7 @@ import { useTournamentStore } from '@/stores/useTournamentStore';
 import { TournamentType } from '@/utils/enums';
 
 export const TournamentForm: React.FC = () => {
-  const { tournamentName, tournamentType, setTournamentName, setTournamentType } = useTournamentStore();
+  const { name, type, setTournamentName, setTournamentType } = useTournamentStore();
 
   return (
     <div className="space-y-6">
@@ -14,7 +14,7 @@ export const TournamentForm: React.FC = () => {
         <Label htmlFor="tournamentName">Nome do Torneio</Label>
         <Input
           id="tournamentName"
-          value={tournamentName}
+          value={name}
           onChange={(e) => setTournamentName(e.target.value)}
           placeholder="Digite o nome do torneio"
         />
@@ -23,7 +23,7 @@ export const TournamentForm: React.FC = () => {
       <div className="space-y-4">
         <Label>Tipo de Disputa</Label>
         <RadioGroup
-          value={tournamentType}
+          value={type}
           onValueChange={setTournamentType}
           className="flex flex-col space-y-2"
         >

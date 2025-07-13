@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import { motion } from "framer-motion";
 import { Check, DollarSign, UserCheck, X } from "lucide-react";
@@ -12,6 +12,7 @@ import { Player, Rating } from "@/types/types";
 
 const PresenceList = () => {
   const { players, addPlayer, updatePlayer } = usePlayerStore();
+  const newPlayerNameRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
   const isAdmin = true; // Suponha que temos uma maneira de verificar se o usuário é administrador
@@ -19,7 +20,7 @@ const PresenceList = () => {
   const handleAddPlayer = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newPlayerName = e.target.elements.newPlayerName.value.trim();
+    const newPlayerName = newPlayerNameRef.current?.value.trim();
     if (!newPlayerName) {
       toast({
         title: "Erro",
@@ -114,7 +115,7 @@ const PresenceList = () => {
               <Input
                 name="newPlayerName"
                 placeholder="Digite o nome do novo jogador..."
-
+                ref={newPlayerNameRef}
               />
               <Button type="submit">Adicionar Jogador</Button>
             </div>
