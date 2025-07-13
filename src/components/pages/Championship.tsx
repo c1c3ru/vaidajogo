@@ -186,7 +186,7 @@ const Championship = () => {
   }, [groups, format, advanceFromGroups]);
 
   const standings = (format === TournamentFormat.ROUND_ROBIN || format === TournamentFormat.GROUPS_WITH_KNOCKOUTS)
-    ? calculateGroupStandings(matches, teams)
+    ? calculateGroupStandings(matches || [], teams || [])
     : [];
 
   const showGroupStandings = format === TournamentFormat.GROUPS_WITH_KNOCKOUTS && groups && groups.length > 0;
@@ -694,7 +694,7 @@ const Championship = () => {
 
         {/* Tabelas de Classificação dos Grupos */}
         {showGroupStandings && groups.map((group, groupIdx) => {
-          const standings = calculateGroupStandings(group.matches, group.teams);
+          const standings = calculateGroupStandings(group.matches || [], group.teams || []);
           return (
             <motion.div
               key={group.id}
@@ -749,24 +749,29 @@ const Championship = () => {
         })}
 
         {/* Chaveamento do Torneio */}
-        {(groups.length > 0 || knockoutMatches) && (
+        {matches.length > 0 && (groups.length > 0 || knockoutMatches) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="border-2 border-yellow-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50">
-                <CardTitle className="flex items-center gap-2 text-yellow-800">
-                  <Trophy className="h-5 w-5" />
+            <Card className="border-2 border-purple-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50">
+                <CardTitle className="flex items-center gap-2 text-purple-800">
+                  <BarChart3 className="h-5 w-5" />
                   Chaveamento do Torneio
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <TournamentBracket 
-                  groups={groups} 
-                  knockoutMatches={knockoutMatches}
-                />
+                <div className="space-y-4">
+                  <div className="text-sm text-gray-600 mb-4">
+                    Visualize a estrutura e progresso do torneio
+                  </div>
+                  <TournamentBracket 
+                    groups={groups} 
+                    knockoutMatches={knockoutMatches}
+                  />
+                </div>
               </CardContent>
             </Card>
           </motion.div>

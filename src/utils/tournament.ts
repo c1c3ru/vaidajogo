@@ -25,6 +25,10 @@ export function calculateAggregateScore(matches: Match[], teamA: Team, teamB: Te
 
 // Classificação de grupos (pontos corridos)
 export function calculateGroupStandings(matches: Match[], teams: Team[]) {
+  if (!teams || !Array.isArray(teams) || teams.length === 0) {
+    return [];
+  }
+  
   const standings = teams.map(team => ({
     team,
     points: 0,
@@ -36,6 +40,10 @@ export function calculateGroupStandings(matches: Match[], teams: Team[]) {
     goalDifference: 0,
     fairPlay: 0, // pode ser incrementado depois
   }));
+
+  if (!matches || !Array.isArray(matches)) {
+    return standings;
+  }
 
   matches.forEach(match => {
     const t1 = standings.find(s => s.team.id === match.team1.id);
