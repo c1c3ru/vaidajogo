@@ -97,6 +97,7 @@ export interface Match {
   score1?: number;
   score2?: number;
   isHomeGame?: boolean;
+  date?: string;
 }
 
 // Define the Group interface
@@ -160,7 +161,7 @@ export interface TournamentState {
   name: string;
   type: TournamentType;
   teams: Team[];
-  matches: Group[];
+  matches: Match[];
   groups?: Group[];
   knockoutMatches?: KnockoutMatches;
   addTeam: (team: Team) => void;
@@ -173,6 +174,8 @@ export interface TournamentState {
     type: TournamentType
   ) => void;
   updateMatch: (matchId: string, score1: number, score2: number) => void;
+  addManualMatch: (match: Match) => void;
+  removeManualMatch: (id: string) => void;
 }
 
 // Define the DashboardState interface

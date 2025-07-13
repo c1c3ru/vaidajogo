@@ -14,6 +14,7 @@ import { TournamentForm } from '@/components/tournament/TournamentForm';
 import TeamList from '@/components/tournament/TeamList';
 import { Team } from '@/types/types';
 import { TournamentType } from '@/utils/enums';
+import { ManualMatchModal } from '@/components/tournament/ManualMatchModal';
 
 const Championship = () => {
   const [teamName, setTeamName] = useState('');
@@ -32,7 +33,11 @@ const Championship = () => {
     type: tournamentType,
     name: tournamentName,
     setTournamentName,
-    setTournamentType
+    setTournamentType,
+    addManualMatch,
+    matches,
+    removeManualMatch,
+    updateMatch
   } = useTournamentStore();
 
   const handleAddTeam = () => {
@@ -158,18 +163,83 @@ const Championship = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="border-2 border-blue-200">
+        <Card className="border-2 border-blue-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-blue-600" />
+              Configuração do Torneio
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TournamentForm />
+          </CardContent>
+        </Card>
+        </motion.div>
+
+        {/* Botão/modal para adicionar partida manual */}
+        <div className="mb-4">
+          <ManualMatchModal teams={teams} onSave={addManualMatch} />
+        </div>
+
+        {/* Lista de partidas cadastradas/geradas */}
+        {matches.length > 0 && (
+          <Card className="border-2 border-gray-200 mb-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-blue-600" />
-                Configuração do Torneio
+                <Trophy className="h-5 w-5 text-gray-600" />
+                Partidas Cadastradas
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <TournamentForm />
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="px-4 py-2 text-left">Time 1</th>
+                      <th className="px-4 py-2 text-center">Placar</th>
+                      <th className="px-4 py-2 text-left">Time 2</th>
+                      <th className="px-4 py-2 text-center">Placar</th>
+                      <th className="px-4 py-2 text-left">Data</th>
+                      <th className="px-4 py-2 text-left">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {matches.map((match) => (
+                      <tr key={match.id} className="border-b">
+                        <td className="px-4 py-2">{match.team1?.name}</td>
+                        <td className="px-4 py-2 text-center">
+                          <input
+                            type="number"
+                            min={0}
+                            className="w-14 border rounded text-center"
+                            value={match.score1 ?? ''}
+                            onChange={e => updateMatch(match.id, Number(e.target.value), match.score2 ?? 0)}
+                          />
+                        </td>
+                        <td className="px-4 py-2">{match.team2?.name}</td>
+                        <td className="px-4 py-2 text-center">
+                          <input
+                            type="number"
+                            min={0}
+                            className="w-14 border rounded text-center"
+                            value={match.score2 ?? ''}
+                            onChange={e => updateMatch(match.id, match.score1 ?? 0, Number(e.target.value))}
+                          />
+                        </td>
+                        <td className="px-4 py-2">{match.date ? new Date(match.date).toLocaleString('pt-BR') : '-'}</td>
+                        <td className="px-4 py-2">
+                          <Button size="sm" variant="destructive" onClick={() => removeManualMatch(match.id)}>
+                            Remover
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </CardContent>
           </Card>
-        </motion.div>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Adicionar Times */}
@@ -183,60 +253,60 @@ const Championship = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-            >
-              <Card className="border-2 border-green-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-green-600" />
-                    {editingTeam ? 'Editar Time' : 'Adicionar Time'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="teamName">Nome do Time</Label>
-                    <Input
-                      id="teamName"
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                      placeholder="Digite o nome do time..."
-                      className="border-2 border-green-200 focus:border-green-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="responsible">Responsável</Label>
-                    <Input
-                      id="responsible"
-                      value={responsible}
-                      onChange={(e) => setResponsible(e.target.value)}
-                      placeholder="Nome do responsável..."
-                      className="border-2 border-green-200 focus:border-green-500"
-                    />
-                  </div>
-                  <div className="flex gap-2">
+          >
+            <Card className="border-2 border-green-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-green-600" />
+                  {editingTeam ? 'Editar Time' : 'Adicionar Time'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="teamName">Nome do Time</Label>
+                  <Input
+                    id="teamName"
+                    value={teamName}
+                    onChange={(e) => setTeamName(e.target.value)}
+                    placeholder="Digite o nome do time..."
+                    className="border-2 border-green-200 focus:border-green-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="responsible">Responsável</Label>
+                  <Input
+                    id="responsible"
+                    value={responsible}
+                    onChange={(e) => setResponsible(e.target.value)}
+                    placeholder="Nome do responsável..."
+                    className="border-2 border-green-200 focus:border-green-500"
+                  />
+                </div>
+                <div className="flex gap-2">
                     <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }} className="flex-1">
-                      <Button 
-                        onClick={handleAddTeam} 
+                  <Button 
+                    onClick={handleAddTeam} 
                         className="w-full bg-green-600 hover:bg-green-700"
-                        disabled={!teamName.trim() || !responsible.trim()}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        {editingTeam ? 'Atualizar Time' : 'Adicionar Time'}
-                      </Button>
+                    disabled={!teamName.trim() || !responsible.trim()}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    {editingTeam ? 'Atualizar Time' : 'Adicionar Time'}
+                  </Button>
                     </motion.div>
-                    {editingTeam && (
+                  {editingTeam && (
                       <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }}>
-                        <Button 
-                          onClick={handleCancelEdit} 
-                          variant="outline"
-                          className="border-orange-200 text-orange-600 hover:bg-orange-50"
-                        >
-                          Cancelar
-                        </Button>
+                    <Button 
+                      onClick={handleCancelEdit} 
+                      variant="outline"
+                      className="border-orange-200 text-orange-600 hover:bg-orange-50"
+                    >
+                      Cancelar
+                    </Button>
                       </motion.div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
             </motion.div>
             {/* Lista de Times */}
             <motion.div
@@ -244,23 +314,23 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <Card className="border-2 border-purple-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-purple-600" />
-                    Times ({teams.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+            <Card className="border-2 border-purple-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-purple-600" />
+                  Times ({teams.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                   <motion.div layout>
-                    <TeamList 
-                      teams={teams}
-                      onEdit={handleEditTeam}
-                      onRemove={handleRemoveTeam}
-                    />
+                <TeamList 
+                  teams={teams}
+                  onEdit={handleEditTeam}
+                  onRemove={handleRemoveTeam}
+                />
                   </motion.div>
-                </CardContent>
-              </Card>
+              </CardContent>
+            </Card>
             </motion.div>
           </motion.div>
 
@@ -275,40 +345,40 @@ const Championship = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-            >
-              <Card className="border-2 border-orange-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-orange-600" />
-                    Geração de Confrontos
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
+          >
+            <Card className="border-2 border-orange-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-orange-600" />
+                  Geração de Confrontos
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
                     <div className="text-sm text-gray-600 flex items-center gap-2">
-                      Tipo de torneio: <Badge variant="secondary">{tournamentType}</Badge>
+                    Tipo de torneio: <Badge variant="secondary">{tournamentType}</Badge>
                     </div>
                     <div className="text-sm text-gray-600 flex items-center gap-2">
-                      Times cadastrados: <Badge variant="secondary">{teams.length}</Badge>
+                    Times cadastrados: <Badge variant="secondary">{teams.length}</Badge>
                     </div>
-                  </div>
+                </div>
                   <motion.div whileTap={{ scale: 0.97 }} whileHover={{ scale: 1.04 }}>
-                    <Button 
-                      onClick={handleGenerateMatches} 
-                      className="w-full bg-orange-600 hover:bg-orange-700"
-                      disabled={teams.length < 2}
-                    >
-                      <Trophy className="mr-2 h-4 w-4" />
-                      Gerar Confrontos
-                    </Button>
+                <Button 
+                  onClick={handleGenerateMatches} 
+                  className="w-full bg-orange-600 hover:bg-orange-700"
+                  disabled={teams.length < 2}
+                >
+                  <Trophy className="mr-2 h-4 w-4" />
+                  Gerar Confrontos
+                </Button>
                   </motion.div>
-                  {teams.length < 2 && (
-                    <p className="text-sm text-orange-600 text-center">
-                      Adicione pelo menos 2 times para gerar confrontos
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
+                {teams.length < 2 && (
+                  <p className="text-sm text-orange-600 text-center">
+                    Adicione pelo menos 2 times para gerar confrontos
+                  </p>
+                )}
+              </CardContent>
+            </Card>
             </motion.div>
             {/* Estatísticas */}
             <motion.div
@@ -316,28 +386,28 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <Card className="border-2 border-blue-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Save className="h-5 w-5 text-blue-600" />
-                    Estatísticas
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-blue-600">{teams.length}</p>
-                      <p className="text-sm text-gray-600">Times</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-green-600">
-                        {groups.reduce((total, group) => total + group.matches.length, 0)}
-                      </p>
-                      <p className="text-sm text-gray-600">Partidas</p>
-                    </div>
+            <Card className="border-2 border-blue-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Save className="h-5 w-5 text-blue-600" />
+                  Estatísticas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-blue-600">{teams.length}</p>
+                    <p className="text-sm text-gray-600">Times</p>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-green-600">
+                      {groups.reduce((total, group) => total + group.matches.length, 0)}
+                    </p>
+                    <p className="text-sm text-gray-600">Partidas</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             </motion.div>
           </motion.div>
         </div>

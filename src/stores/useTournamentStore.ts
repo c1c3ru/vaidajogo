@@ -50,6 +50,22 @@ export const useTournamentStore = create<TournamentState>()(
             match.id === matchId ? { ...match, score1, score2 } : match
           ),
         })),
+
+      // Métodos para partidas manuais
+      addManualMatch: (match) =>
+        set((state) => ({ matches: [...state.matches, match] })),
+
+      editManualMatch: (id, updatedMatch) =>
+        set((state) => ({
+          matches: state.matches.map((match) =>
+            match.id === id ? { ...match, ...updatedMatch } : match
+          ),
+        })),
+
+      removeManualMatch: (id) =>
+        set((state) => ({
+          matches: state.matches.filter((match) => match.id !== id),
+        })),
     }),
     {
       name: 'tournament',
