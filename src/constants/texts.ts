@@ -107,12 +107,7 @@ export const TEXTS = {
         MIDFIELDER: 'Meio-campo',
         FORWARD: 'Atacante',
       },
-      RATING_SYSTEM: {
-        NAME: 'Estrelas (1-5)',
-        DESCRIPTION: 'Sistema de avaliação por estrelas para futebol',
-        MAX: 5,
-        TYPE: 'stars'
-      }
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'numeric10', 'numeric5']
     },
     FUTSAL: {
       NAME: 'Futsal',
@@ -122,12 +117,7 @@ export const TEXTS = {
         ALA: 'Ala',
         PIVO: 'Pivô',
       },
-      RATING_SYSTEM: {
-        NAME: 'Numérico (1-10)',
-        DESCRIPTION: 'Sistema de avaliação numérico para futsal',
-        MAX: 10,
-        TYPE: 'numeric'
-      }
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'numeric10', 'numeric5', 'halfStars']
     },
     VOLLEYBALL: {
       NAME: 'Vôlei',
@@ -139,12 +129,7 @@ export const TEXTS = {
         WING_SPIKER: 'Ponteiro',
         OPPOSITE: 'Oposto',
       },
-      RATING_SYSTEM: {
-        NAME: 'Estrelas e Meias (1-5)',
-        DESCRIPTION: 'Sistema de avaliação por estrelas com meias para vôlei',
-        MAX: 5,
-        TYPE: 'halfStars'
-      }
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'halfStars', 'numeric10', 'numeric5']
     },
     BASKETBALL: {
       NAME: 'Basquete',
@@ -155,12 +140,7 @@ export const TEXTS = {
         POWER_FORWARD: 'Ala-pivô',
         CENTER: 'Pivô',
       },
-      RATING_SYSTEM: {
-        NAME: 'Numérico (1-5)',
-        DESCRIPTION: 'Sistema de avaliação numérico para basquete',
-        MAX: 5,
-        TYPE: 'numeric'
-      }
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'numeric10', 'numeric5']
     },
     HANDBALL: {
       NAME: 'Handebol',
@@ -170,12 +150,7 @@ export const TEXTS = {
         BACK: 'Central',
         PIVOT: 'Pivô',
       },
-      RATING_SYSTEM: {
-        NAME: 'Estrelas (1-5)',
-        DESCRIPTION: 'Sistema de avaliação por estrelas para handebol',
-        MAX: 5,
-        TYPE: 'stars'
-      }
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'numeric10', 'numeric5', 'halfStars']
     },
   },
 
