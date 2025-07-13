@@ -1,308 +1,382 @@
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Save } from "lucide-react";
-import { Edit2, Trash2 } from "lucide-react";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { BackToDashboard } from "./BackToDashboard";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { usePlayerStore } from "@/stores/usePlayerStore";
-import { Player, Rating } from "@/types/types";
-
-
-type Sport = "futsal" | "futebol" | "volei" | "basquete" | "handbol";
-
-type Position = {
-  [key in Sport]: string[];
-};
-
-const positions: Position = {
-  futsal: ["Goleiro", "Fixo", "Ala", "Pivô"],
-  futebol: ["Goleiro", "Defensor", "Meio-campo", "Atacante"],
-  volei: ["Levantador", "Líbero", "Central", "Ponteiro", "Oposto"],
-  basquete: ["Armador", "Ala", "Ala-pivô", "Pivô"],
-  handbol: ["Goleiro", "Ponta", "Central", "Pivô"],
-};
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Checkbox } from "./ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { usePlayerStore } from "@/stores/zustand_stores";
+import { SportEnum, PositionEnum, RatingEnum } from "@/utils/enums";
+import { springConfig } from "@/utils/animations";
+import { BackToDashboard } from "./BackToDashboard";
+import { TEXTS, CONFIG } from "@/constants";
+import { Player } from "@/types";
+import { generateId, formatDate } from "@/lib";
 
 const PlayerForm = () => {
   const { addPlayer, newPlayer, setNewPlayer, errors, setErrors, resetForm } = usePlayerStore();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setNewPlayer({ [name]: type === "checkbox" ? checked : value });
-  };
-
-  const handleSelectChange = (value: string) => {
-    setNewPlayer({ sport: value as Sport, selectedPositions: [] });
-  };
-
-  const handlePositionChange = (position: string) => {
-    setNewPlayer((prev) => ({
-      selectedPositions: prev.selectedPositions.includes(position)
-        ? prev.selectedPositions.filter((pos) => pos !== position)
-        : [...prev.selectedPositions, position],
-    }));
-  };
-
-  const updatePlayer = (prev: any) => ({
-    selectedPositions: prev.selectedPositions,
-  });
-
-  const validateForm = () => {
+  // Validação do formulário
+  const validateForm = (): boolean => {
     const newErrors = {
-      name: newPlayer.name.trim() === "",
-      isGuest: newPlayer.isGuest === null,
-      selectedPositions: newPlayer.selectedPositions.length === 0,
-      rating: newPlayer.rating === 0 as Rating,
+      name: { hasError: false, message: "" },
+      isGuest: { hasError: false, message: "" },
+      selectedPositions: { hasError: false, message: "" },
+      rating: { hasError: false, message: "" },
     };
+
+    // Validação do nome
+    if (!newPlayer.name || newPlayer.name.trim().length < CONFIG.VALIDATION.MIN_NAME_LENGTH) {
+      newErrors.name = {
+        hasError: true,
+        message: `O nome deve ter pelo menos ${CONFIG.VALIDATION.MIN_NAME_LENGTH} caracteres.`,
+      };
+    }
+
+    // Validação das posições
+    if (newPlayer.selectedPositions.length === 0) {
+      newErrors.selectedPositions = {
+        hasError: true,
+        message: "Selecione pelo menos uma posição.",
+      };
+    }
+
+    // Validação da avaliação
+    if (!newPlayer.rating || newPlayer.rating < 1 || newPlayer.rating > 10) {
+      newErrors.rating = {
+        hasError: true,
+        message: "A avaliação deve estar entre 1 e 10.",
+      };
+    }
+
     setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error);
+
+    // Retorna true se não há erros
+    return !Object.values(newErrors).some(error => error.hasError);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Manipulador de envio do formulário
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!validateForm()) {
       toast({
-        title: "Erro",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-
+        title: TEXTS.ERROR.VALIDATION,
+        description: "Por favor, corrija os erros no formulário.",
         variant: "destructive",
       });
       return;
     }
-    const player: Player = {
-      ...newPlayer,
-      id: Date.now(),
-      createdAt: new Date().toISOString(),
-    };
-    addPlayer(player);
 
-    toast({
-      title: "Jogador Adicionado",
-      description: "Novo jogador foi adicionado com sucesso.",
-    });
+    setIsSubmitting(true);
 
-    resetForm();
-  };
+    try {
+      const player: Player = {
+        id: generateId(),
+        name: newPlayer.name.trim(),
+        nickname: newPlayer.nickname?.trim() || undefined,
+        birthDate: newPlayer.birthDate,
+        isGuest: newPlayer.isGuest,
+        sport: newPlayer.sport,
+        selectedPositions: newPlayer.selectedPositions,
+        rating: newPlayer.rating,
+        includeInDraw: newPlayer.includeInDraw,
+        createdAt: formatDate(new Date()),
+        selected: false,
+        present: false,
+        paid: false,
+        registered: false,
+      };
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <BackToDashboard />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6"
-      >
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Nome</Label>
-              <Input
-                id="name"
-                name="name"
-                value={newPlayer.name}
-                onChange={handleChange}
-                placeholder="Nome do jogador"
-                className={errors.name ? "border-red-500" : ""}
-              />
-              {errors.name && <p className="text-red-500">Nome é obrigatório.</p>}
-            </div>
-            <div>
-              <Label htmlFor="nickname">Apelido</Label>
-              <Input
-                id="nickname"
-                name="nickname"
-                value={newPlayer.nickname}
-                onChange={handleChange}
-                placeholder="Apelido do jogador"
-              />
-            </div>
-            <div>
-              <Label htmlFor="birthDate">Data de Nascimento</Label>
-              <Input
-                id="birthDate"
-                name="birthDate"
-                type="date"
-                value={newPlayer.birthDate}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label>É convidado?</Label>
-              <div className="flex gap-4">
-                <div className="flex items-center">
-                  <Checkbox
-                    id="isGuestYes"
-                    name="isGuest"
-                    checked={newPlayer.isGuest === true}
-                    onChange={() => setNewPlayer({ isGuest: true })}
-                    className={errors.isGuest ? "border-red-500" : ""}
-                  />
-                  <Label htmlFor="isGuestYes" className="ml-2">Sim</Label>
-
-                </div>
-                <div className="flex items-center">
-                  <Checkbox
-                    id="isGuestNo"
-                    name="isGuest"
-                    checked={newPlayer.isGuest === false}
-                    onChange={() => setNewPlayer({ isGuest: false })}
-                    className={errors.isGuest ? "border-red-500" : ""}
-                  />
-                  <Label htmlFor="isGuestNo" className="ml-2">Não</Label>
-                </div>
-              </div>
-              {errors.isGuest && <p className="text-red-500">Marcar como convidado é obrigatório.</p>}
-            </div>
-
-            <div>
-              <Label htmlFor="sport">Esporte</Label>
-              <Select
-                value={newPlayer.sport}
-                onValueChange={handleSelectChange}
-
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione um esporte" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(positions).map((sport) => (
-                    <SelectItem key={sport} value={sport}>
-                      {sport}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Posições</Label>
-              <div className="flex flex-wrap gap-2">
-                {positions[newPlayer.sport]?.map((position) => (
-                  <div key={position} className="flex items-center">
-                    <Checkbox
-                      id={position}
-                      name="selectedPositions"
-                      checked={newPlayer.selectedPositions.includes(position)}
-                      onChange={() => handlePositionChange(position)}
-                      className={errors.selectedPositions ? "border-red-500" : ""}
-                    />
-                    <Label htmlFor={position} className="ml-2">{position}</Label>
-                  </div>
-                ))}
-              </div>
-              {errors.selectedPositions && <p className="text-red-500">Escolher pelo menos uma posição é obrigatório.</p>}
-            </div>
-            <div>
-              <Label htmlFor="rating">Avaliação</Label>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <Button
-                    key={rating}
-                    type="button"
-                    variant={newPlayer.rating === rating ? "default" : "outline"}
-                    onClick={() => setNewPlayer({ rating: rating as Rating })}
-                    className={errors.rating ? "border-red-500" : ""}
-                  >
-                    {rating}
-                  </Button>
-                ))}
-              </div>
-              {errors.rating && <p className="text-red-500">Avaliação é obrigatória.</p>}
-            </div>
-            <Button type="submit">
-              <Save className="mr-2 h-4 w-4" />
-              Salvar
-            </Button>
-          </div>
-
-        </form>
-      </motion.div>
-    </div>
-
-  );
-};
-
-const Statistics = ({ statistics, updateStatistic, removeStatistic, saveStatistics }) => {
-  const [editingRecord, setEditingRecord] = useState<{ index: number; recordIndex: number } | null>(null);
-  const [editValue, setEditValue] = useState<string>('');
-  const { toast } = useToast();
-
-  const handleEdit = (index: number, recordIndex: number) => {
-    setEditingRecord({ index, recordIndex });
-    setEditValue(statistics[index].pointRecords[recordIndex].points.toString());
-  };
-
-  const handleSave = () => {
-    if (editingRecord !== null) {
-      const { index, recordIndex } = editingRecord;
-      const updatedPointRecords = [...statistics[index].pointRecords];
-      updatedPointRecords[recordIndex].points = parseInt(editValue, 10);
-
-      updateStatistic(index, { pointRecords: updatedPointRecords });
-      setEditingRecord(null);
-      setEditValue('');
+      addPlayer(player);
+      
       toast({
-        title: "Registro atualizado",
-        description: "O registro de pontos foi atualizado com sucesso.",
+        title: TEXTS.SUCCESS.PLAYER_ADDED,
+        description: `${player.name} foi cadastrado com sucesso!`,
+        className: "bg-green-500 text-white",
+      });
+
+      resetForm();
+    } catch (error) {
+      console.error("Erro ao cadastrar jogador:", error);
+      toast({
+        title: TEXTS.ERROR.UNEXPECTED_ERROR,
+        description: "Ocorreu um erro ao cadastrar o jogador. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Manipuladores específicos para cada campo
+  const handleBasicInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewPlayer({ [name]: value });
+    
+    if (errors[name as keyof typeof errors]?.hasError) {
+      setErrors({
+        [name]: { hasError: false, message: "" },
       });
     }
   };
 
-  const handleDelete = (index: number) => {
-    removeStatistic(index);
+  const handleGuestChange = (checked: boolean) => {
+    setNewPlayer({ isGuest: checked });
+    
+    if (errors.isGuest?.hasError) {
+      setErrors({
+        isGuest: { hasError: false, message: "" },
+      });
+    }
+  };
 
-    toast({
-      title: "Estatística removida",
-      description: "A estatística foi removida com sucesso.",
-    });
+  const handleSportChange = (value: SportEnum) => {
+    setNewPlayer({ sport: value, selectedPositions: [] });
+  };
+
+  const handlePositionChange = (position: PositionEnum, checked: boolean) => {
+    const currentPositions = newPlayer.selectedPositions || [];
+    const updatedPositions = checked
+      ? [...currentPositions, position]
+      : currentPositions.filter(p => p !== position);
+    
+    setNewPlayer({ selectedPositions: updatedPositions });
+    
+    if (errors.selectedPositions?.hasError) {
+      setErrors({
+        selectedPositions: { hasError: false, message: "" },
+      });
+    }
+  };
+
+  const handleRatingChange = (rating: RatingEnum) => {
+    setNewPlayer({ rating });
+    
+    if (errors.rating?.hasError) {
+      setErrors({
+        rating: { hasError: false, message: "" },
+      });
+    }
   };
 
   return (
-    <div>
-      {statistics.map((statistic, index) => (
-        <div key={index}>
-          <h3>{statistic.name}</h3>
-          {statistic.pointRecords.map((record, recordIndex) => (
-            <div key={recordIndex}>
-              <p>{record.points} pontos em {record.date}</p>
-              <Button onClick={() => handleEdit(index, recordIndex)}>
-                <Edit2 className="h-4 w-4" />
-              </Button>
-              <Button onClick={() => handleDelete(index)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      ))}
-      {editingRecord && (
-        <div>
-          <Input
-            type="number"
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            placeholder="Novo valor"
-          />
-          <Button onClick={handleSave}>
-            <Save className="mr-2 h-4 w-4" />
-            Salvar
-          </Button>
-        </div>
-      )}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={springConfig}
+      className="min-h-screen p-4 sm:p-0"
+    >
+      <BackToDashboard />
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card className="shadow-lg border border-gray-100 rounded-xl">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
+            <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <span className="text-blue-600">👤</span>
+              {TEXTS.PAGE_TITLES.PLAYER_NEW}
+            </CardTitle>
+            <p className="text-gray-600 mt-2">
+              {TEXTS.INSTRUCTIONS.PLAYER_REGISTRATION}
+            </p>
+          </CardHeader>
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Informações Básicas */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800">Informações Básicas</h3>
+                
+                <div>
+                  <Label htmlFor="name">Nome *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={newPlayer.name || ""}
+                    onChange={handleBasicInfoChange}
+                    placeholder="Nome completo do jogador"
+                    className={errors.name?.hasError ? "border-red-500" : ""}
+                  />
+                  {errors.name?.hasError && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="nickname">Apelido</Label>
+                  <Input
+                    id="nickname"
+                    name="nickname"
+                    value={newPlayer.nickname || ""}
+                    onChange={handleBasicInfoChange}
+                    placeholder="Apelido (opcional)"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="birthDate">Data de Nascimento</Label>
+                  <Input
+                    id="birthDate"
+                    name="birthDate"
+                    type="date"
+                    value={newPlayer.birthDate || ""}
+                    onChange={handleBasicInfoChange}
+                  />
+                </div>
+
+                <div>
+                  <Label>É convidado?</Label>
+                  <div className="flex gap-4 mt-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="isGuest-true"
+                        checked={newPlayer.isGuest === true}
+                        onCheckedChange={(checked) => handleGuestChange(checked === true)}
+                      />
+                      <Label htmlFor="isGuest-true">Sim</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="isGuest-false"
+                        checked={newPlayer.isGuest === false}
+                        onCheckedChange={(checked) => handleGuestChange(checked === true)}
+                      />
+                      <Label htmlFor="isGuest-false">Não</Label>
+                    </div>
+                  </div>
+                  {errors.isGuest?.hasError && (
+                    <p className="text-red-500 text-sm mt-1">{errors.isGuest.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Informações Esportivas */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800">Informações Esportivas</h3>
+                
+                <div>
+                  <Label htmlFor="sport">Esporte *</Label>
+                  <select
+                    id="sport"
+                    value={newPlayer.sport || ""}
+                    onChange={(e) => handleSportChange(e.target.value as SportEnum)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Selecione um esporte</option>
+                    <option value={SportEnum.SOCCER}>Futebol</option>
+                    <option value={SportEnum.FUTSAL}>Futsal</option>
+                    <option value={SportEnum.VOLLEYBALL}>Vôlei</option>
+                    <option value={SportEnum.BASKETBALL}>Basquete</option>
+                    <option value={SportEnum.HANDBALL}>Handebol</option>
+                  </select>
+                </div>
+
+                <div>
+                  <Label>Posições *</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                    {Object.values(PositionEnum).map((position) => (
+                      <div key={position} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={position}
+                          checked={newPlayer.selectedPositions?.includes(position) || false}
+                          onCheckedChange={(checked) => handlePositionChange(position, checked === true)}
+                        />
+                        <Label htmlFor={position} className="text-sm">{position}</Label>
+                      </div>
+                    ))}
+                  </div>
+                  {errors.selectedPositions?.hasError && (
+                    <p className="text-red-500 text-sm mt-1">{errors.selectedPositions.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Avaliação */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800">Avaliação</h3>
+                
+                <div>
+                  <Label>Avaliação (1-10) *</Label>
+                  <div className="flex gap-2 mt-2">
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((rating) => (
+                      <Button
+                        key={rating}
+                        type="button"
+                        variant={newPlayer.rating === rating ? "default" : "outline"}
+                        onClick={() => handleRatingChange(rating as RatingEnum)}
+                        className="w-10 h-10 p-0"
+                      >
+                        {rating}
+                      </Button>
+                    ))}
+                  </div>
+                  {errors.rating?.hasError && (
+                    <p className="text-red-500 text-sm mt-1">{errors.rating.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Configurações Adicionais */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="includeInDraw"
+                    checked={newPlayer.includeInDraw}
+                    onCheckedChange={(checked) =>
+                      setNewPlayer({ includeInDraw: checked === true })
+                    }
+                  />
+                  <Label htmlFor="includeInDraw" className="text-sm font-medium text-gray-700">
+                    {TEXTS.LABELS.INCLUDE_IN_DRAW}
+                  </Label>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Marque esta opção se o jogador deve ser incluído no sorteio automático de times.
+                </p>
+              </div>
+
+              {/* Botões de Ação */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 transition-colors duration-200 rounded-lg shadow-md"
+                >
+                  {isSubmitting ? TEXTS.STATUS.SAVING : TEXTS.BUTTONS.SAVE}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetForm}
+                  disabled={isSubmitting}
+                  className="flex-1 h-12 text-lg font-semibold border-gray-300 hover:bg-gray-50 transition-colors duration-200 rounded-lg"
+                >
+                  {TEXTS.BUTTONS.CLEAR}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Informações de Ajuda */}
+        <Card className="shadow-lg border border-blue-100 rounded-xl bg-blue-50">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-blue-800 mb-3">
+              💡 Dicas para um Cadastro Completo
+            </h3>
+            <ul className="space-y-2 text-sm text-blue-700">
+              <li>• Preencha o nome completo do jogador</li>
+              <li>• Selecione todas as posições que o jogador pode jogar</li>
+              <li>• Avalie o jogador de forma justa (1-10)</li>
+              <li>• Marque se é um jogador convidado ou regular</li>
+              <li>• Inclua a data de nascimento para estatísticas de idade</li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </motion.div>
   );
 };
 
 export default PlayerForm;
-export { Statistics };

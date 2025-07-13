@@ -14,7 +14,17 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/constants": ["src/constants"],
+      "@/config": ["src/config"],
+      "@/lib": ["src/lib"],
+      "@/types": ["src/types"],
+      "@/stores": ["src/stores"],
+      "@/utils": ["src/utils"],
+      "@/hooks": ["src/hooks"],
+      "@/provider": ["src/provider"],
+      "@/styles": ["src/styles"]
     },
     "noImplicitAny": false,
     "noUnusedParameters": false,
