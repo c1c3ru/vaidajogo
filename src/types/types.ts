@@ -105,6 +105,7 @@ export interface Match {
 export interface Group {
   id: string;
   name: string;
+  teams: Team[];
   matches: Match[];
 }
 
@@ -167,6 +168,7 @@ export interface TournamentState {
   matches: Match[];
   groups?: Group[];
   knockoutMatches?: KnockoutMatches;
+  champion?: Team;
   addTeam: (team: Team) => void;
   editTeam: (id: string, updatedTeam: Partial<Team>) => void;
   removeTeam: (id: string) => void;
@@ -179,6 +181,8 @@ export interface TournamentState {
     type: TournamentType
   ) => void;
   updateMatch: (matchId: string, score1: number, score2: number) => void;
+  advanceKnockoutPhase: () => void;
+  advanceFromGroups: () => void;
   addManualMatch: (match: Match) => void;
   removeManualMatch: (id: string) => void;
 }

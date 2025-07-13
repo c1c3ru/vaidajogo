@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from '@/utils/zustand-persist';
-import { generateGroupsAndMatches } from '@/utils/tournament';
+import { generateGroupsAndMatches, advanceKnockoutRound } from '@/utils/tournament';
 import { TournamentState, Team, Match } from '@/types/types';
 import { TournamentType } from '@/utils/enums';
 import { TournamentFormat } from '@/utils/enums';
@@ -48,11 +48,11 @@ export const useTournamentStore = create<TournamentState>()(
       generateMatches: (teams, type) =>
         set((state) => {
           let matches: Match[] = [];
-          let groups = state.groups || [];
+          let tournamentGroups = state.groups || [];
           const format = state.format;
           if (format === TournamentFormat.GROUPS_WITH_KNOCKOUTS) {
-            groups = generateGroupsAndMatches(teams, state.numGroups);
-            matches = groups.flatMap(g => g.matches);
+            tournamentGroups = generateGroupsAndMatches(teams, state.numGroups);
+            matches = tournamentGroups.flatMap(g => g.matches);
           } else if (format === TournamentFormat.SINGLE_GAME) {
             if (teams.length >= 2) {
               matches = [{
@@ -116,7 +116,7 @@ export const useTournamentStore = create<TournamentState>()(
               }
             }
           }
-          return { ...state, matches, groups };
+          return { ...state, matches, groups: tournamentGroups };
         }),
 
       updateMatch: (matchId, score1, score2) =>
