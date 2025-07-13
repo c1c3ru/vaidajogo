@@ -1,6 +1,5 @@
 import React from 'react';
 import { Star, StarHalf } from 'lucide-react';
-import { useSettingsStore } from '@/stores/useSettingsStore';
 import { usePlayerStore } from '@/stores/usePlayerStore';
 import { Rating } from '@/types/types';
 import { motion } from 'framer-motion';
@@ -122,14 +121,16 @@ const ratingSystems = {
 };
 
 export const RatingInput: React.FC = () => {
-  const { ratingSystem } = useSettingsStore();
   const { newPlayer, setNewPlayer, ratingSystemLocked, currentRatingSystem } = usePlayerStore();
+  
+  // Usar sistema de avaliação padrão (estrelas)
+  const defaultRatingSystem = 'stars';
   
   const setRating = (rating: Rating) => {
     setNewPlayer({ rating });
   };
   
-  const ratingSystemConfig = ratingSystems[ratingSystem];
+  const ratingSystemConfig = ratingSystems[defaultRatingSystem];
 
   if (!ratingSystemConfig) {
     return null;
@@ -149,7 +150,7 @@ export const RatingInput: React.FC = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-blue-800">
-                Sistema de Avaliação: <span className="text-blue-600">{currentRatingSystem}</span>
+                Sistema de Avaliação: <span className="text-blue-600">Estrelas (1-5)</span>
               </p>
               <p className="text-xs text-blue-600 mt-1">
                 Todos os jogadores devem usar o mesmo sistema. Use "Limpar" para alterar.

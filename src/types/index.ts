@@ -184,15 +184,7 @@ export interface TeamDrawState {
   generateTeams: (players: Player[], playersPerTeamOverride?: number) => { success: boolean; error?: string };
 }
 
-/**
- * Estado para a store de configurações.
- */
-export interface SettingsState {
-  ratingSystem: string;
-  guestHighlight: string;
-  setRatingSystem: (system: string) => void;
-  setGuestHighlight: (highlight: string) => void;
-}
+
 
 /**
  * Estado para a store de estatísticas.

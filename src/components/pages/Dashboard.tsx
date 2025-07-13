@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { DashboardHeader } from '../dashboard/DashboardHeader';
-import { DashboardSettings } from '../dashboard/DashboardSettings';
 import { DashboardMenu } from '../dashboard/DashboardMenu';
-import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useDashboardStore } from '@/stores/useDashboardStore';
 import { motion } from 'framer-motion';
 import { TEXTS } from '@/constants';
@@ -13,13 +11,6 @@ const Dashboard = () => {
     isAdmin, 
     setDashboardTitle 
   } = useDashboardStore();
-
-  const { 
-    ratingSystem, 
-    guestHighlight, 
-    setRatingSystem, 
-    setGuestHighlight 
-  } = useSettingsStore();
 
   useEffect(() => {
     const storedTitle = localStorage.getItem('dashboardTitle');
@@ -59,7 +50,7 @@ const Dashboard = () => {
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Bem-vindo ao {TEXTS.PAGE_TITLES.MENU}
+              Bem-vindo ao VaiDaJogo
             </h2>
             <p className="text-gray-600 leading-relaxed">
               Gerencie seus jogadores, controle presenças, organize sorteios e acompanhe estatísticas 
@@ -68,28 +59,11 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Settings Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-12"
-        >
-          <DashboardSettings
-            settings={{
-              selectedRatingSystem: ratingSystem,
-              setSelectedRatingSystem: setRatingSystem,
-              guestHighlight: guestHighlight,
-              setGuestHighlight: setGuestHighlight
-            }}
-          />
-        </motion.div>
-
         {/* Menu Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.3 }}
         >
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-gray-800 mb-6">

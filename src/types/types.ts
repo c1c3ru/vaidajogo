@@ -189,21 +189,7 @@ export interface DashboardState {
   setNewTitle: (title: string) => void;
 }
 
-// Define the DashboardSettingsState interface
-export interface DashboardSettingsState {
-  selectedRatingSystem: string;
-  guestHighlight: string;
-  setSelectedRatingSystem: (system: string) => void;
-  setGuestHighlight: (highlight: string) => void;
-}
 
-// Define the DashboardSettingsProps interface
-export interface DashboardSettingsProps {
-  selectedRatingSystem: string;
-  guestHighlight: string;
-  setGuestHighlight: (highlight: string) => void;
-  setSelectedRatingSystem: (system: string) => void;
-}
 
 // Define the DashboardHeaderProps interface
 export interface DashboardHeaderProps {

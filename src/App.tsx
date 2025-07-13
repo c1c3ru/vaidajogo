@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/pages/Login';
 import { PlayerProvider } from './context/PlayerContext';
 import Dashboard from './components/pages/Dashboard';
 import PlayerForm from './components/PlayerForm';
@@ -21,8 +20,7 @@ const App = () => {
           transition={{ duration: 0.3 }}
         >
           <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/player/new" element={<PlayerForm />} />
             <Route path="/players" element={<PlayerList />} />
@@ -30,7 +28,7 @@ const App = () => {
             <Route path="/presence" element={<PresenceList />} />
             <Route path="/statistics" element={<Statistics />} />
             <Route path="/championship" element={<Championship />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
