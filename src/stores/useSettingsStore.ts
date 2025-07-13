@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from '@/utils/zustand-persist';
 
 interface SettingsState {
   ratingSystem: string;
@@ -7,15 +8,26 @@ interface SettingsState {
   setGuestHighlight: (highlight: string) => void;
 }
 
-export const useSettingsStore = create<SettingsState>((set) => ({
-  ratingSystem: localStorage.getItem('ratingSystem') || 'stars',
-  guestHighlight: localStorage.getItem('guestHighlight') || 'orange',
-  setRatingSystem: (system) => {
-    localStorage.setItem('ratingSystem', system);
-    set({ ratingSystem: system });
-  },
-  setGuestHighlight: (highlight) => {
-    localStorage.setItem('guestHighlight', highlight);
-    set({ guestHighlight: highlight });
-  },
-}));
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (set) => ({
+      ratingSystem: 'stars',
+      guestHighlight: 'orange',
+      setRatingSystem: (system) => {
+        set({ ratingSystem: system });
+      },
+      setGuestHighlight: (highlight) => {
+        set({ guestHighlight: highlight });
+      },
+    }),
+    {
+      name: 'settings',
+      storage: 'local',
+      version: 1,
+      partialize: (state) => ({
+        ratingSystem: state.ratingSystem,
+        guestHighlight: state.guestHighlight,
+      }),
+    }
+  )
+);
