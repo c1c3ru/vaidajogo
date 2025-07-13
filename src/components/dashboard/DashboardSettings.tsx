@@ -57,6 +57,11 @@ const guestHighlights: GuestHighlight[] = [
 ];
 
 export const DashboardSettings = ({ settings }: { settings: DashboardSettingsState }) => {
+  // Verificação de segurança
+  if (!settings) {
+    return <div>Carregando configurações...</div>;
+  }
+
   const { 
     selectedRatingSystem, 
     setSelectedRatingSystem, 
