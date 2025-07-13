@@ -1,4 +1,5 @@
 import { TournamentType } from '@/utils/enums';
+import { TournamentFormat } from '@/utils/enums';
 
 // Define a type for the rating system
 export type Rating = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
@@ -160,6 +161,8 @@ export interface TournamentState {
   tournament: Tournament | null;
   name: string;
   type: TournamentType;
+  format: TournamentFormat;
+  numGroups: number;
   teams: Team[];
   matches: Match[];
   groups?: Group[];
@@ -169,6 +172,8 @@ export interface TournamentState {
   removeTeam: (id: string) => void;
   setTournamentName: (name: string) => void;
   setTournamentType: (type: TournamentType) => void;
+  setTournamentFormat: (format: TournamentFormat) => void;
+  setNumGroups: (num: number) => void;
   generateMatches: (
     teams: Team[],
     type: TournamentType

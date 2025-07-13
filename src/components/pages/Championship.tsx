@@ -15,6 +15,8 @@ import TeamList from '@/components/tournament/TeamList';
 import { Team } from '@/types/types';
 import { TournamentType } from '@/utils/enums';
 import { ManualMatchModal } from '@/components/tournament/ManualMatchModal';
+import { calculateGroupStandings } from '@/utils/tournament';
+import { TournamentFormat } from '@/utils/enums';
 
 const Championship = () => {
   const [teamName, setTeamName] = useState('');
@@ -37,7 +39,12 @@ const Championship = () => {
     addManualMatch,
     matches,
     removeManualMatch,
-    updateMatch
+    updateMatch,
+    advanceKnockoutPhase,
+    advanceFromGroups,
+    champion,
+    format,
+    groups
   } = useTournamentStore();
 
   const handleAddTeam = () => {
@@ -137,6 +144,28 @@ const Championship = () => {
       generateMatches(teams, tournamentType);
     }
   }, [tournamentType, teams.length]);
+
+  // Avanço automático dos grupos para o mata-mata
+  React.useEffect(() => {
+    if (
+      format === TournamentFormat.GROUPS_WITH_KNOCKOUTS &&
+      groups && groups.length > 0 &&
+      groups.every(g => g.matches.every(m => m.score1 !== undefined && m.score2 !== undefined))
+    ) {
+      setTimeout(() => advanceFromGroups(), 500);
+    }
+  }, [groups, format, advanceFromGroups]);
+
+  // Exemplo: definir formato do torneio (depois pode ser dinâmico)
+  const tournamentFormat = TournamentFormat.ROUND_ROBIN; // ou outro conforme configuração
+
+  // Calcular classificação se for pontos corridos ou grupos
+  const standings = (tournamentFormat === TournamentFormat.ROUND_ROBIN || tournamentFormat === TournamentFormat.GROUPS_WITH_KNOCKOUTS)
+    ? calculateGroupStandings(matches, teams)
+    : [];
+
+  // Exibir standings de grupos se for grupos + eliminatória
+  const showGroupStandings = format === TournamentFormat.GROUPS_WITH_KNOCKOUTS && groups && groups.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -238,6 +267,112 @@ const Championship = () => {
                 </table>
               </div>
             </CardContent>
+          </Card>
+        )}
+
+        {/* Tabelas de classificação dos grupos */}
+        {showGroupStandings && groups.map((group) => {
+          const standings = calculateGroupStandings(group.matches, group.teams);
+          return (
+            <Card key={group.id} className="border-2 border-indigo-200 mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Save className="h-5 w-5 text-indigo-600" />
+                  {group.name} - Classificação
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="bg-indigo-50">
+                        <th className="px-4 py-2 text-left">#</th>
+                        <th className="px-4 py-2 text-left">Time</th>
+                        <th className="px-4 py-2 text-center">Pontos</th>
+                        <th className="px-4 py-2 text-center">Vitórias</th>
+                        <th className="px-4 py-2 text-center">Empates</th>
+                        <th className="px-4 py-2 text-center">Derrotas</th>
+                        <th className="px-4 py-2 text-center">GP</th>
+                        <th className="px-4 py-2 text-center">GC</th>
+                        <th className="px-4 py-2 text-center">SG</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {standings.map((s, idx) => (
+                        <tr key={s.team.id} className="border-b">
+                          <td className="px-4 py-2">{idx + 1}</td>
+                          <td className="px-4 py-2">{s.team.name}</td>
+                          <td className="px-4 py-2 text-center">{s.points}</td>
+                          <td className="px-4 py-2 text-center">{s.wins}</td>
+                          <td className="px-4 py-2 text-center">{s.draws}</td>
+                          <td className="px-4 py-2 text-center">{s.losses}</td>
+                          <td className="px-4 py-2 text-center">{s.goalsFor}</td>
+                          <td className="px-4 py-2 text-center">{s.goalsAgainst}</td>
+                          <td className="px-4 py-2 text-center">{s.goalDifference}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+
+        {/* Tabela de classificação */}
+        {standings.length > 0 && (
+          <Card className="border-2 border-indigo-200 mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Save className="h-5 w-5 text-indigo-600" />
+                Tabela de Classificação
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="bg-indigo-50">
+                      <th className="px-4 py-2 text-left">#</th>
+                      <th className="px-4 py-2 text-left">Time</th>
+                      <th className="px-4 py-2 text-center">Pontos</th>
+                      <th className="px-4 py-2 text-center">Vitórias</th>
+                      <th className="px-4 py-2 text-center">Empates</th>
+                      <th className="px-4 py-2 text-center">Derrotas</th>
+                      <th className="px-4 py-2 text-center">GP</th>
+                      <th className="px-4 py-2 text-center">GC</th>
+                      <th className="px-4 py-2 text-center">SG</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {standings.map((s, idx) => (
+                      <tr key={s.team.id} className="border-b">
+                        <td className="px-4 py-2">{idx + 1}</td>
+                        <td className="px-4 py-2">{s.team.name}</td>
+                        <td className="px-4 py-2 text-center">{s.points}</td>
+                        <td className="px-4 py-2 text-center">{s.wins}</td>
+                        <td className="px-4 py-2 text-center">{s.draws}</td>
+                        <td className="px-4 py-2 text-center">{s.losses}</td>
+                        <td className="px-4 py-2 text-center">{s.goalsFor}</td>
+                        <td className="px-4 py-2 text-center">{s.goalsAgainst}</td>
+                        <td className="px-4 py-2 text-center">{s.goalDifference}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Mensagem de campeão */}
+        {champion && (
+          <Card className="border-2 border-yellow-400 mb-8 bg-yellow-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-yellow-700">
+                🏆 Campeão: {champion.name}
+              </CardTitle>
+            </CardHeader>
           </Card>
         )}
 

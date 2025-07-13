@@ -1,54 +1,61 @@
 import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTournamentStore } from '@/stores/useTournamentStore';
-import { TournamentType } from '@/utils/enums';
+import { TournamentFormat } from '@/utils/enums';
 
-export const TournamentForm: React.FC = () => {
-  const { name, type, setTournamentName, setTournamentType } = useTournamentStore();
+export const TournamentForm = () => {
+  const { name, setTournamentName, type, setTournamentType, format, setTournamentFormat, numGroups, setNumGroups } = useTournamentStore();
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <Label htmlFor="tournamentName">Nome do Torneio</Label>
-        <Input
-          id="tournamentName"
-          value={name}
-          onChange={(e) => setTournamentName(e.target.value)}
-          placeholder="Digite o nome do torneio"
-        />
-      </div>
-
-      <div className="space-y-4">
-        <Label>Tipo de Disputa</Label>
-        <RadioGroup
-          value={type}
-          onValueChange={setTournamentType}
-          className="flex flex-col space-y-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value={TournamentType.LEAGUE} id="league" />
-            <Label htmlFor="league">Liga (Pontos Corridos)</Label>
-            <span className="text-xs text-gray-500 ml-2">Todos contra todos, sem mata-mata</span>
+    <Card className="mb-4">
+      <CardHeader>
+        <CardTitle>Configuração do Torneio</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <Label htmlFor="tournamentName">Nome do Torneio</Label>
+          <Input
+            id="tournamentName"
+            value={name}
+            onChange={e => setTournamentName(e.target.value)}
+            placeholder="Digite o nome do torneio..."
+          />
+        </div>
+        <div>
+          <Label htmlFor="tournamentFormat">Formato do Torneio</Label>
+          <Select value={format} onValueChange={setTournamentFormat}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Selecione o formato" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={TournamentFormat.SINGLE_GAME}>Jogo Único</SelectItem>
+              <SelectItem value={TournamentFormat.TWO_LEGS}>Ida e Volta</SelectItem>
+              <SelectItem value={TournamentFormat.ROUND_ROBIN}>Pontos Corridos</SelectItem>
+              <SelectItem value={TournamentFormat.GROUPS_WITH_KNOCKOUTS}>Grupos + Eliminatória</SelectItem>
+              <SelectItem value={TournamentFormat.KNOCKOUT_SINGLE}>Mata-mata (Jogo Único)</SelectItem>
+              <SelectItem value={TournamentFormat.KNOCKOUT_TWO_LEGS}>Mata-mata (Ida e Volta)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {format === TournamentFormat.GROUPS_WITH_KNOCKOUTS && (
+          <div>
+            <Label htmlFor="numGroups">Número de Grupos</Label>
+            <Select value={String(numGroups)} onValueChange={v => setNumGroups(Number(v))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione o número de grupos" />
+              </SelectTrigger>
+              <SelectContent>
+                {[2, 4, 8].map(n => (
+                  <SelectItem key={n} value={String(n)}>{n} grupos</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value={TournamentType.CUP} id="cup" />
-            <Label htmlFor="cup">Copa (Mata-Mata)</Label>
-            <span className="text-xs text-gray-500 ml-2">Sistema eliminatório direto</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value={TournamentType.CHAMPIONSHIP} id="championship" />
-            <Label htmlFor="championship">Campeonato (Grupos + Mata-Mata)</Label>
-            <span className="text-xs text-gray-500 ml-2">Fase de grupos seguida de eliminatórias</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value={TournamentType.FRIENDLY} id="friendly" />
-            <Label htmlFor="friendly">Amistoso</Label>
-            <span className="text-xs text-gray-500 ml-2">Jogos sem competição oficial</span>
-          </div>
-        </RadioGroup>
-      </div>
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };

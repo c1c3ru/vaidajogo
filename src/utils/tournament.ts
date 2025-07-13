@@ -1,118 +1,159 @@
-import { Team, KnockoutMatches, Match, Group } from '../types/types';
-import { TournamentType } from './enums';
+import { Match, Team } from '@/types/types';
+import { TournamentFormat, TiebreakerCriteria } from './enums';
 
-export interface TournamentBracketProps {
-  groups: Group[];
-  knockoutMatches?: {
-    roundOf16: Match[];
-    quarterFinals: Match[];
-    semiFinals: Match[];
-    final: Match;
-    thirdPlace: Match;
-  };
-}
-
-export interface Tournament {
-  id: string;
-  name: string;
-  type: TournamentType;
-  teams: Team[];
-  matches: Match[];
-  groups?: Group[];
-  knockoutMatches?: KnockoutMatches;
-}
-
-export const generateKnockoutMatches = (teams: Team[]): KnockoutMatches => {
-  // Embaralha os times para criar confrontos aleatórios
-  const shuffledTeams = [...teams].sort(() => Math.random() - 0.5);
-  
-  return {
-    id: 'knockout-matches',
-    roundOf16: Array(8).fill(null).map((_, index) => ({
-      id: `round16-${index}`,
-      team1: { id: 'tbd', name: 'A Definir', responsible: '' },
-      team2: { id: 'tbd', name: 'A Definir', responsible: '' }
-    })),
-    quarterFinals: Array(4).fill(null).map((_, index) => ({
-      id: `quarter-${index}`,
-      team1: { id: 'tbd', name: 'A Definir', responsible: '' },
-      team2: { id: 'tbd', name: 'A Definir', responsible: '' }
-    })),
-    semiFinals: Array(2).fill(null).map((_, index) => ({
-      id: `semi-${index}`,
-      team1: { id: 'tbd', name: 'A Definir', responsible: '' },
-      team2: { id: 'tbd', name: 'A Definir', responsible: '' }
-    })),
-    final: {
-      id: 'final',
-      team1: { id: 'tbd', name: 'A Definir', responsible: '' },
-      team2: { id: 'tbd', name: 'A Definir', responsible: '' }
-    },
-    thirdPlace: {
-      id: 'third-place',
-      team1: { id: 'tbd', name: 'A Definir', responsible: '' },
-      team2: { id: 'tbd', name: 'A Definir', responsible: '' }
+// Placar agregado para ida/volta
+export function calculateAggregateScore(matches: Match[], teamA: Team, teamB: Team) {
+  let goalsA = 0;
+  let goalsB = 0;
+  let awayGoalsA = 0;
+  let awayGoalsB = 0;
+  matches.forEach(match => {
+    if (match.team1.id === teamA.id && match.team2.id === teamB.id) {
+      goalsA += match.score1 || 0;
+      goalsB += match.score2 || 0;
+      // teamA é mandante
+    } else if (match.team1.id === teamB.id && match.team2.id === teamA.id) {
+      goalsA += match.score2 || 0;
+      goalsB += match.score1 || 0;
+      // teamA é visitante
+      awayGoalsA += match.score2 || 0;
+      awayGoalsB += match.score1 || 0;
     }
-  };
-};
+  });
+  return { goalsA, goalsB, awayGoalsA, awayGoalsB };
+}
 
-export const createTeamFromString = (name: string): Team => ({
-  id: name.toLowerCase().replace(/\s/g, '-'),
-  name: name,
-  responsible: ''
-});
+// Classificação de grupos (pontos corridos)
+export function calculateGroupStandings(matches: Match[], teams: Team[]) {
+  const standings = teams.map(team => ({
+    team,
+    points: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    fairPlay: 0, // pode ser incrementado depois
+  }));
 
-export const generateGroups = (teams: string[]): Group[] => {
-  const groups: Group[] = [];
-  const teamsPerGroup = Math.ceil(teams.length / 4);
-
-  for (let i = 0; i < 4; i++) {
-    const groupTeams = teams.slice(i * teamsPerGroup, (i + 1) * teamsPerGroup)
-      .map(createTeamFromString);
-    const matches: Match[] = [];
-
-    for (let j = 0; j < groupTeams.length; j++) {
-      for (let k = j + 1; k < groupTeams.length; k++) {
-        matches.push({
-          id: `group-${i}-match-${j}-${k}`,
-          team1: groupTeams[j],
-          team2: groupTeams[k]
-        });
+  matches.forEach(match => {
+    const t1 = standings.find(s => s.team.id === match.team1.id);
+    const t2 = standings.find(s => s.team.id === match.team2.id);
+    if (t1 && t2 && match.score1 !== undefined && match.score2 !== undefined) {
+      t1.goalsFor += match.score1;
+      t1.goalsAgainst += match.score2;
+      t2.goalsFor += match.score2;
+      t2.goalsAgainst += match.score1;
+      if (match.score1 > match.score2) {
+        t1.points += 3;
+        t1.wins++;
+        t2.losses++;
+      } else if (match.score1 < match.score2) {
+        t2.points += 3;
+        t2.wins++;
+        t1.losses++;
+      } else {
+        t1.points++;
+        t2.points++;
+        t1.draws++;
+        t2.draws++;
       }
     }
+  });
 
+  standings.forEach(s => {
+    s.goalDifference = s.goalsFor - s.goalsAgainst;
+  });
+
+  // Ordenação inicial por pontos, saldo, gols marcados
+  standings.sort((a, b) =>
+    b.points - a.points ||
+    b.goalDifference - a.goalDifference ||
+    b.goalsFor - a.goalsFor
+  );
+
+  return standings;
+}
+
+// Desempate (pode ser expandido)
+export function resolveTiebreakers(standings: any[], criteria: TiebreakerCriteria[]) {
+  // Implementar lógica de desempate conforme critérios
+  // Exemplo: saldo, gols, confronto direto, fair play, sorteio
+  // Por enquanto, retorna standings já ordenados
+  return standings;
+}
+
+// Avanço automático de vencedores (mata-mata ou grupos)
+export function advanceWinners(matches: Match[], format: TournamentFormat, teams: Team[], groupSize = 2) {
+  // Para grupos: retorna os melhores de cada grupo
+  // Para mata-mata: retorna vencedores dos confrontos
+  // Para ida/volta: usa placar agregado
+  // Para jogo único: vencedor direto
+  // Esta função pode ser expandida conforme necessidade
+  return [];
+}
+
+// Avanço automático de rodadas de mata-mata
+export function advanceKnockoutRound(matches: Match[], format: TournamentFormat): Team[] {
+  // Agrupa confrontos por par (ida/volta ou jogo único)
+  const pairs: { [key: string]: Match[] } = {};
+  matches.forEach(match => {
+    const key = [match.team1.id, match.team2.id].sort().join('-');
+    if (!pairs[key]) pairs[key] = [];
+    pairs[key].push(match);
+  });
+  const winners: Team[] = [];
+  Object.values(pairs).forEach(pairMatches => {
+    if (format === TournamentFormat.KNOCKOUT_TWO_LEGS || format === TournamentFormat.TWO_LEGS) {
+      // Placar agregado
+      const teamA = pairMatches[0].team1;
+      const teamB = pairMatches[0].team2;
+      const { goalsA, goalsB } = calculateAggregateScore(pairMatches, teamA, teamB);
+      if (goalsA > goalsB) winners.push(teamA);
+      else if (goalsB > goalsA) winners.push(teamB);
+      // Empate: critério pode ser expandido (gols fora, pênaltis, etc)
+    } else {
+      // Jogo único
+      const match = pairMatches[0];
+      if (match.score1 !== undefined && match.score2 !== undefined) {
+        if (match.score1 > match.score2) winners.push(match.team1);
+        else if (match.score2 > match.score1) winners.push(match.team2);
+        // Empate: critério pode ser expandido
+      }
+    }
+  });
+  return winners;
+}
+
+// Geração de grupos e confrontos dentro dos grupos
+export function generateGroupsAndMatches(teams: Team[], numGroups: number) {
+  // Embaralha os times
+  const shuffled = [...teams].sort(() => Math.random() - 0.5);
+  const groups: { id: string; name: string; teams: Team[]; matches: Match[] }[] = [];
+  // Distribui os times nos grupos
+  for (let i = 0; i < numGroups; i++) {
     groups.push({
-      id: `group-${i}`,
+      id: `group-${i + 1}`,
       name: `Grupo ${String.fromCharCode(65 + i)}`,
-      matches
+      teams: [],
+      matches: []
     });
   }
-
-  return groups;
-};
-
-export const generateTournamentMatches = (teams: Team[], tournamentType: string): Match[] => {
-  const matches: Match[] = [];
-
-  if (tournamentType === "league") {
-    for (let i = 0; i < teams.length; i++) {
-      for (let j = i + 1; j < teams.length; j++) {
-        matches.push({ 
-          id: `league-match-${i}-${j}`,
-          team1: teams[i], 
-          team2: teams[j] 
+  shuffled.forEach((team, idx) => {
+    groups[idx % numGroups].teams.push(team);
+  });
+  // Gera confrontos todos contra todos em cada grupo
+  groups.forEach(group => {
+    for (let i = 0; i < group.teams.length; i++) {
+      for (let j = i + 1; j < group.teams.length; j++) {
+        group.matches.push({
+          id: `group-${group.id}-match-${i}-${j}`,
+          team1: group.teams[i],
+          team2: group.teams[j],
         });
       }
     }
-  } else if (tournamentType === "knockout") {
-    // Lógica para torneio eliminatório
-    const knockoutMatches = generateKnockoutMatches(teams);
-    matches.push(...knockoutMatches.roundOf16);
-    matches.push(...knockoutMatches.quarterFinals);
-    matches.push(...knockoutMatches.semiFinals);
-    matches.push(knockoutMatches.final);
-    matches.push(knockoutMatches.thirdPlace);
-  }
-
-  return matches;
-};
+  });
+  return groups;
+}

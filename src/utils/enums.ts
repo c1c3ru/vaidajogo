@@ -85,6 +85,27 @@ export enum TournamentType {
   FRIENDLY = "amistoso",
 }
 
+export enum TournamentFormat {
+  SINGLE_GAME = 'SINGLE_GAME',
+  TWO_LEGS = 'TWO_LEGS',
+  ROUND_ROBIN = 'ROUND_ROBIN',
+  GROUPS_WITH_KNOCKOUTS = 'GROUPS_WITH_KNOCKOUTS',
+  KNOCKOUT_SINGLE = 'KNOCKOUT_SINGLE',
+  KNOCKOUT_TWO_LEGS = 'KNOCKOUT_TWO_LEGS',
+}
+
+export enum TiebreakerCriteria {
+  POINTS = 'POINTS',
+  GOAL_DIFFERENCE = 'GOAL_DIFFERENCE',
+  GOALS_SCORED = 'GOALS_SCORED',
+  HEAD_TO_HEAD = 'HEAD_TO_HEAD',
+  FAIR_PLAY = 'FAIR_PLAY',
+  DRAW = 'DRAW',
+  AWAY_GOALS = 'AWAY_GOALS',
+  EXTRA_TIME = 'EXTRA_TIME',
+  PENALTIES = 'PENALTIES',
+}
+
 // ===== ENUMS DE PARTIDA =====
 export enum MatchType {
   GROUP = "grupo",
