@@ -175,7 +175,7 @@ const PresenceList = () => {
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <DynamicTitle />
+          {/* <DynamicTitle /> */}
           <div className="text-right">
             <p className="text-sm text-gray-600">Data: {new Date().toLocaleDateString('pt-BR')}</p>
             <p className="text-xs text-gray-500">Controle de Presença</p>

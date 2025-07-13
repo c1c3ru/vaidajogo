@@ -142,14 +142,14 @@ const TeamDraw = () => {
         {/* Controles de Sorteio */}
         <Card className="shadow-lg border border-gray-100 rounded-xl">
           <CardContent className="p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">{TEXTS.PAGE_TITLES.TEAM_DRAW}</h1>
+            <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">{TEXTS.TEAM_DRAW.TITLE}</h1>
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
               <Select
                 value={String(playersPerTeam)}
                 onValueChange={(value) => setPlayersPerTeam(Number(value))}
               >
                 <SelectTrigger className="w-full sm:w-[200px] h-12 rounded-lg border-gray-300 focus:ring-blue-200 focus:border-blue-400 transition-all duration-200">
-                  <SelectValue placeholder={TEXTS.LABELS.PLAYERS_PER_TEAM} />
+                  <SelectValue placeholder={TEXTS.TEAM_DRAW.SETTINGS.PLAYERS_PER_TEAM} />
                 </SelectTrigger>
                 <SelectContent>
                   {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
@@ -165,7 +165,7 @@ const TeamDraw = () => {
                 className="w-full sm:w-auto h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 transition-colors duration-200 rounded-lg shadow-md"
               >
                 <Shuffle className="mr-2 h-5 w-5" aria-hidden="true" />
-                {isGenerating ? TEXTS.STATUS.GENERATING : TEXTS.BUTTONS.SORT}
+                {isGenerating ? TEXTS.COMMON.STATES.GENERATING : TEXTS.TEAM_DRAW.ACTIONS.GENERATE_TEAMS}
               </Button>
             </div>
           </CardContent>
@@ -176,7 +176,7 @@ const TeamDraw = () => {
           <Info className="h-5 w-5 text-blue-600" aria-hidden="true" />
           <AlertTitle className="text-lg font-semibold">Instruções Importantes</AlertTitle>
           <AlertDescription className="text-sm">
-            {TEXTS.INSTRUCTIONS.TEAM_DRAW}
+            {TEXTS.TEAM_DRAW.SUBTITLE}
             <br />
             <strong className="text-green-700">Novo:</strong> Algoritmo de balanceamento inteligente para times mais equilibrados!
           </AlertDescription>
@@ -193,7 +193,7 @@ const TeamDraw = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium text-gray-700">{TEXTS.SETTINGS.BALANCE_METHOD}</Label>
+                <Label className="text-sm font-medium text-gray-700">Método de Balanceamento</Label>
                 <Select value="intelligent" onValueChange={() => {}}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione o método" />
@@ -206,7 +206,7 @@ const TeamDraw = () => {
                 </Select>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-700">{TEXTS.SETTINGS.BALANCE_TOLERANCE}</Label>
+                <Label className="text-sm font-medium text-gray-700">Tolerância de Balanceamento</Label>
                 <Select value="medium" onValueChange={() => {}}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione a tolerância" />

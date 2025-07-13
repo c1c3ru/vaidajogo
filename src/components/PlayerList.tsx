@@ -78,7 +78,11 @@ const PlayerList = () => {
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
             <div className="flex items-center justify-between">
-              <DynamicTitle />
+              {/* <DynamicTitle /> */}
+              <div className="text-right">
+                <p className="text-sm text-gray-600">Data: {new Date().toLocaleDateString('pt-BR')}</p>
+                <p className="text-xs text-gray-500">Lista de Jogadores</p>
+              </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full">
                   <Users className="h-5 w-5" />
