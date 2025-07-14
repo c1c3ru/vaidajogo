@@ -26,9 +26,21 @@ export const useTournamentStore = create<TournamentState>()(
 
       setTournamentType: (type: TournamentType) => set({ type }),
 
-      setTournamentFormat: (format) => set({ format }),
+      setTournamentFormat: (format) => set({ 
+        format, 
+        matches: [], 
+        groups: [], 
+        knockoutMatches: null,
+        champion: undefined 
+      }),
 
-      setNumGroups: (num) => set({ numGroups: num }),
+      setNumGroups: (num) => set({ 
+        numGroups: num,
+        matches: [], 
+        groups: [], 
+        knockoutMatches: null,
+        champion: undefined 
+      }),
 
       addTeam: (team) =>
         set((state) => ({ teams: [...state.teams, team] })),

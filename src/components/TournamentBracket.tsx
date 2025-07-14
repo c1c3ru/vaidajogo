@@ -103,6 +103,9 @@ const FinalAndThirdPlace = ({ final, thirdPlace }: { final: Match; thirdPlace: M
 };
 
 export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracketProps) => {
+  const hasGroups = groups && groups.length > 0;
+  const hasKnockout = knockoutMatches && Object.keys(knockoutMatches).length > 0;
+  
   return (
     <motion.div
       className="w-full space-y-6"
@@ -110,7 +113,7 @@ export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracket
       animate={{ opacity: 1, y: 0 }}
     >
       {/* Fase de Grupos */}
-      {groups.length > 0 && (
+      {hasGroups && (
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <Users className="h-5 w-5 text-blue-600" />
@@ -155,7 +158,7 @@ export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracket
       )}
 
       {/* Fases Eliminatórias */}
-      {knockoutMatches && (
+      {hasKnockout && (
         <div className="space-y-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <Trophy className="h-5 w-5 text-purple-600" />
@@ -195,7 +198,7 @@ export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracket
       )}
 
       {/* Mensagem quando não há dados */}
-      {groups.length === 0 && !knockoutMatches && (
+      {!hasGroups && !hasKnockout && (
         <div className="text-center py-8">
           <div className="text-gray-500 mb-2">
             <Trophy className="h-12 w-12 mx-auto text-gray-300" />

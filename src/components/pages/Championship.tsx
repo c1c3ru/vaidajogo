@@ -749,7 +749,7 @@ const Championship = () => {
         })}
 
         {/* Chaveamento do Torneio */}
-        {matches.length > 0 && (groups.length > 0 || knockoutMatches) && (
+        {matches.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
