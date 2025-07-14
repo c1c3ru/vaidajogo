@@ -12,6 +12,14 @@ import { TEXTS } from "@/constants";
 
 type Rating = 1 | 2 | 3 | 4 | 5;
 
+const getRatingMax = (player: any) => {
+  // Se o rating for inteiro de 1 a 5, assume estrelas
+  if (player.ratingSystem === 'stars' || (player.rating <= 5 && player.rating % 1 === 0)) return 5;
+  if (player.ratingSystem === 'numeric5') return 5;
+  if (player.ratingSystem === 'numeric10' || player.rating > 5) return 10;
+  return 5;
+};
+
 const PlayerList = () => {
   const { players, updatePlayer, removePlayer, editingPlayer, setEditingPlayer, editValue, setEditValue } = usePlayerStore();
   const { toast } = useToast();
@@ -190,15 +198,13 @@ const PlayerList = () => {
                       <div className="flex items-center gap-2">
                         <Trophy className="h-4 w-4 text-yellow-500" />
                         <span className="text-sm text-gray-600">
-                          Avaliação: <span className="font-semibold text-gray-800">{player.rating}/10</span>
+                          Avaliação: <span className="font-semibold text-gray-800">{player.rating}/{getRatingMax(player)}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Check className={`h-4 w-4 ${player.selected ? 'text-green-500' : 'text-gray-400'}`} />
                         <span className="text-sm text-gray-600">
-                          Selecionado: <span className={`font-semibold ${player.selected ? 'text-green-600' : 'text-gray-500'}`}>
-                            {player.selected ? "Sim" : "Não"}
-                          </span>
+                          Selecionado: <span className={`font-semibold ${player.selected ? 'text-green-600' : 'text-gray-500'}`}>{player.selected ? "Sim" : "Não"}</span>
                         </span>
                       </div>
                     </div>
