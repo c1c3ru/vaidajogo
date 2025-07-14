@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { usePlayerStore } from '@/stores/usePlayerStore';
 import { TEXTS } from '@/constants/texts';
+import { LottieAnimation } from '@/components/LottieAnimation';
 import { 
   Users, 
   Star, 
@@ -36,6 +37,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.SOCCER.NAME,
       description: TEXTS.SPORTS.SOCCER.DESCRIPTION,
       icon: Users,
+      animation: 'futebo' as const,
       positions: Object.values(TEXTS.SPORTS.SOCCER.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.SOCCER.AVAILABLE_RATING_SYSTEMS
     },
@@ -44,6 +46,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.FUTSAL.NAME,
       description: TEXTS.SPORTS.FUTSAL.DESCRIPTION,
       icon: Users,
+      animation: 'futsal' as const,
       positions: Object.values(TEXTS.SPORTS.FUTSAL.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.FUTSAL.AVAILABLE_RATING_SYSTEMS
     },
@@ -52,6 +55,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.VOLLEYBALL.NAME,
       description: TEXTS.SPORTS.VOLLEYBALL.DESCRIPTION,
       icon: Users,
+      animation: 'volleyball' as const,
       positions: Object.values(TEXTS.SPORTS.VOLLEYBALL.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.VOLLEYBALL.AVAILABLE_RATING_SYSTEMS
     },
@@ -60,6 +64,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.BASKETBALL.NAME,
       description: TEXTS.SPORTS.BASKETBALL.DESCRIPTION,
       icon: Users,
+      animation: 'basketball' as const,
       positions: Object.values(TEXTS.SPORTS.BASKETBALL.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.BASKETBALL.AVAILABLE_RATING_SYSTEMS
     },
@@ -68,6 +73,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.HANDBALL.NAME,
       description: TEXTS.SPORTS.HANDBALL.DESCRIPTION,
       icon: Users,
+      animation: 'futebo' as const, // Usando futebol como fallback para handebol
       positions: Object.values(TEXTS.SPORTS.HANDBALL.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.HANDBALL.AVAILABLE_RATING_SYSTEMS
     }
@@ -244,7 +250,14 @@ const SportRatingSelector = () => {
                       : 'border-green-200 hover:border-green-300 hover:bg-green-50'
                   } ${sportLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <sport.icon className="h-8 w-8" />
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <LottieAnimation 
+                      type={sport.animation}
+                      width={48}
+                      height={48}
+                      className="mx-auto"
+                    />
+                  </div>
                   <div className="text-center">
                     <p className="font-semibold">{sport.name}</p>
                     <p className="text-xs opacity-75 mt-1">

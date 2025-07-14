@@ -27,15 +27,17 @@
 - `Volleyball.json` - Animação de vôlei
 - `Futebo.json` - Animação de futebol
 
-### 3. Integração no Dashboard
+### 3. Integração nas Páginas Específicas
 
-**Arquivo alterado:** `src/components/pages/Dashboard.tsx`
+**Páginas com animações integradas:**
+- **Cadastro de Jogadores** (`src/components/player/SportRatingSelector.tsx`)
+  - Animações específicas para cada modalidade esportiva
+  - Tamanho: 48x48px nos botões de seleção
+- **Página de Campeonato** (`src/components/pages/Championship.tsx`)
+  - Animação de campeonato no header
+  - Tamanho: 64x64px no título principal
 
-**Adições:**
-- Importação do componente `LottieAnimation`
-- Nova seção "Animações Esportivas" com grid responsivo
-- Exibição de todas as 5 animações disponíveis
-- Layout responsivo (1 coluna mobile, 2 colunas tablet, 3 colunas desktop)
+**Nota:** O card de animações foi removido do Dashboard conforme solicitado pelo usuário.
 
 ### 4. Funcionalidades do Componente LottieAnimation
 
@@ -55,11 +57,11 @@
 
 ### 5. Melhorias Visuais
 
-**Dashboard:**
-- Seção de animações com design consistente
-- Cards com gradientes e sombras
-- Animações de entrada com Framer Motion
+**Páginas com animações:**
+- **Cadastro de Jogadores:** Animações específicas por modalidade esportiva
+- **Página de Campeonato:** Header animado com contexto de torneio
 - Layout responsivo e acessível
+- Animações de entrada com Framer Motion
 
 ## Como Usar
 
@@ -95,4 +97,12 @@ import { LottieAnimation } from '@/components/LottieAnimation';
 - Adicionar animações em outras páginas do sistema
 - Criar animações específicas para diferentes ações (sucesso, erro, loading)
 - Implementar animações interativas baseadas no estado do usuário
-- Otimizar tamanho dos arquivos JSON para melhor performance 
+- Otimizar tamanho dos arquivos JSON para melhor performance
+
+## Atualizações Recentes
+
+**Remoção do Dashboard:**
+- ✅ Card "Animações Esportivas" removido do Dashboard
+- ✅ Importação do LottieAnimation removida do Dashboard
+- ✅ Build funcionando sem erros após remoção
+- ✅ Animações mantidas apenas nas páginas específicas onde fazem sentido contextual 

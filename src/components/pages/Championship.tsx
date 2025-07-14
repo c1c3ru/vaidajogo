@@ -28,6 +28,7 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { TournamentBracket } from '../TournamentBracket';
+import { LottieAnimation } from '@/components/LottieAnimation';
 import { useToast } from "@/hooks/use-toast";
 import { useTournamentStore } from '@/stores/useTournamentStore';
 import { BackToDashboard } from '@/components/BackToDashboard';
@@ -206,9 +207,14 @@ const Championship = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-4"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full">
-              <Trophy className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center gap-6 mb-4">
+            <div className="w-16 h-16 flex items-center justify-center">
+              <LottieAnimation 
+                type="campeonato"
+                width={64}
+                height={64}
+                className="mx-auto"
+              />
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
