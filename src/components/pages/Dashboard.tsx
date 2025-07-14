@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TEXTS } from '@/constants/texts';
+import { LottieAnimation } from '@/components/LottieAnimation';
 import { 
   Users, 
   Calendar, 
@@ -199,6 +200,76 @@ const Dashboard = () => {
                       Gerencie campeonatos e torneios
                     </li>
                   </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Animações Esportivas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-12 max-w-6xl mx-auto"
+        >
+          <Card className="border-2 border-gray-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50 border-b-2 border-gray-200">
+              <CardTitle className="flex items-center gap-2 text-gray-800">
+                <Trophy className="h-5 w-5 text-yellow-500" />
+                Animações Esportivas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <LottieAnimation 
+                    type="futsal" 
+                    width={150} 
+                    height={150}
+                    className="mx-auto"
+                  />
+                  <h4 className="font-semibold text-gray-800 mt-2">Futsal</h4>
+                </div>
+                
+                <div className="text-center">
+                  <LottieAnimation 
+                    type="basketball" 
+                    width={150} 
+                    height={150}
+                    className="mx-auto"
+                  />
+                  <h4 className="font-semibold text-gray-800 mt-2">Basquete</h4>
+                </div>
+                
+                <div className="text-center">
+                  <LottieAnimation 
+                    type="volleyball" 
+                    width={150} 
+                    height={150}
+                    className="mx-auto"
+                  />
+                  <h4 className="font-semibold text-gray-800 mt-2">Vôlei</h4>
+                </div>
+                
+                <div className="text-center">
+                  <LottieAnimation 
+                    type="futebo" 
+                    width={150} 
+                    height={150}
+                    className="mx-auto"
+                  />
+                  <h4 className="font-semibold text-gray-800 mt-2">Futebol</h4>
+                </div>
+                
+                <div className="text-center">
+                  <LottieAnimation 
+                    type="campeonato" 
+                    width={150} 
+                    height={150}
+                    className="mx-auto"
+                  />
+                  <h4 className="font-semibold text-gray-800 mt-2">Campeonato</h4>
                 </div>
               </div>
             </CardContent>
