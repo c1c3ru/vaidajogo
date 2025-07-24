@@ -1,82 +1,137 @@
-## Estrutura do Projeto
-## Telas Principais
+# Vai da Jogo ⚽
 
+Sistema completo para gerenciamento de jogadores, times e campeonatos esportivos. Desenvolvido para facilitar a organização de peladas, torneios e competições amadoras.
 
-Lista de Jogadores (/players)
-Cadastro de Jogadores (/player/new)
-Sorteio de Times (/teams/draw)
-Lista de Presença (/attendance)
-Estatísticas (/statistics)
-Componentes Reutilizáveis
+## 🚀 Funcionalidades
 
-## Botões, entradas de texto, modais, ícones e toasts.
-Animações suaves utilizando Framer Motion.
-Componentes de design, como Card, Header, e Footer.
-Gerenciamento de Estado
+### 📋 Gerenciamento de Jogadores
+- **Cadastro completo**: Nome, apelido, data de nascimento, posições e avaliações
+- **Sistema de avaliação flexível**: Suporte a diferentes escalas de rating (1-5, 1-10, etc.)
+- **Controle de presença**: Marcar jogadores presentes/ausentes
+- **Controle de pagamento**: Gerenciar mensalidades e taxas
+- **Filtros avançados**: Busca por nome, posição, rating, presença e pagamento
 
-## React Context para autenticação e dados globais (usuários, jogadores, etc.).
-Zustand ou Redux para controle de estados mais complexos, como times balanceados.
-Estilo
+### ⚽ Organização de Times
+- **Sorteio automático**: Algoritmo inteligente para balanceamento de times
+- **Configuração flexível**: Definir número de jogadores por time
+- **Múltiplos esportes**: Futebol, Futsal, Basquete, Vôlei
+- **Posições específicas**: Sistema adaptável para cada modalidade
 
-## Tailwind CSS para uma estilização consistente e rápida.
-Configuração de cores suaves baseadas nos tons de verde: #10B981 e tons complementares.
-API Simulada
+### 🏆 Sistema de Campeonatos
+- **Múltiplos formatos**: Liga, eliminatórias, grupos + mata-mata
+- **Gerenciamento de partidas**: Controle de resultados e classificação
+- **Chaveamento automático**: Geração de tabelas e confrontos
+- **Acompanhamento em tempo real**: Estatísticas e rankings
 
-## Simulação de uma API REST usando o json-server ou Mock Service Worker (MSW) para desenvolvimento local.
+### 📊 Estatísticas e Relatórios
+- **Histórico de presenças**: Controle de frequência dos jogadores
+- **Relatórios financeiros**: Controle de pagamentos e inadimplência
+- **Estatísticas de desempenho**: Análise de dados dos jogadores
+- **Exportação de dados**: Relatórios em PDF
+
+## 🛠️ Tecnologias
+
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **UI Components**: shadcn/ui + Radix UI
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Animations**: Framer Motion + Lottie
+- **Icons**: Lucide React + FontAwesome
+- **Forms**: React Hook Form + Zod
+- **Charts**: Recharts
+- **PDF Generation**: jsPDF
+- **Routing**: React Router DOM
+- **Testing**: Jest + Testing Library
+
+## 📁 Estrutura do Projeto
 
 ```
 src/
 ├── components/
-│   ├── Header.tsx
-│   ├── PlayerForm.tsx
-│   ├── PlayerList.tsx
-│   ├── TeamDraw.tsx
-│   ├── PresenceList.tsx
-│   └── Statistics.tsx
-├── pages/
-│   ├── Login.tsx
-│   ├── Dashboard.tsx
-├── App.tsx
-├── main.tsx
-└── styles/
-    └── global.css
-```    
+│   ├── ui/                    # Componentes base (shadcn/ui)
+│   ├── dashboard/             # Componentes do dashboard
+│   ├── player/                # Componentes de jogadores
+│   ├── tournament/            # Componentes de torneios
+│   ├── pages/                 # Páginas principais
+│   ├── PlayerForm.tsx         # Formulário de cadastro
+│   ├── PlayerList.tsx         # Lista de jogadores
+│   ├── TeamDraw.tsx           # Sorteio de times
+│   ├── PresenceList.tsx       # Controle de presença
+│   ├── Statistics.tsx         # Estatísticas
+│   └── TournamentBracket.tsx  # Chaveamento
+├── stores/                    # Gerenciamento de estado (Zustand)
+│   ├── usePlayerStore.ts      # Estado dos jogadores
+│   ├── useTeamStore.ts        # Estado dos times
+│   ├── useTournamentStore.ts  # Estado dos torneios
+│   └── useStatisticsStore.ts  # Estado das estatísticas
+├── types/                     # Definições TypeScript
+├── utils/                     # Utilitários e helpers
+├── constants/                 # Constantes e configurações
+├── assets/                    # Animações Lottie
+└── styles/                    # Estilos globais
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🎯 Páginas Principais
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Dashboard** (`/dashboard`) - Painel principal com acesso a todas as funcionalidades
+- **Cadastro de Jogadores** (`/player-form`) - Formulário para adicionar novos jogadores
+- **Lista de Jogadores** (`/players`) - Visualização e gerenciamento de jogadores
+- **Controle de Presença** (`/presence`) - Marcar presenças e pagamentos
+- **Sorteio de Times** (`/team-draw`) - Organizar jogadores em times balanceados
+- **Estatísticas** (`/statistics`) - Relatórios e análises
+- **Campeonatos** (`/championship`) - Gerenciar torneios e competições
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🚀 Como Executar
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Pré-requisitos
+- Node.js 18+
+- npm ou yarn
+
+### Instalação
+
+```bash
+# Clone o repositório
+git clone <URL_DO_REPOSITORIO>
+
+# Navegue até o diretório
+cd vaidajogo
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Scripts Disponíveis
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run dev      # Servidor de desenvolvimento
+npm run build    # Build para produção
+npm run preview  # Preview do build
+npm run lint     # Verificar código
+```
 
-**Use GitHub Codespaces**
+## 🎨 Design System
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Cores principais**: Gradientes em azul e ciano
+- **Componentes**: Sistema consistente baseado em shadcn/ui
+- **Responsividade**: Design mobile-first
+- **Animações**: Transições suaves com Framer Motion
+- **Ícones**: Lucide React para interface moderna
 
-## What technologies are used for this project?
+## 💾 Persistência de Dados
 
-This project is built with .
+- **Local Storage**: Dados persistidos localmente no navegador
+- **Zustand Persist**: Sincronização automática do estado
+- **Backup/Restore**: Funcionalidades de exportação e importação
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🔧 Configuração
+
+O projeto inclui configurações para:
+- ESLint para qualidade de código
+- TypeScript para tipagem estática
+- Tailwind CSS para estilização
+- Vite para build otimizado
 
