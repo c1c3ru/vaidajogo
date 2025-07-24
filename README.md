@@ -1,7 +1,7 @@
 ## Estrutura do Projeto
 ## Telas Principais
 
-## Login (/login)
+
 Lista de Jogadores (/players)
 Cadastro de Jogadores (/player/new)
 Sorteio de Times (/teams/draw)
