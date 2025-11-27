@@ -8,18 +8,18 @@ import { create } from 'zustand';
 import { useState, useEffect } from 'react';
 import { localStorageManager, sessionStorageManager, indexedDBManager } from './storage';
 
-export interface PersistOptions {
+export interface PersistOptions<T = any> {
   name: string;
   storage?: 'local' | 'session' | 'indexed';
-  partialize?: (state: any) => any;
-  onRehydrateStorage?: (state: any) => void;
+  partialize?: (state: T) => Partial<T>;
+  onRehydrateStorage?: (state: T) => void;
   version?: number;
-  migrate?: (persistedState: any, version: number) => any;
+  migrate?: (persistedState: unknown, version: number) => T | Promise<T>;
 }
 
 export const persist = <T extends object>(
   config: StateCreator<T>,
-  options: PersistOptions
+  options: PersistOptions<T>
 ): StateCreator<T> => {
   return (set, get, api) => {
     const {
@@ -134,9 +134,9 @@ export const persist = <T extends object>(
 
 // ===== UTILITÁRIOS PARA MIGRAÇÃO =====
 export const createMigrate = <T>(
-  migrations: Record<number, (state: any) => T>
+  migrations: Record<number, (state: unknown) => T>
 ) => {
-  return (persistedState: any, version: number): T => {
+  return (persistedState: unknown, version: number): T => {
     let state = persistedState;
 
     // Aplicar migrações em ordem
@@ -146,7 +146,7 @@ export const createMigrate = <T>(
       }
     }
 
-    return state;
+    return state as T;
   };
 };
 
@@ -170,7 +170,7 @@ export const usePersistedStore = <T extends object>(
 // ===== CONFIGURAÇÕES PRÉ-DEFINIDAS =====
 export const createPersistedStore = <T extends object>(
   config: StateCreator<T>,
-  options: PersistOptions
+  options: PersistOptions<T>
 ) => {
   return create<T>()(persist(config, options));
 };

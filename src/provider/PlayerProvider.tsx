@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { saveToLocalStorage, getFromLocalStorage } from "@/utils/localStorage";
-import { Player } from "@/types/types";
+import { Player } from "@/types";
 
 interface PlayerContextProps {
   players: Player[];
   addPlayer: (player: Player) => void;
-  updatePlayer: (id: number, updatedPlayer: Partial<Player>) => void;
-  removePlayer: (id: number) => void;
+  updatePlayer: (id: string, updatedPlayer: Partial<Player>) => void;
+  removePlayer: (id: string) => void;
 }
 
 const PlayerContext = createContext<PlayerContextProps | undefined>(undefined);
@@ -33,14 +33,14 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children }) => {
     savePlayersToStorage(updatedPlayers);
   };
 
-  const updatePlayer = (id: number, updatedPlayer: Partial<Player>) => {
+  const updatePlayer = (id: string, updatedPlayer: Partial<Player>) => {
     const updatedPlayers = players.map((player) =>
       player.id === id ? { ...player, ...updatedPlayer } : player
     );
     savePlayersToStorage(updatedPlayers);
   };
 
-  const removePlayer = (id: number) => {
+  const removePlayer = (id: string) => {
     const updatedPlayers = players.filter((player) => player.id !== id);
     savePlayersToStorage(updatedPlayers);
   };

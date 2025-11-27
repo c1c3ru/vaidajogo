@@ -43,6 +43,24 @@ Sistema completo para gerenciamento de jogadores, times e campeonatos esportivos
 - **PDF Generation**: jsPDF
 - **Routing**: React Router DOM
 - **Testing**: Jest + Testing Library
+- **Internationalization**: i18next + react-i18next
+
+## 🌐 Internacionalização (i18n)
+
+O projeto suporta múltiplos idiomas:
+- 🇧🇷 Português (Brasil) - Padrão
+- 🇺🇸 Inglês (EUA)
+- 🇪🇸 Espanhol
+
+A detecção de idioma é automática baseada no navegador, mas pode ser alterada manualmente pelo usuário.
+
+## ♿ Acessibilidade
+
+Compromisso com a inclusão:
+- Navegação por teclado
+- Suporte a leitores de tela (ARIA)
+- Contraste de cores adequado
+- HTML semântico
 
 ## 📁 Estrutura do Projeto
 

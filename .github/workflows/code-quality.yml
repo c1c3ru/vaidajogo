@@ -1,0 +1,56 @@
+name: Code Quality Checks
+
+on:
+    push:
+        branches: [main, develop]
+    pull_request:
+        branches: [main, develop]
+    schedule:
+        # Run every day at 2 AM UTC
+        - cron: "0 2 * * *"
+
+jobs:
+    code-quality:
+        name: Code Quality Analysis
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run ESLint with report
+              run: |
+                  npm run lint -- --format json --output-file eslint-report.json || true
+                  npm run lint
+              continue-on-error: true
+
+            - name: Check for console.log statements
+              run: |
+                  echo "Checking for console.log statements..."
+                  ! grep -r "console\.log" src/ --include="*.ts" --include="*.tsx" || echo "⚠️ Warning: console.log statements found"
+              continue-on-error: true
+
+            - name: Check for TODO comments
+              run: |
+                  echo "Checking for TODO comments..."
+                  grep -r "TODO\|FIXME\|XXX" src/ --include="*.ts" --include="*.tsx" || echo "✅ No TODO comments found"
+              continue-on-error: true
+
+            - name: Upload ESLint report
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: eslint-report
+                  path: eslint-report.json
+                  retention-days: 30

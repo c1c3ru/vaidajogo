@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Save, 
-  Trophy, 
-  Users, 
-  Plus, 
-  Trash2, 
-  Edit, 
-  Play, 
-  Target, 
-  Award, 
-  AlertCircle, 
-  CheckCircle, 
+import {
+  Save,
+  Trophy,
+  Users,
+  Plus,
+  Trash2,
+  Edit,
+  Play,
+  Target,
+  Award,
+  AlertCircle,
+  CheckCircle,
   Clock,
   TrendingUp,
   BarChart3,
@@ -34,7 +34,7 @@ import { useTournamentStore } from '@/stores/useTournamentStore';
 import { BackToDashboard } from '@/components/BackToDashboard';
 import { TournamentForm } from '@/components/tournament/TournamentForm';
 import TeamList from '@/components/tournament/TeamList';
-import { Team } from '@/types/types';
+import { Team } from '@/types';
 import { TournamentType, TournamentFormat } from '@/utils/enums';
 import { ManualMatchModal } from '@/components/tournament/ManualMatchModal';
 import { calculateGroupStandings } from '@/utils/tournament';
@@ -45,9 +45,9 @@ const Championship = () => {
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const { toast } = useToast();
-  
-  const {  
-    addTeam,  
+
+  const {
+    addTeam,
     editTeam,
     removeTeam,
     generateMatches,
@@ -99,12 +99,12 @@ const Championship = () => {
         className: "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-blue-600 shadow-lg",
       });
     } else {
-      const newTeam: Team = { 
-        id: Date.now().toString(), 
-        name: teamName.trim(), 
+      const newTeam: Team = {
+        id: Date.now().toString(),
+        name: teamName.trim(),
         responsible: responsible.trim()
       };
-      
+
       addTeam(newTeam);
       toast({
         title: "✅ Time Adicionado",
@@ -112,7 +112,7 @@ const Championship = () => {
         className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
       });
     }
-    
+
     setTeamName("");
     setResponsible("");
   };
@@ -195,7 +195,7 @@ const Championship = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
       <BackToDashboard />
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -209,7 +209,7 @@ const Championship = () => {
         >
           <div className="flex items-center justify-center gap-6 mb-4">
             <div className="w-16 h-16 flex items-center justify-center">
-              <LottieAnimation 
+              <LottieAnimation
                 type="campeonato"
                 width={64}
                 height={64}
@@ -328,7 +328,7 @@ const Championship = () => {
         {/* Grid Principal */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Coluna 1: Gerenciamento de Times */}
-          <motion.div 
+          <motion.div
             className="space-y-6"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -365,8 +365,8 @@ const Championship = () => {
                 </div>
                 <div className="flex gap-2">
                   <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.02 }} className="flex-1">
-                    <Button 
-                      onClick={handleAddTeam} 
+                    <Button
+                      onClick={handleAddTeam}
                       className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                       disabled={!teamName.trim() || !responsible.trim()}
                     >
@@ -376,8 +376,8 @@ const Championship = () => {
                   </motion.div>
                   {editingTeam && (
                     <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.02 }}>
-                      <Button 
-                        onClick={handleCancelEdit} 
+                      <Button
+                        onClick={handleCancelEdit}
                         variant="outline"
                         className="border-orange-200 text-orange-600 hover:bg-orange-50"
                       >
@@ -400,7 +400,7 @@ const Championship = () => {
               <CardContent className="p-6">
                 <AnimatePresence>
                   <motion.div layout>
-                    <TeamList 
+                    <TeamList
                       teams={teams}
                       onEdit={handleEditTeam}
                       onRemove={handleRemoveTeam}
@@ -412,7 +412,7 @@ const Championship = () => {
           </motion.div>
 
           {/* Coluna 2: Geração de Confrontos e Estatísticas */}
-          <motion.div 
+          <motion.div
             className="space-y-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -447,12 +447,12 @@ const Championship = () => {
                     </Badge>
                   </div>
                 </div>
-                
+
                 <Separator />
-                
+
                 <motion.div whileTap={{ scale: 0.97 }} whileHover={{ scale: 1.02 }}>
-                  <Button 
-                    onClick={handleGenerateMatches} 
+                  <Button
+                    onClick={handleGenerateMatches}
                     className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700"
                     disabled={teams.length < 2}
                   >
@@ -460,7 +460,7 @@ const Championship = () => {
                     Gerar Confrontos
                   </Button>
                 </motion.div>
-                
+
                 {teams.length < 2 && (
                   <p className="text-sm text-orange-600 text-center flex items-center justify-center gap-1">
                     <AlertCircle className="h-4 w-4" />
@@ -511,7 +511,7 @@ const Championship = () => {
           </motion.div>
 
           {/* Coluna 3: Próximos Passos */}
-          <motion.div 
+          <motion.div
             className="space-y-6"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -585,8 +585,8 @@ const Championship = () => {
                     </thead>
                     <tbody>
                       {matches.map((match, idx) => (
-                        <motion.tr 
-                          key={match.id} 
+                        <motion.tr
+                          key={match.id}
                           className="border-b hover:bg-gray-50"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -627,9 +627,9 @@ const Championship = () => {
                             )}
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <Button 
-                              size="sm" 
-                              variant="destructive" 
+                            <Button
+                              size="sm"
+                              variant="destructive"
                               onClick={() => removeManualMatch(match.id)}
                               className="h-8"
                             >
@@ -773,8 +773,8 @@ const Championship = () => {
                   <div className="text-sm text-gray-600 mb-4">
                     Visualize a estrutura e progresso do torneio
                   </div>
-                  <TournamentBracket 
-                    groups={groups} 
+                  <TournamentBracket
+                    groups={groups}
                     knockoutMatches={knockoutMatches}
                   />
                 </div>

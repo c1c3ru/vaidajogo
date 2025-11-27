@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { BackToDashboard } from "./BackToDashboard";
 import { DynamicTitle } from "./DynamicTitle";
 import { usePlayerStore } from "@/stores/usePlayerStore";
-import { Player, Rating } from "@/types/types";
+import { Player, Rating } from "@/types";
+import { SportEnum } from "@/utils/enums";
 
 const PresenceList = () => {
   const { players, addPlayer, updatePlayer } = usePlayerStore();
@@ -23,14 +24,14 @@ const PresenceList = () => {
   // Filtrar jogadores
   const filteredPlayers = players.filter(player => {
     const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         player.nickname.toLowerCase().includes(searchTerm.toLowerCase());
-    
+      player.nickname.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesFilter = filterStatus === 'all' ||
-                         (filterStatus === 'present' && player.present) ||
-                         (filterStatus === 'absent' && !player.present) ||
-                         (filterStatus === 'paid' && player.paid) ||
-                         (filterStatus === 'unpaid' && !player.paid);
-    
+      (filterStatus === 'present' && player.present) ||
+      (filterStatus === 'absent' && !player.present) ||
+      (filterStatus === 'paid' && player.paid) ||
+      (filterStatus === 'unpaid' && !player.paid);
+
     return matchesSearch && matchesFilter;
   });
 
@@ -72,12 +73,12 @@ const PresenceList = () => {
     }
 
     const newPlayer: Player = {
-      id: Date.now(),
+      id: Date.now().toString(),
       name: newPlayerName,
       nickname: "",
       birthDate: "",
       isGuest: false,
-      sport: "",
+      sport: SportEnum.SOCCER,
       selectedPositions: [],
       rating: 0 as Rating,
       includeInDraw: false,
@@ -99,7 +100,7 @@ const PresenceList = () => {
     });
   };
 
-  const togglePresence = (id: number) => {
+  const togglePresence = (id: string) => {
     const player = players.find((player) => player.id === id);
     if (player) {
       const newStatus = !player.present;
@@ -108,7 +109,7 @@ const PresenceList = () => {
       toast({
         title: newStatus ? "✅ Presente" : "❌ Ausente",
         description: `${player.name} está agora ${newStatus ? 'presente' : 'ausente'}.`,
-        className: newStatus 
+        className: newStatus
           ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
           : "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-gray-600 shadow-lg",
         duration: 2000,
@@ -116,7 +117,7 @@ const PresenceList = () => {
     }
   };
 
-  const togglePayment = (id: number) => {
+  const togglePayment = (id: string) => {
     const player = players.find((player) => player.id === id);
     if (player) {
       const newStatus = !player.paid;
@@ -125,7 +126,7 @@ const PresenceList = () => {
       toast({
         title: newStatus ? "💰 Pago" : "💸 Pendente",
         description: `Pagamento de ${player.name} marcado como ${newStatus ? 'pago' : 'pendente'}.`,
-        className: newStatus 
+        className: newStatus
           ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
           : "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
         duration: 2000,
@@ -136,13 +137,13 @@ const PresenceList = () => {
   const handleBulkAction = (action: 'present' | 'absent' | 'paid' | 'unpaid') => {
     const actionPlayers = filteredPlayers.map(player => {
       const updates: Partial<Player> = {};
-      
+
       if (action === 'present' || action === 'absent') {
         updates.present = action === 'present';
       } else if (action === 'paid' || action === 'unpaid') {
         updates.paid = action === 'paid';
       }
-      
+
       return { id: player.id, updates };
     });
 
@@ -167,7 +168,7 @@ const PresenceList = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <BackToDashboard />
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -191,7 +192,7 @@ const PresenceList = () => {
               <p className="text-sm text-gray-600">Total</p>
             </CardContent>
           </Card>
-          
+
           <Card className="border-2 border-green-200">
             <CardContent className="p-4 text-center">
               <Check className="h-8 w-8 text-green-600 mx-auto mb-2" />
@@ -199,7 +200,7 @@ const PresenceList = () => {
               <p className="text-sm text-gray-600">Presentes</p>
             </CardContent>
           </Card>
-          
+
           <Card className="border-2 border-red-200">
             <CardContent className="p-4 text-center">
               <X className="h-8 w-8 text-red-600 mx-auto mb-2" />
@@ -207,7 +208,7 @@ const PresenceList = () => {
               <p className="text-sm text-gray-600">Ausentes</p>
             </CardContent>
           </Card>
-          
+
           <Card className="border-2 border-emerald-200">
             <CardContent className="p-4 text-center">
               <DollarSign className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
@@ -215,7 +216,7 @@ const PresenceList = () => {
               <p className="text-sm text-gray-600">Pagos</p>
             </CardContent>
           </Card>
-          
+
           <Card className="border-2 border-orange-200">
             <CardContent className="p-4 text-center">
               <DollarSign className="h-8 w-8 text-orange-600 mx-auto mb-2" />
@@ -272,7 +273,7 @@ const PresenceList = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button
                   variant={filterStatus === 'all' ? 'default' : 'outline'}
@@ -384,12 +385,10 @@ const PresenceList = () => {
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        player.present ? 'bg-green-100' : 'bg-red-100'
-                      }`}>
-                        <UserCheck className={`h-4 w-4 ${
-                          player.present ? 'text-green-600' : 'text-red-600'
-                        }`} />
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${player.present ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                        <UserCheck className={`h-4 w-4 ${player.present ? 'text-green-600' : 'text-red-600'
+                          }`} />
                       </div>
                       <div>
                         <p className="font-semibold text-gray-800">{player.name}</p>
@@ -402,9 +401,8 @@ const PresenceList = () => {
                     <div className="flex items-center gap-4">
                       {/* Status de Pagamento */}
                       <div className="flex items-center gap-2">
-                        <DollarSign className={`h-4 w-4 ${
-                          player.paid ? 'text-emerald-600' : 'text-orange-600'
-                        }`} />
+                        <DollarSign className={`h-4 w-4 ${player.paid ? 'text-emerald-600' : 'text-orange-600'
+                          }`} />
                         <Badge variant={player.paid ? 'default' : 'secondary'}>
                           {player.paid ? 'Pago' : 'Pendente'}
                         </Badge>
@@ -432,11 +430,10 @@ const PresenceList = () => {
                             onClick={() => togglePayment(player.id)}
                             size="sm"
                             variant="outline"
-                            className={`${
-                              player.paid 
-                                ? 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'
-                                : 'border-orange-200 text-orange-600 hover:bg-orange-50'
-                            }`}
+                            className={`${player.paid
+                              ? 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'
+                              : 'border-orange-200 text-orange-600 hover:bg-orange-50'
+                              }`}
                           >
                             <DollarSign className="h-4 w-4" />
                           </Button>
@@ -445,11 +442,10 @@ const PresenceList = () => {
                             onClick={() => togglePresence(player.id)}
                             size="sm"
                             variant="outline"
-                            className={`${
-                              player.present
-                                ? 'border-green-200 text-green-600 hover:bg-green-50'
-                                : 'border-red-200 text-red-600 hover:bg-red-50'
-                            }`}
+                            className={`${player.present
+                              ? 'border-green-200 text-green-600 hover:bg-green-50'
+                              : 'border-red-200 text-red-600 hover:bg-red-50'
+                              }`}
                           >
                             {player.present ? (
                               <Check className="h-4 w-4" />

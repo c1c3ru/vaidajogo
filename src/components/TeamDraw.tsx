@@ -12,7 +12,7 @@ import clsx from "clsx";
 import { springConfig } from '@/utils/animations';
 import { BackToDashboard } from './BackToDashboard';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Player } from "@/types/types";
+import { Player } from "@/types";
 import { TEXTS } from "@/constants";
 import { Label } from "./ui/label";
 
@@ -35,7 +35,7 @@ const TeamDraw = () => {
     presentPlayers.forEach(player => {
       // Se um jogador presente não está marcado para inclusão no sorteio, atualiza para true
       if (player.includeInDraw === false) { // Verifica explicitamente 'false'
-        updatePlayer(player.id, { includeInDraw: true });
+        updatePlayer(Number(player.id), { includeInDraw: true });
       }
     });
   }, [players, updatePlayer]); // Dependências: jogadores e função de atualização
@@ -60,7 +60,7 @@ const TeamDraw = () => {
 
       if (availableFieldPlayers.length < playersPerTeam) {
         toast({
-          title: TEXTS.ERROR.INSUFFICIENT_PLAYERS,
+          title: TEXTS.TEAM_DRAW.MESSAGES.INSUFFICIENT_PLAYERS,
           description: `Você precisa de pelo menos ${playersPerTeam} jogadores de linha presentes para gerar times.`,
           variant: "destructive",
         });
@@ -68,7 +68,7 @@ const TeamDraw = () => {
       }
       if (playersPerTeam <= 0) {
         toast({
-          title: TEXTS.ERROR.INVALID_CONFIGURATION,
+          title: TEXTS.TEAM_DRAW.MESSAGES.INVALID_CONFIGURATION,
           description: "O número de jogadores por time deve ser maior que zero.",
           variant: "destructive",
         });
@@ -80,7 +80,7 @@ const TeamDraw = () => {
 
       if (!result.success) {
         toast({
-          title: TEXTS.ERROR.TEAM_GENERATION_FAILED,
+          title: TEXTS.TEAM_DRAW.MESSAGES.TEAM_GENERATION_FAILED,
           description: result.error || "Ocorreu um erro ao gerar os times. Verifique o número de jogadores e a configuração.",
           variant: "destructive",
         });
@@ -88,14 +88,14 @@ const TeamDraw = () => {
       }
 
       toast({
-        title: TEXTS.SUCCESS.TEAMS_GENERATED,
+        title: TEXTS.TEAM_DRAW.MESSAGES.TEAMS_GENERATED,
         description: "Os times foram sorteados com sucesso!",
         className: "bg-green-500 text-white",
       });
     } catch (error) {
       console.error("Erro ao gerar times:", error);
       toast({
-        title: TEXTS.ERROR.TEAM_GENERATION_FAILED,
+        title: TEXTS.TEAM_DRAW.MESSAGES.TEAM_GENERATION_FAILED,
         description: "Ocorreu um erro inesperado ao sortear os times.",
         variant: "destructive",
       });
@@ -194,7 +194,7 @@ const TeamDraw = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-sm font-medium text-gray-700">Método de Balanceamento</Label>
-                <Select value="intelligent" onValueChange={() => {}}>
+                <Select value="intelligent" onValueChange={() => { }}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione o método" />
                   </SelectTrigger>
@@ -207,7 +207,7 @@ const TeamDraw = () => {
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-700">Tolerância de Balanceamento</Label>
-                <Select value="medium" onValueChange={() => {}}>
+                <Select value="medium" onValueChange={() => { }}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione a tolerância" />
                   </SelectTrigger>

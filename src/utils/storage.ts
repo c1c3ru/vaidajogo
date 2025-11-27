@@ -9,7 +9,7 @@ export interface StorageConfig {
   ttl?: number; // Time to live em milissegundos
 }
 
-export interface StorageItem<T = any> {
+export interface StorageItem<T = unknown> {
   data: T;
   timestamp: number;
   version: string;
@@ -49,7 +49,7 @@ export class LocalStorageManager {
       if (!item) return null;
 
       const parsedItem: StorageItem<T> = JSON.parse(item);
-      
+
       // Verificar TTL
       if (this.config.ttl && Date.now() - parsedItem.timestamp > this.config.ttl) {
         this.remove(key);
@@ -112,7 +112,7 @@ export class SessionStorageManager {
       if (!item) return null;
 
       const parsedItem: StorageItem<T> = JSON.parse(item);
-      
+
       // Verificar TTL
       if (this.config.ttl && Date.now() - parsedItem.timestamp > this.config.ttl) {
         this.remove(key);
@@ -258,7 +258,7 @@ export const indexedDBManager = new IndexedDBManager();
 
 // ===== UTILITÁRIOS DE MIGRAÇÃO =====
 export const migrateStorage = async (fromKey: string, toKey: string, storageType: 'local' | 'session' | 'indexed' = 'local') => {
-  let data: any = null;
+  let data: unknown = null;
 
   // Ler dados da origem
   switch (storageType) {

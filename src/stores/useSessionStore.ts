@@ -1,15 +1,16 @@
 import { create } from 'zustand';
 import { persist } from '@/utils/zustand-persist';
+import { Player, User } from '@/types';
 
 interface SessionState {
-  currentUser: any | null;
+  currentUser: User | null;
   sessionId: string | null;
   lastActivity: number | null;
-  temporaryData: Record<string, any>;
-  setCurrentUser: (user: any) => void;
+  temporaryData: Record<string, unknown>;
+  setCurrentUser: (user: User | null) => void;
   setSessionId: (id: string) => void;
   updateLastActivity: () => void;
-  setTemporaryData: (key: string, data: any) => void;
+  setTemporaryData: (key: string, data: unknown) => void;
   clearTemporaryData: (key: string) => void;
   clearSession: () => void;
 }
@@ -21,26 +22,26 @@ export const useSessionStore = create<SessionState>()(
       sessionId: null,
       lastActivity: null,
       temporaryData: {},
-      
+
       setCurrentUser: (user) => set({ currentUser: user }),
-      
+
       setSessionId: (id) => set({ sessionId: id }),
-      
+
       updateLastActivity: () => set({ lastActivity: Date.now() }),
-      
+
       setTemporaryData: (key, data) => set((state) => ({
         temporaryData: {
           ...state.temporaryData,
           [key]: data,
         },
       })),
-      
+
       clearTemporaryData: (key) => set((state) => {
         const newTemporaryData = { ...state.temporaryData };
         delete newTemporaryData[key];
         return { temporaryData: newTemporaryData };
       }),
-      
+
       clearSession: () => set({
         currentUser: null,
         sessionId: null,

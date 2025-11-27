@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { Player, Rating } from '@/types/types';
+import { Player, Rating } from '@/types';
+import { SportEnum } from '@/utils/enums';
 
 interface PlayerFormState {
   newPlayer: Omit<Player, 'id' | 'createdAt'>;
@@ -20,7 +21,7 @@ export const usePlayerFormStore = create<PlayerFormState>((set) => ({
     nickname: "",
     birthDate: "",
     isGuest: false,
-    sport: "futebol",
+    sport: SportEnum.SOCCER,
     selectedPositions: [],
     rating: 0 as Rating,
     includeInDraw: false,
@@ -47,7 +48,7 @@ export const usePlayerFormStore = create<PlayerFormState>((set) => ({
       nickname: "",
       birthDate: "",
       isGuest: false,
-      sport: "futebol",
+      sport: SportEnum.SOCCER,
       selectedPositions: [],
       rating: 0 as Rating,
       includeInDraw: false,

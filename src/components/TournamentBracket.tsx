@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Match, Group, KnockoutMatches } from '@/types/types';
+import { Match, Group, KnockoutMatches } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Users, Target } from 'lucide-react';
@@ -105,7 +105,7 @@ const FinalAndThirdPlace = ({ final, thirdPlace }: { final: Match; thirdPlace: M
 export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracketProps) => {
   const hasGroups = groups && groups.length > 0;
   const hasKnockout = knockoutMatches && Object.keys(knockoutMatches).length > 0;
-  
+
   return (
     <motion.div
       className="w-full space-y-6"
@@ -119,7 +119,7 @@ export const TournamentBracket = ({ groups, knockoutMatches }: TournamentBracket
             <Users className="h-5 w-5 text-blue-600" />
             Fase de Grupos
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {groups.map((group, index) => (
               <motion.div

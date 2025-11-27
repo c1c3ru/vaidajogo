@@ -27,7 +27,7 @@ export const TEXTS = {
   PLAYER_FORM: {
     TITLE: 'Cadastro de Jogador',
     SUBTITLE: 'Preencha os dados do jogador',
-    
+
     // Campos
     NAME: {
       LABEL: 'Nome Completo',
@@ -35,47 +35,47 @@ export const TEXTS = {
       ERROR_REQUIRED: 'Nome é obrigatório',
       ERROR_MIN_LENGTH: 'Nome deve ter pelo menos 3 caracteres',
     },
-    
+
     NICKNAME: {
       LABEL: 'Apelido (Opcional)',
       PLACEHOLDER: 'Digite o apelido',
     },
-    
+
     BIRTH_DATE: {
       LABEL: 'Data de Nascimento',
       PLACEHOLDER: 'Selecione a data',
     },
-    
+
     SPORT: {
       LABEL: 'Esporte',
       PLACEHOLDER: 'Selecione o esporte',
       ERROR_REQUIRED: 'Esporte é obrigatório',
       LOCKED_MESSAGE: 'Esporte bloqueado após primeiro cadastro. Use "Limpar" para alterar.',
     },
-    
+
     POSITIONS: {
       LABEL: 'Posições',
       PLACEHOLDER: 'Selecione as posições',
       ERROR_REQUIRED: 'Pelo menos uma posição deve ser selecionada',
     },
-    
+
     RATING: {
       LABEL: 'Avaliação',
       PLACEHOLDER: 'Selecione a avaliação',
       ERROR_REQUIRED: 'Avaliação é obrigatória',
       LOCKED_MESSAGE: 'Sistema de avaliação bloqueado após primeiro cadastro. Use "Limpar" para alterar.',
     },
-    
+
     IS_GUEST: {
       LABEL: 'Jogador Convidado',
       DESCRIPTION: 'Marque se é um jogador convidado',
     },
-    
+
     INCLUDE_IN_DRAW: {
       LABEL: 'Incluir no Sorteio',
       DESCRIPTION: 'Marque para incluir no sorteio de times',
     },
-    
+
     // Botões
     BUTTONS: {
       SAVE: 'Salvar Jogador',
@@ -84,7 +84,7 @@ export const TEXTS = {
       CANCEL: 'Cancelar',
       BACK: 'Voltar ao Dashboard',
     },
-    
+
     // Mensagens
     MESSAGES: {
       SUCCESS_SAVE: 'Jogador salvo com sucesso!',
@@ -219,7 +219,7 @@ export const TEXTS = {
   PRESENCE: {
     TITLE: 'Controle de Presença',
     SUBTITLE: 'Gerencie a presença e pagamento dos jogadores',
-    
+
     // Estatísticas
     STATS: {
       TOTAL: 'Total',
@@ -228,7 +228,7 @@ export const TEXTS = {
       PAID: 'Pagos',
       UNPAID: 'Pendentes',
     },
-    
+
     // Filtros
     FILTERS: {
       ALL: 'Todos',
@@ -238,7 +238,7 @@ export const TEXTS = {
       UNPAID: 'Pendentes',
       SEARCH_PLACEHOLDER: 'Buscar jogadores...',
     },
-    
+
     // Ações em lote
     BULK_ACTIONS: {
       MARK_ALL_PRESENT: 'Marcar Todos Presentes',
@@ -246,7 +246,7 @@ export const TEXTS = {
       MARK_ALL_PAID: 'Marcar Todos Pagos',
       MARK_ALL_UNPAID: 'Marcar Todos Pendentes',
     },
-    
+
     // Status
     STATUS: {
       PRESENT: 'Presente',
@@ -254,7 +254,7 @@ export const TEXTS = {
       PAID: 'Pago',
       UNPAID: 'Pendente',
     },
-    
+
     // Mensagens
     MESSAGES: {
       PLAYER_ADDED: 'Jogador adicionado com sucesso!',
@@ -269,14 +269,14 @@ export const TEXTS = {
   CHAMPIONSHIP: {
     TITLE: 'Campeonato',
     SUBTITLE: 'Gerencie times e gere confrontos para o campeonato',
-    
+
     // Configuração
     CONFIG: {
       TITLE: 'Configuração do Torneio',
       TOURNAMENT_NAME: 'Nome do Torneio',
       TOURNAMENT_TYPE: 'Tipo de Torneio',
     },
-    
+
     // Times
     TEAMS: {
       TITLE: 'Times',
@@ -291,7 +291,7 @@ export const TEXTS = {
       CANCEL_BUTTON: 'Cancelar',
       REMOVE_CONFIRM: 'Tem certeza que deseja remover este time?',
     },
-    
+
     // Confrontos
     MATCHES: {
       TITLE: 'Geração de Confrontos',
@@ -299,13 +299,13 @@ export const TEXTS = {
       INSUFFICIENT_TEAMS: 'Adicione pelo menos 2 times para gerar confrontos',
       SUCCESS_GENERATED: 'Confrontos gerados com sucesso!',
     },
-    
+
     // Estatísticas
     STATS: {
       TEAMS: 'Times',
       MATCHES: 'Partidas',
     },
-    
+
     // Mensagens
     MESSAGES: {
       TEAM_ADDED: 'Time adicionado ao campeonato!',
@@ -319,7 +319,7 @@ export const TEXTS = {
   TEAM_DRAW: {
     TITLE: 'Sorteio de Times',
     SUBTITLE: 'Organize os jogadores em times equilibrados',
-    
+
     // Configurações
     SETTINGS: {
       PLAYERS_PER_TEAM: 'Jogadores por Time',
@@ -331,19 +331,21 @@ export const TEXTS = {
         CITIES: 'Cidades',
       },
     },
-    
+
     // Ações
     ACTIONS: {
       GENERATE_TEAMS: 'Gerar Times',
       CLEAR_TEAMS: 'Limpar Times',
       SHUFFLE_TEAMS: 'Embaralhar Times',
     },
-    
+
     // Mensagens
     MESSAGES: {
       TEAMS_GENERATED: 'Times gerados com sucesso!',
       INSUFFICIENT_PLAYERS: 'Adicione mais jogadores para gerar times',
       TEAMS_CLEARED: 'Times limpos com sucesso!',
+      INVALID_CONFIGURATION: 'Configuração inválida',
+      TEAM_GENERATION_FAILED: 'Falha ao gerar times',
     },
   },
 
@@ -351,7 +353,7 @@ export const TEXTS = {
   STATISTICS: {
     TITLE: 'Estatísticas',
     SUBTITLE: 'Acompanhe as estatísticas dos jogadores',
-    
+
     // Seções
     SECTIONS: {
       ATTENDANCE: 'Presença',
@@ -359,7 +361,7 @@ export const TEXTS = {
       POSITIONS: 'Posições',
       PAYMENTS: 'Pagamentos',
     },
-    
+
     // Gráficos
     CHARTS: {
       ATTENDANCE_RATE: 'Taxa de Presença',
@@ -391,7 +393,7 @@ export const TEXTS = {
       EXPORT: 'Exportar',
       IMPORT: 'Importar',
     },
-    
+
     // Estados
     STATES: {
       LOADING: 'Carregando...',
@@ -405,7 +407,7 @@ export const TEXTS = {
       WARNING: 'Aviso',
       INFO: 'Informação',
     },
-    
+
     // Validações
     VALIDATION: {
       REQUIRED: 'Campo obrigatório',
@@ -414,7 +416,7 @@ export const TEXTS = {
       MAX_LENGTH: 'Máximo de {max} caracteres',
       INVALID_FORMAT: 'Formato inválido',
     },
-    
+
     // Mensagens de erro
     ERRORS: {
       GENERAL: 'Ocorreu um erro inesperado',
@@ -424,7 +426,7 @@ export const TEXTS = {
       UNAUTHORIZED: 'Acesso não autorizado',
       FORBIDDEN: 'Acesso negado',
     },
-    
+
     // Mensagens de sucesso
     SUCCESS: {
       SAVED: 'Dados salvos com sucesso!',

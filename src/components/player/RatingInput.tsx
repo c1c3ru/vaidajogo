@@ -83,16 +83,14 @@ const RatingInput: React.FC<RatingInputProps> = ({
           onClick={() => onChange(i)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className={`p-1 transition-all duration-200 ${
-            isFilled 
-              ? 'text-yellow-500' 
+          className={`p-1 transition-all duration-200 ${isFilled
+              ? 'text-yellow-500'
               : 'text-gray-300 hover:text-yellow-300'
-          }`}
-        >
-          <IconComponent 
-            className={`h-8 w-8 ${
-              isHalf ? 'text-yellow-400' : ''
             }`}
+        >
+          <IconComponent
+            className={`h-8 w-8 ${isHalf ? 'text-yellow-400' : ''
+              }`}
             fill={isFilled ? 'currentColor' : 'none'}
           />
         </motion.button>
@@ -108,56 +106,49 @@ const RatingInput: React.FC<RatingInputProps> = ({
     const currentRating = value || 0;
 
     for (let i = 1; i <= maxStars; i++) {
-      const isFilled = i <= currentRating;
-      const isHalf = i === Math.ceil(currentRating) && currentRating % 1 !== 0;
+      const isFull = currentRating >= i;
+      const isHalf = currentRating === i - 0.5;
 
       stars.push(
-        <motion.button
-          key={i}
-          type="button"
-          onClick={() => onChange(i)}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className={`p-1 transition-all duration-200 ${
-            isFilled 
-              ? 'text-yellow-500' 
-              : 'text-gray-300 hover:text-yellow-300'
-          }`}
-        >
-          <IconComponent 
-            className={`h-8 w-8 ${
-              isHalf ? 'text-yellow-400' : ''
-            }`}
-            fill={isFilled ? 'currentColor' : 'none'}
-          />
-        </motion.button>
-      );
-
-      // Adicionar meia estrela se não for a última
-      if (i < maxStars) {
-        const halfValue = i + 0.5;
-        const isHalfFilled = halfValue <= currentRating;
-
-        stars.push(
-          <motion.button
-            key={`${i}-half`}
-            type="button"
-            onClick={() => onChange(halfValue)}
+        <div key={i} className="relative inline-block">
+          <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className={`p-1 transition-all duration-200 ${
-              isHalfFilled 
-                ? 'text-yellow-500' 
-                : 'text-gray-300 hover:text-yellow-300'
-            }`}
+            className="relative p-1"
           >
-            <IconComponent 
-              className="h-8 w-8"
-              fill={isHalfFilled ? 'currentColor' : 'none'}
+            {/* Base Star (Empty or Full) */}
+            <Star
+              className={`h-8 w-8 transition-colors duration-200 ${isFull ? 'text-yellow-500' : 'text-gray-300'
+                }`}
+              fill={isFull ? 'currentColor' : 'none'}
             />
-          </motion.button>
-        );
-      }
+
+            {/* Half Star Overlay (Clipped) */}
+            {isHalf && (
+              <div className="absolute top-1 left-1 w-4 h-8 overflow-hidden pointer-events-none">
+                <Star
+                  className="h-8 w-8 text-yellow-500"
+                  fill="currentColor"
+                />
+              </div>
+            )}
+
+            {/* Click Targets (Left Half / Right Half) */}
+            <button
+              type="button"
+              onClick={() => onChange(i - 0.5)}
+              className="absolute top-0 left-0 w-1/2 h-full z-10 opacity-0 cursor-pointer"
+              title={`${i - 0.5}`}
+            />
+            <button
+              type="button"
+              onClick={() => onChange(i)}
+              className="absolute top-0 right-0 w-1/2 h-full z-10 opacity-0 cursor-pointer"
+              title={`${i}`}
+            />
+          </motion.div>
+        </div>
+      );
     }
 
     return stars;
@@ -177,11 +168,10 @@ const RatingInput: React.FC<RatingInputProps> = ({
           onClick={() => onChange(i)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`w-12 h-12 rounded-full border-2 font-bold text-lg transition-all duration-200 ${
-            isSelected
+          className={`w-12 h-12 rounded-full border-2 font-bold text-lg transition-all duration-200 ${isSelected
               ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
               : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400 hover:text-blue-600'
-          }`}
+            }`}
         >
           {i}
         </motion.button>
@@ -204,7 +194,7 @@ const RatingInput: React.FC<RatingInputProps> = ({
             {config.name}
           </span>
         </div>
-        
+
         {value > 0 && (
           <Badge variant="default" className="bg-green-100 text-green-700">
             Avaliação: {value}/{config.max}
@@ -218,10 +208,10 @@ const RatingInput: React.FC<RatingInputProps> = ({
             <Label className="text-sm font-medium text-gray-600">
               Clique para selecionar a avaliação
             </Label>
-            
+
             <div className="flex justify-center items-center gap-2">
-              {config.type === 'halfStars' ? renderHalfStars() : 
-               config.type === 'numeric' ? renderNumeric() : renderStars()}
+              {config.type === 'halfStars' ? renderHalfStars() :
+                config.type === 'numeric' ? renderNumeric() : renderStars()}
             </div>
 
             {value > 0 && (

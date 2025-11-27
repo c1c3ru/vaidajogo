@@ -5,7 +5,7 @@
  */
 
 // Importa os enums
-import { SportEnum, PositionEnum, RatingEnum, TournamentType, MatchType, MatchStatus } from "@/utils/enums";
+import { SportEnum, PositionEnum, RatingEnum, TournamentType, TournamentFormat, MatchType, MatchStatus } from "@/utils/enums";
 
 // ===== TIPOS BÁSICOS =====
 
@@ -61,10 +61,10 @@ export interface Team {
   id: string;
   name: string;
   responsible?: string;
-  players: string[];
+  players?: string[];
   ranking?: number;
   group?: string;
-  stats: {
+  stats?: {
     wins: number;
     draws: number;
     losses: number;
@@ -83,11 +83,11 @@ export interface Match {
   team2: Team;
   score1?: number;
   score2?: number;
-  date: string;
+  date?: string;
   location?: string;
-  type: MatchType;
-  status: MatchStatus;
-  isHomeGame: boolean;
+  type?: MatchType;
+  status?: MatchStatus;
+  isHomeGame?: boolean;
   round?: "roundOf16" | "quarterFinals" | "semiFinals" | "final" | "thirdPlace";
 }
 
@@ -106,6 +106,7 @@ export interface Group {
  * Representa a classificação de um time dentro de um grupo ou liga.
  */
 export interface TeamStanding {
+  team: Team;
   teamId: string;
   points: number;
   played: number;
@@ -114,6 +115,8 @@ export interface TeamStanding {
   losses: number;
   goalsFor: number;
   goalsAgainst: number;
+  goalDifference: number;
+  fairPlay?: number;
 }
 
 /**
@@ -199,29 +202,38 @@ export interface StatisticsState {
  * Estado para a store de torneios.
  */
 export interface TournamentState {
-  tournamentName: string;
-  tournamentType: TournamentType;
+  tournament: Tournament | null;
+  name: string;
+  type: TournamentType;
+  format: TournamentFormat;
+  numGroups: number;
   teams: Team[];
   matches: Match[];
   groups: Group[];
   knockoutMatches: KnockoutMatches | null;
+  champion?: Team;
 
   // Funções de ação
+  setTournament: (tournament: Tournament | null) => void;
   setTournamentName: (name: string) => void;
   setTournamentType: (type: TournamentType) => void;
-  addTeam: (team: Team) => { success: boolean; error?: string };
-  removeTeam: (id: string) => void;
-  generateMatches: (teamsToUse: Team[]) => { success: boolean; error?: string };
-  generateGroups: (teamsToUse: Team[]) => void;
-  generateKnockoutStage: (teamsToUse: Team[]) => void;
-  scheduleMatch: (match: Match) => void;
-  updateMatchResult: (match: Match) => void;
-  setTeams: (teams: Team[]) => void;
-  setMatches: (matches: Match[]) => void;
-  setGroups: (groups: Group[]) => void;
-  setKnockoutMatches: (matches: KnockoutMatches | null) => void;
-}
+  setTournamentFormat: (format: TournamentFormat) => void;
+  setNumGroups: (num: number) => void;
 
+  addTeam: (team: Team) => void;
+  editTeam: (id: string, updatedTeam: Partial<Team>) => void;
+  removeTeam: (id: string) => void;
+
+  generateMatches: (teams: Team[], type: TournamentType) => void;
+  updateMatch: (matchId: string, score1: number, score2: number) => void;
+
+  advanceKnockoutPhase: () => void;
+  advanceFromGroups: () => void;
+
+  addManualMatch: (match: Match) => void;
+  editManualMatch: (id: string, updatedMatch: Partial<Match>) => void;
+  removeManualMatch: (id: string) => void;
+}
 /**
  * Estado para a store do Dashboard.
  */
@@ -316,4 +328,88 @@ export interface PaginatedResponse<T> {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+// ===== TIPOS ADICIONAIS =====
+
+/**
+ * Representa um registro de pontos
+ */
+export interface PointRecord {
+  date: string;
+  points: number;
+}
+
+/**
+ * Representa uma estatística de jogador
+ */
+export interface Statistic {
+  id: string;
+  playerName: string;
+  date: string;
+  attendanceCount: number;
+  lastUpdated: string;
+  pointRecords: PointRecord[];
+}
+
+/**
+ * Estado para a store de times (legado)
+ */
+export interface TeamState {
+  player: Player[];
+  goalkeepers: Player[];
+  teams: Team[];
+  playersPerTeam: number;
+  namingOption: string;
+  matchups: Match[];
+  setPlayers: (players: Player[]) => void;
+  setGoalkeepers: (goalkeepers: Player[]) => void;
+  setTeams: (teams: Team[]) => void;
+  setPlayersPerTeam: (playersPerTeam: number) => void;
+  setNamingOption: (namingOption: string) => void;
+  setMatchups: (matchups: Match[]) => void;
+  addTeam: (team: Team) => void;
+  editTeam: (index: number, team: Team) => void;
+  removeTeam: (id: string) => void;
+}
+
+/**
+ * Representa um usuário do sistema
+ */
+export interface User {
+  id: string;
+  username: string;
+  email?: string;
+  role: 'admin' | 'user' | 'guest';
+  playerId?: string; // Link opcional para um perfil de jogador
+}
+
+/**
+ * Estatísticas detalhadas de um jogador
+ */
+export interface PlayerStatistics {
+  matchesPlayed: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goalsScored: number;
+  assists?: number;
+  cleanSheets?: number; // Para goleiros
+  ratingHistory: { date: string; rating: number }[];
+}
+
+/**
+ * Dados históricos de um torneio para arquivamento
+ */
+export interface TournamentData {
+  id: string;
+  name: string;
+  date: string;
+  winnerId?: string;
+  finalStandings: { teamId: string; position: number }[];
+  stats: {
+    totalGoals: number;
+    totalMatches: number;
+    averageGoalsPerMatch: number;
+  };
 } 

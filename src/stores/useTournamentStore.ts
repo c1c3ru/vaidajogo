@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from '@/utils/zustand-persist';
 import { generateGroupsAndMatches, advanceKnockoutRound } from '@/utils/tournament';
-import { TournamentState, Team, Match } from '@/types/types';
+import { TournamentState, Team, Match } from '@/types';
 import { TournamentType } from '@/utils/enums';
 import { TournamentFormat } from '@/utils/enums';
 import { calculateGroupStandings } from '@/utils/tournament';
@@ -26,20 +26,20 @@ export const useTournamentStore = create<TournamentState>()(
 
       setTournamentType: (type: TournamentType) => set({ type }),
 
-      setTournamentFormat: (format) => set({ 
-        format, 
-        matches: [], 
-        groups: [], 
+      setTournamentFormat: (format) => set({
+        format,
+        matches: [],
+        groups: [],
         knockoutMatches: null,
-        champion: undefined 
+        champion: undefined
       }),
 
-      setNumGroups: (num) => set({ 
+      setNumGroups: (num) => set({
         numGroups: num,
-        matches: [], 
-        groups: [], 
+        matches: [],
+        groups: [],
         knockoutMatches: null,
-        champion: undefined 
+        champion: undefined
       }),
 
       addTeam: (team) =>
@@ -148,7 +148,7 @@ export const useTournamentStore = create<TournamentState>()(
           // Se só restar um vencedor, acabou (campeão)
           if (winners.length <= 1) return { matches: [], champion: winners[0] };
           // Gera nova rodada
-          let newMatches: Match[] = [];
+          const newMatches: Match[] = [];
           for (let i = 0; i < winners.length; i += 2) {
             if (winners[i + 1]) {
               if (format === TournamentFormat.KNOCKOUT_TWO_LEGS || format === TournamentFormat.TWO_LEGS) {
@@ -189,7 +189,7 @@ export const useTournamentStore = create<TournamentState>()(
           });
           // Gera confrontos de mata-mata (aleatório)
           const shuffled = [...qualified].sort(() => Math.random() - 0.5);
-          let matches: Match[] = [];
+          const matches: Match[] = [];
           for (let i = 0; i < shuffled.length; i += 2) {
             if (shuffled[i + 1]) {
               matches.push({

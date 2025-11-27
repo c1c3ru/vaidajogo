@@ -1,4 +1,4 @@
-import { Match, Team } from '@/types/types';
+import { Match, Team, TeamStanding } from '@/types';
 import { TournamentFormat, TiebreakerCriteria } from './enums';
 
 // Placar agregado para ida/volta
@@ -24,14 +24,16 @@ export function calculateAggregateScore(matches: Match[], teamA: Team, teamB: Te
 }
 
 // Classificação de grupos (pontos corridos)
-export function calculateGroupStandings(matches: Match[], teams: Team[]) {
+export function calculateGroupStandings(matches: Match[], teams: Team[]): TeamStanding[] {
   if (!teams || !Array.isArray(teams) || teams.length === 0) {
     return [];
   }
-  
-  const standings = teams.map(team => ({
+
+  const standings: TeamStanding[] = teams.map(team => ({
     team,
+    teamId: team.id,
     points: 0,
+    played: 0,
     wins: 0,
     draws: 0,
     losses: 0,
@@ -49,6 +51,8 @@ export function calculateGroupStandings(matches: Match[], teams: Team[]) {
     const t1 = standings.find(s => s.team.id === match.team1.id);
     const t2 = standings.find(s => s.team.id === match.team2.id);
     if (t1 && t2 && match.score1 !== undefined && match.score2 !== undefined) {
+      t1.played++;
+      t2.played++;
       t1.goalsFor += match.score1;
       t1.goalsAgainst += match.score2;
       t2.goalsFor += match.score2;
@@ -85,7 +89,7 @@ export function calculateGroupStandings(matches: Match[], teams: Team[]) {
 }
 
 // Desempate (pode ser expandido)
-export function resolveTiebreakers(standings: any[], criteria: TiebreakerCriteria[]) {
+export function resolveTiebreakers(standings: TeamStanding[], criteria: TiebreakerCriteria[]) {
   // Implementar lógica de desempate conforme critérios
   // Exemplo: saldo, gols, confronto direto, fair play, sorteio
   // Por enquanto, retorna standings já ordenados

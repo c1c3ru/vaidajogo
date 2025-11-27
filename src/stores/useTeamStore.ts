@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Team, TeamState} from '@/types/types';
+import { Team, TeamState } from '@/types';
 
 
 

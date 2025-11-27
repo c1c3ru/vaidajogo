@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { SportEnum, PositionEnum } from '@/utils/enums';
 import { useToast } from '@/hooks/use-toast';
 import { usePlayerStore } from '@/stores/usePlayerStore';
 import { TEXTS } from '@/constants/texts';
-import { Player } from '@/types/types';
+import { Player } from '@/types';
 import { CalendarIcon, User, Users, Star, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -44,7 +45,7 @@ const PlayerForm = () => {
     nickname: '',
     birthDate: '',
     isGuest: false,
-    selectedPositions: [] as string[],
+    selectedPositions: [] as PositionEnum[],
     rating: 0,
     includeInDraw: true,
   });
@@ -109,14 +110,14 @@ const PlayerForm = () => {
     }
 
     const newPlayer: Player = {
-      id: Date.now(),
+      id: Date.now().toString(),
       name: formData.name.trim(),
       nickname: formData.nickname.trim(),
       birthDate: date ? format(date, 'dd/MM/yyyy') : '',
       isGuest: formData.isGuest,
-      sport: currentSport!,
+      sport: currentSport as SportEnum,
       selectedPositions: formData.selectedPositions,
-      rating: formData.rating as any,
+      rating: formData.rating,
       includeInDraw: formData.includeInDraw,
       createdAt: new Date().toISOString(),
       selected: false,
@@ -154,9 +155,9 @@ const PlayerForm = () => {
   };
 
   // Atualizar campo
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Limpar erro do campo
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -181,7 +182,7 @@ const PlayerForm = () => {
               {TEXTS.PLAYER_FORM.SUBTITLE}
             </p>
           </CardHeader>
-          
+
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Seletor de Esporte e Avaliação */}
@@ -209,8 +210,8 @@ const PlayerForm = () => {
                         placeholder={TEXTS.PLAYER_FORM.NAME.PLACEHOLDER}
                         className={cn(
                           "border-2 transition-all duration-200",
-                          errors.name 
-                            ? "border-red-300 focus:border-red-500 bg-red-50" 
+                          errors.name
+                            ? "border-red-300 focus:border-red-500 bg-red-50"
                             : "border-gray-300 focus:border-purple-500 focus:bg-purple-50"
                         )}
                       />
@@ -253,8 +254,8 @@ const PlayerForm = () => {
                           className={cn(
                             "w-full justify-start text-left font-normal border-2 transition-all duration-200",
                             !date && "text-muted-foreground",
-                            date 
-                              ? "border-purple-300 focus:border-purple-500 focus:bg-purple-50" 
+                            date
+                              ? "border-purple-300 focus:border-purple-500 focus:bg-purple-50"
                               : "border-gray-300 focus:border-purple-500 focus:bg-purple-50"
                           )}
                         >
@@ -365,7 +366,7 @@ const PlayerForm = () => {
                 >
                   {TEXTS.PLAYER_FORM.BUTTONS.SAVE}
                 </Button>
-                
+
                 <Button
                   type="button"
                   onClick={handleClearForm}

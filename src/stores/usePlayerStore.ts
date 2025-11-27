@@ -1,19 +1,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Player } from '@/types/types';
+import { Player } from '@/types';
 
 interface PlayerState {
   // Jogadores
   players: Player[];
   currentPlayer: Player | null;
   editingPlayer: Player | null;
-  
+
   // Esporte e Sistema de Avaliação
   currentSport: string | null;
   currentRatingSystem: string | null;
   sportLocked: boolean;
   ratingSystemLocked: boolean;
-  
+
   // Estados de UI
   isLoading: boolean;
   searchTerm: string;
@@ -22,21 +22,21 @@ interface PlayerState {
   filterByRating: string;
   filterByPresence: boolean | null;
   filterByPayment: boolean | null;
-  
-        // Ações de jogadores
-      addPlayer: (player: Player) => void;
-      updatePlayer: (id: number, updates: Partial<Player>) => void;
-      deletePlayer: (id: number) => void;
+
+  // Ações de jogadores
+  addPlayer: (player: Player) => void;
+  updatePlayer: (id: string, updates: Partial<Player>) => void;
+  deletePlayer: (id: string) => void;
   setCurrentPlayer: (player: Player | null) => void;
   setEditingPlayer: (player: Player | null) => void;
-  
+
   // Ações de esporte e avaliação
   setCurrentSport: (sport: string) => void;
   setCurrentRatingSystem: (system: string) => void;
   setSportLocked: (locked: boolean) => void;
   setRatingSystemLocked: (locked: boolean) => void;
   resetSportAndRating: () => void;
-  
+
   // Ações de filtros
   setSearchTerm: (term: string) => void;
   setFilterBySport: (sport: string) => void;
@@ -45,13 +45,13 @@ interface PlayerState {
   setFilterByPresence: (presence: boolean | null) => void;
   setFilterByPayment: (payment: boolean | null) => void;
   clearFilters: () => void;
-  
+
   // Ações de UI
   setIsLoading: (loading: boolean) => void;
-  
-        // Ações de presença e pagamento
-      togglePresence: (playerId: number) => void;
-      togglePayment: (playerId: number) => void;
+
+  // Ações de presença e pagamento
+  togglePresence: (playerId: string) => void;
+  togglePayment: (playerId: string) => void;
   bulkTogglePresence: (present: boolean) => void;
   bulkTogglePayment: (paid: boolean) => void;
 }
@@ -63,13 +63,13 @@ export const usePlayerStore = create<PlayerState>()(
       players: [],
       currentPlayer: null,
       editingPlayer: null,
-      
+
       // Esporte e Sistema de Avaliação
       currentSport: null,
       currentRatingSystem: null,
       sportLocked: false,
       ratingSystemLocked: false,
-      
+
       // Estados de UI
       isLoading: false,
       searchTerm: '',
@@ -78,14 +78,14 @@ export const usePlayerStore = create<PlayerState>()(
       filterByRating: '',
       filterByPresence: null,
       filterByPayment: null,
-      
+
       // Ações de jogadores
       addPlayer: (player) => {
         set((state) => ({
           players: [...state.players, player],
         }));
       },
-      
+
       updatePlayer: (id, updates) => {
         set((state) => ({
           players: state.players.map((player) =>
@@ -93,38 +93,38 @@ export const usePlayerStore = create<PlayerState>()(
           ),
         }));
       },
-      
+
       deletePlayer: (id) => {
         set((state) => ({
           players: state.players.filter((player) => player.id !== id),
         }));
       },
-      
+
       setCurrentPlayer: (player) => {
         set({ currentPlayer: player });
       },
-      
+
       setEditingPlayer: (player) => {
         set({ editingPlayer: player });
       },
-      
+
       // Ações de esporte e avaliação
       setCurrentSport: (sport) => {
         set({ currentSport: sport });
       },
-      
+
       setCurrentRatingSystem: (system) => {
         set({ currentRatingSystem: system });
       },
-      
+
       setSportLocked: (locked) => {
         set({ sportLocked: locked });
       },
-      
+
       setRatingSystemLocked: (locked) => {
         set({ ratingSystemLocked: locked });
       },
-      
+
       resetSportAndRating: () => {
         set({
           currentSport: null,
@@ -133,32 +133,32 @@ export const usePlayerStore = create<PlayerState>()(
           ratingSystemLocked: false,
         });
       },
-      
+
       // Ações de filtros
       setSearchTerm: (term) => {
         set({ searchTerm: term });
       },
-      
+
       setFilterBySport: (sport) => {
         set({ filterBySport: sport });
       },
-      
+
       setFilterByPosition: (position) => {
         set({ filterByPosition: position });
       },
-      
+
       setFilterByRating: (rating) => {
         set({ filterByRating: rating });
       },
-      
+
       setFilterByPresence: (presence) => {
         set({ filterByPresence: presence });
       },
-      
+
       setFilterByPayment: (payment) => {
         set({ filterByPayment: payment });
       },
-      
+
       clearFilters: () => {
         set({
           searchTerm: '',
@@ -169,12 +169,12 @@ export const usePlayerStore = create<PlayerState>()(
           filterByPayment: null,
         });
       },
-      
+
       // Ações de UI
       setIsLoading: (loading) => {
         set({ isLoading: loading });
       },
-      
+
       // Ações de presença e pagamento
       togglePresence: (playerId) => {
         set((state) => ({
@@ -185,7 +185,7 @@ export const usePlayerStore = create<PlayerState>()(
           ),
         }));
       },
-      
+
       togglePayment: (playerId) => {
         set((state) => ({
           players: state.players.map((player) =>
@@ -195,7 +195,7 @@ export const usePlayerStore = create<PlayerState>()(
           ),
         }));
       },
-      
+
       bulkTogglePresence: (present) => {
         set((state) => ({
           players: state.players.map((player) => ({
@@ -204,7 +204,7 @@ export const usePlayerStore = create<PlayerState>()(
           })),
         }));
       },
-      
+
       bulkTogglePayment: (paid) => {
         set((state) => ({
           players: state.players.map((player) => ({

@@ -9,25 +9,24 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { TEXTS } from "@/constants";
+import { Player } from '@/types';
 
 type Rating = 1 | 2 | 3 | 4 | 5;
 
-const getRatingMax = (player: any) => {
-  // Se o rating for inteiro de 1 a 5, assume estrelas
-  if (player.ratingSystem === 'stars' || (player.rating <= 5 && player.rating % 1 === 0)) return 5;
-  if (player.ratingSystem === 'numeric5') return 5;
-  if (player.ratingSystem === 'numeric10' || player.rating > 5) return 10;
+const getRatingMax = (player: Player) => {
+  // Assume sistema de 5 estrelas por padrão
   return 5;
 };
 
 const PlayerList = () => {
-  const { players, updatePlayer, removePlayer, editingPlayer, setEditingPlayer, editValue, setEditValue } = usePlayerStore();
+  const { players, updatePlayer, deletePlayer, editingPlayer, setEditingPlayer } = usePlayerStore();
+  const [editValue, setEditValue] = React.useState('');
   const { toast } = useToast();
 
-  const handleEdit = (id: number) => {
-    setEditingPlayer({ id });
+  const handleEdit = (id: string) => {
     const player = players.find((player) => player.id === id);
     if (player) {
+      setEditingPlayer(player);
       setEditValue(player.name);
     }
   };
@@ -46,11 +45,11 @@ const PlayerList = () => {
     }
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     const player = players.find(p => p.id === id);
     const playerName = player?.name || "Jogador";
-    
-    removePlayer(id);
+
+    deletePlayer(id);
     toast({
       title: "🗑️ Jogador Removido",
       description: `${playerName} foi removido da lista com sucesso.`,
@@ -131,21 +130,17 @@ const PlayerList = () => {
                                 autoFocus
                               />
                               <motion.div className="flex gap-2">
-                                <Button 
+                                <Button
                                   onClick={handleSave}
                                   size="sm"
                                   className="bg-green-500 hover:bg-green-600 text-white"
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
                                 >
                                   <Save className="h-4 w-4" />
                                 </Button>
-                                <Button 
+                                <Button
                                   onClick={handleCancelEdit}
                                   size="sm"
                                   variant="outline"
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
                                 >
                                   ❌
                                 </Button>
@@ -158,14 +153,14 @@ const PlayerList = () => {
                           )}
                         </div>
                       </div>
-                      
+
                       {editingPlayer?.id !== player.id && (
                         <div className="flex items-center gap-2">
                           <motion.div
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             whileTap={{ scale: 0.9 }}
                           >
-                            <Button 
+                            <Button
                               onClick={() => handleEdit(player.id)}
                               size="sm"
                               variant="outline"
@@ -174,13 +169,13 @@ const PlayerList = () => {
                               <Edit2 className="h-4 w-4" />
                             </Button>
                           </motion.div>
-                          
+
                           <motion.div
                             whileHover={{ scale: 1.1, rotate: -5 }}
                             whileTap={{ scale: 0.9 }}
                           >
-                            <Button 
-                              onClick={() => handleDelete(player.id)} 
+                            <Button
+                              onClick={() => handleDelete(player.id)}
                               size="sm"
                               variant="destructive"
                               className="bg-red-500 hover:bg-red-600 text-white"
@@ -192,7 +187,7 @@ const PlayerList = () => {
                       )}
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="pt-0">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center gap-2">
@@ -213,7 +208,7 @@ const PlayerList = () => {
               </motion.div>
             ))}
           </AnimatePresence>
-          
+
           {players.length === 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}

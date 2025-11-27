@@ -10,17 +10,18 @@ import { useLargeDataStore } from '@/stores/useLargeDataStore';
 import { useStorage } from '@/utils/storage';
 import { cleanupExpiredData } from '@/utils/storage';
 import { BackToDashboard } from './BackToDashboard';
-import { Rating } from '@/types/types';
+import { Rating } from '@/types';
+import { SportEnum, PositionEnum } from '@/utils/enums';
 
 export const StorageDemo = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'local' | 'session' | 'indexed'>('local');
-  
+
   // Stores
   const { players, addPlayer, deletePlayer } = usePlayerStore();
   const { temporaryData, setTemporaryData, clearTemporaryData } = useSessionStore();
   const { matchHistory, addMatch, removeMatch } = useLargeDataStore();
-  
+
   // Storage direto
   const localStorage = useStorage('local');
   const sessionStorage = useStorage('session');
@@ -51,7 +52,7 @@ export const StorageDemo = () => {
 
   const handleSaveData = async (type: 'local' | 'session' | 'indexed') => {
     const data = `Dados salvos em ${type} - ${new Date().toLocaleString()}`;
-    
+
     try {
       switch (type) {
         case 'local':
@@ -66,7 +67,7 @@ export const StorageDemo = () => {
       }
 
       setDemoData(prev => ({ ...prev, [type]: data }));
-      
+
       toast({
         title: "✅ Dados Salvos",
         description: `Dados salvos com sucesso no ${type}Storage!`,
@@ -96,7 +97,7 @@ export const StorageDemo = () => {
       }
 
       setDemoData(prev => ({ ...prev, [type]: '' }));
-      
+
       toast({
         title: "🗑️ Dados Removidos",
         description: `Dados removidos do ${type}Storage!`,
@@ -122,13 +123,13 @@ export const StorageDemo = () => {
 
   const addDemoPlayer = () => {
     const newPlayer = {
-      id: Date.now(),
+      id: Date.now().toString(),
       name: `Jogador Demo ${players.length + 1}`,
       nickname: `Demo${players.length + 1}`,
       birthDate: new Date().toISOString().split('T')[0],
       isGuest: false,
-      sport: "futebol",
-      selectedPositions: ["atacante"],
+      sport: SportEnum.SOCCER,
+      selectedPositions: [PositionEnum.FORWARD],
       rating: 5 as Rating,
       includeInDraw: true,
       present: true,
@@ -168,7 +169,7 @@ export const StorageDemo = () => {
   const addDemoSessionData = () => {
     const key = `temp-data-${Date.now()}`;
     const data = `Dados temporários - ${new Date().toLocaleTimeString()}`;
-    
+
     setTemporaryData(key, data);
     toast({
       title: "📝 Dados Temporários",
@@ -209,7 +210,7 @@ export const StorageDemo = () => {
 
       {/* Conteúdo das Tabs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
+
         {/* localStorage */}
         <Card className="border-2 border-green-200">
           <CardHeader>
@@ -226,14 +227,14 @@ export const StorageDemo = () => {
               <p>• Limite: ~5-10MB</p>
               <p>• Ideal para configurações</p>
             </div>
-            
+
             <div className="space-y-2">
               <Button onClick={() => handleSaveData('local')} className="w-full">
                 Salvar Dados
               </Button>
-              <Button 
-                onClick={() => handleClearData('local')} 
-                variant="outline" 
+              <Button
+                onClick={() => handleClearData('local')}
+                variant="outline"
                 className="w-full"
               >
                 Limpar Dados
@@ -272,14 +273,14 @@ export const StorageDemo = () => {
               <p>• Limite: ~5-10MB</p>
               <p>• Ideal para dados da sessão</p>
             </div>
-            
+
             <div className="space-y-2">
               <Button onClick={() => handleSaveData('session')} className="w-full">
                 Salvar Dados
               </Button>
-              <Button 
-                onClick={() => handleClearData('session')} 
-                variant="outline" 
+              <Button
+                onClick={() => handleClearData('session')}
+                variant="outline"
                 className="w-full"
               >
                 Limpar Dados
@@ -318,14 +319,14 @@ export const StorageDemo = () => {
               <p>• Limite: ~50MB-1GB</p>
               <p>• Ideal para dados complexos</p>
             </div>
-            
+
             <div className="space-y-2">
               <Button onClick={() => handleSaveData('indexed')} className="w-full">
                 Salvar Dados
               </Button>
-              <Button 
-                onClick={() => handleClearData('indexed')} 
-                variant="outline" 
+              <Button
+                onClick={() => handleClearData('indexed')}
+                variant="outline"
                 className="w-full"
               >
                 Limpar Dados
@@ -364,20 +365,20 @@ export const StorageDemo = () => {
             <Button onClick={handleCleanup} className="w-full">
               🧹 Limpar Dados Expirados
             </Button>
-            <Button 
-              onClick={() => window.location.reload()} 
-              variant="outline" 
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
               className="w-full"
             >
               🔄 Recarregar Página
             </Button>
-            <Button 
+            <Button
               onClick={() => {
                 localStorage.clear();
                 sessionStorage.clear();
                 window.location.reload();
-              }} 
-              variant="destructive" 
+              }}
+              variant="destructive"
               className="w-full"
             >
               🗑️ Limpar Tudo

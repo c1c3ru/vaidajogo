@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Player } from '@/types/types';
+import { Player } from '@/types';
 
 interface PlayerContextProps {
 
   players: Player[];
   addPlayer: (player: Player) => void;
-  updatePlayer: (id: number, updatedPlayer: Partial<Player>) => void;
-  removePlayer: (id: number) => void;
+  updatePlayer: (id: string, updatedPlayer: Partial<Player>) => void;
+  removePlayer: (id: string) => void;
 }
 
 const PlayerContext = createContext<PlayerContextProps | undefined>(undefined);
@@ -18,7 +18,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     setPlayers((prevPlayers) => [...prevPlayers, player]);
   };
 
-  const updatePlayer = (id: number, updatedPlayer: Partial<Player>) => {
+  const updatePlayer = (id: string, updatedPlayer: Partial<Player>) => {
     setPlayers((prevPlayers) =>
       prevPlayers.map((player) =>
         player.id === id ? { ...player, ...updatedPlayer } : player
@@ -26,7 +26,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const removePlayer = (id: number) => {
+  const removePlayer = (id: string) => {
     setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== id));
   };
 

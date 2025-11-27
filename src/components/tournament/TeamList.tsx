@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, Users } from 'lucide-react';
-import { Team } from '@/types/types';
+import { Team } from '@/types';
 
 interface TeamListProps {
   teams: Team[];
@@ -56,7 +56,7 @@ const TeamList: React.FC<TeamListProps> = ({ teams, onEdit, onRemove }) => {
                 <Edit className="h-4 w-4" />
               </Button>
             )}
-            
+
             {onRemove && (
               <Button
                 variant="outline"

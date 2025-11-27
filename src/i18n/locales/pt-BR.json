@@ -1,0 +1,93 @@
+{
+    "app": {
+        "title": "Vai da Jogo",
+        "description": "Encontre e participe de eventos esportivos"
+    },
+    "nav": {
+        "home": "Início",
+        "events": "Eventos",
+        "sports": "Esportes",
+        "profile": "Perfil",
+        "settings": "Configurações",
+        "logout": "Sair"
+    },
+    "home": {
+        "welcome": "Bem-vindo ao Vai da Jogo",
+        "subtitle": "Conecte-se com atletas e encontre eventos esportivos perto de você",
+        "cta": "Explorar Eventos"
+    },
+    "events": {
+        "title": "Eventos",
+        "create": "Criar Evento",
+        "search": "Buscar eventos...",
+        "filter": "Filtrar",
+        "noEvents": "Nenhum evento encontrado",
+        "details": "Detalhes do Evento",
+        "join": "Participar",
+        "leave": "Sair",
+        "participants": "Participantes",
+        "date": "Data",
+        "time": "Horário",
+        "location": "Local",
+        "sport": "Esporte",
+        "level": "Nível",
+        "description": "Descrição"
+    },
+    "sports": {
+        "title": "Esportes",
+        "football": "Futebol",
+        "basketball": "Basquete",
+        "volleyball": "Vôlei",
+        "tennis": "Tênis",
+        "running": "Corrida",
+        "cycling": "Ciclismo",
+        "swimming": "Natação",
+        "all": "Todos os Esportes"
+    },
+    "profile": {
+        "title": "Perfil",
+        "edit": "Editar Perfil",
+        "name": "Nome",
+        "email": "E-mail",
+        "bio": "Biografia",
+        "favoriteSports": "Esportes Favoritos",
+        "myEvents": "Meus Eventos",
+        "save": "Salvar",
+        "cancel": "Cancelar"
+    },
+    "settings": {
+        "title": "Configurações",
+        "language": "Idioma",
+        "theme": "Tema",
+        "notifications": "Notificações",
+        "privacy": "Privacidade",
+        "light": "Claro",
+        "dark": "Escuro",
+        "system": "Sistema"
+    },
+    "common": {
+        "loading": "Carregando...",
+        "error": "Erro",
+        "success": "Sucesso",
+        "confirm": "Confirmar",
+        "cancel": "Cancelar",
+        "save": "Salvar",
+        "delete": "Excluir",
+        "edit": "Editar",
+        "close": "Fechar",
+        "back": "Voltar",
+        "next": "Próximo",
+        "previous": "Anterior",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "sort": "Ordenar",
+        "clear": "Limpar"
+    },
+    "errors": {
+        "generic": "Algo deu errado. Tente novamente.",
+        "network": "Erro de conexão. Verifique sua internet.",
+        "notFound": "Página não encontrada",
+        "unauthorized": "Acesso não autorizado",
+        "validation": "Por favor, verifique os campos"
+    }
+}
