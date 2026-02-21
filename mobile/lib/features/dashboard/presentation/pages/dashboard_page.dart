@@ -190,7 +190,7 @@ class _DashboardPageState extends State<DashboardPage>
               splashColor: color.withOpacity(0.2),
               highlightColor: color.withOpacity(0.1),
               onTap: () {
-                // Navigate Modular.to.pushNamed(item['route']);
+                Modular.to.pushNamed(item['route']);
               },
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
