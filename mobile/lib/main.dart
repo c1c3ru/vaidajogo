@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'domain/models/player.dart';
 import 'app_module.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(PlayerAdapter());
+
   runApp(ModularApp(module: AppModule(), child: const AppWidget()));
 }
 
