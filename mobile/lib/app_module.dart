@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'features/dashboard/dashboard_module.dart';
 
 class AppModule extends Module {
   @override
@@ -8,7 +9,6 @@ class AppModule extends Module {
 
   @override
   void routes(RouteManager r) {
-    // Rotas da aplicação (ex: Dashboard, Cadastro, Sorteio, etc)
-    // Inicialmente redirecionando para a DashboardModule assim que criada
+    r.module('/', module: DashboardModule());
   }
 }
