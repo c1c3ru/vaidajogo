@@ -145,7 +145,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'FORMATO TÁTICO (JOGADORES POR ESQUADRÃO)',
+            'FORMATO TÁTICO (JOGADORES POR TIME)',
             style: TextStyle(
               color: AppColors.muted,
               fontSize: 12,
@@ -211,7 +211,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
               },
               icon: const Icon(Icons.flash_on),
               label: const Text(
-                'GERAR ESQUADRÕES',
+                'FORMAR TIMES',
                 style: TextStyle(
                   fontFamily: 'Chakra Petch',
                   fontWeight: FontWeight.bold,
@@ -232,7 +232,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
       itemCount: teams.length,
       itemBuilder: (context, index) {
         final team = teams[index];
-        final totalRating = team.fold<int>(0, (sum, p) => sum + p.rating);
+        final totalRating = team.fold<double>(0.0, (sum, p) => sum + p.rating);
         final averageRating = (totalRating / team.length).toStringAsFixed(1);
 
         return Container(
@@ -268,7 +268,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'ESQUADRÃO ${index + 1}',
+                      'TIME ${index + 1}',
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontFamily: 'Chakra Petch',

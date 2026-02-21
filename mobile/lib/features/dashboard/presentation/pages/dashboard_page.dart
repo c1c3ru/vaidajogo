@@ -22,7 +22,7 @@ class _DashboardPageState extends State<DashboardPage>
     },
     {
       'title': 'Jogadores',
-      'description': 'Visualize dados biométricos de todos os jogadores',
+      'description': 'Visualize os dados de todos os jogadores',
       'icon': Icons.group_outlined,
       'color': AppColors.secondary,
       'route': '/players',

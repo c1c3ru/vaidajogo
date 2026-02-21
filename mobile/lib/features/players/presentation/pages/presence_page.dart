@@ -68,7 +68,7 @@ class _PresencePageState extends State<PresencePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'SITUAÇÃO DO ESQUADRÃO',
+                          'SITUAÇÃO DOS JOGADORES',
                           style: TextStyle(
                             color: AppColors.muted,
                             fontSize: 12,

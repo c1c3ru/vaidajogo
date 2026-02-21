@@ -27,7 +27,10 @@ class Player extends Equatable {
   final List<String> selectedPositions;
 
   @HiveField(7)
-  final int rating;
+  final double rating;
+
+  @HiveField(14)
+  final String? evaluationType;
 
   @HiveField(8)
   final bool includeInDraw;
@@ -56,6 +59,7 @@ class Player extends Equatable {
     required this.sport,
     required this.selectedPositions,
     required this.rating,
+    this.evaluationType,
     required this.includeInDraw,
     required this.createdAt,
     required this.selected,
@@ -72,7 +76,8 @@ class Player extends Equatable {
     bool? isGuest,
     String? sport,
     List<String>? selectedPositions,
-    int? rating,
+    double? rating,
+    String? evaluationType,
     bool? includeInDraw,
     String? createdAt,
     bool? selected,
@@ -89,6 +94,7 @@ class Player extends Equatable {
       sport: sport ?? this.sport,
       selectedPositions: selectedPositions ?? this.selectedPositions,
       rating: rating ?? this.rating,
+      evaluationType: evaluationType ?? this.evaluationType,
       includeInDraw: includeInDraw ?? this.includeInDraw,
       createdAt: createdAt ?? this.createdAt,
       selected: selected ?? this.selected,
@@ -108,6 +114,7 @@ class Player extends Equatable {
     sport,
     selectedPositions,
     rating,
+    evaluationType,
     includeInDraw,
     createdAt,
     selected,

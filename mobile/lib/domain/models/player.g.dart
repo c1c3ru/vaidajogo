@@ -24,7 +24,8 @@ class PlayerAdapter extends TypeAdapter<Player> {
       isGuest: fields[4] as bool,
       sport: fields[5] as String,
       selectedPositions: (fields[6] as List).cast<String>(),
-      rating: fields[7] as int,
+      rating: fields[7] as double,
+      evaluationType: fields[14] as String?,
       includeInDraw: fields[8] as bool,
       createdAt: fields[9] as String,
       selected: fields[10] as bool,
@@ -37,7 +38,7 @@ class PlayerAdapter extends TypeAdapter<Player> {
   @override
   void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -54,6 +55,8 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..write(obj.selectedPositions)
       ..writeByte(7)
       ..write(obj.rating)
+      ..writeByte(14)
+      ..write(obj.evaluationType)
       ..writeByte(8)
       ..write(obj.includeInDraw)
       ..writeByte(9)

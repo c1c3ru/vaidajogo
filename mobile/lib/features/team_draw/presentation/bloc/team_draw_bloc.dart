@@ -19,9 +19,7 @@ class TeamDrawBloc extends Bloc<TeamDrawEvent, TeamDrawState> {
 
       if (players.isEmpty) {
         emit(
-          const TeamDrawError(
-            "Nenhum operador ativo para organizar os esquadrões.",
-          ),
+          const TeamDrawError("Nenhum jogador ativo para organizar os times."),
         );
         return;
       }
@@ -30,7 +28,7 @@ class TeamDrawBloc extends Bloc<TeamDrawEvent, TeamDrawState> {
       if (numberOfTeams <= 1) {
         emit(
           const TeamDrawError(
-            "Jogadores insuficientes para formar mais de um esquadrão.",
+            "Jogadores insuficientes para formar mais de um time.",
           ),
         );
         return;

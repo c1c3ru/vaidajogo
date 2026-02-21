@@ -29,7 +29,7 @@ class _PlayersPageState extends State<PlayersPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'BIOMETRIA / JOGADORES',
+          'JOGADORES',
           style: TextStyle(
             fontFamily: 'Chakra Petch',
             fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class _PlayersPageState extends State<PlayersPage> {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Nenhum registro biométrico encontrado.',
+                    'Nenhum registro encontrado.',
                     style: TextStyle(
                       color: AppColors.muted,
                       fontFamily: 'Jura',

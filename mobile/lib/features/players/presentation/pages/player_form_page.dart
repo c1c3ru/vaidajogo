@@ -19,19 +19,28 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _nicknameController = TextEditingController();
+  final _birthDateController = TextEditingController();
 
   bool _isGuest = false;
-  String _sport = 'Futebol';
-  int _rating = 5;
+  String? _sport;
+  double _rating = 3.0;
+  String _evaluationType = 'Estrelas (1 a 5)';
 
-  final List<String> _availablePositions = [
-    'GOL',
-    'ZAG',
-    'LAT',
-    'VOL',
-    'MEI',
-    'ATA',
+  final Map<String, List<String>> _sportPositions = {
+    'Futebol': ['GOL', 'ZAG', 'LAT', 'VOL', 'MEI', 'ATA'],
+    'Futsal': ['GOL', 'FIX', 'ALA', 'PIV'],
+    'Vôlei': ['LEV', 'PON', 'CEN', 'OPO', 'LIB'],
+    'Handebol': ['GOL', 'PON', 'ARM', 'PIV', 'CEN'],
+    'Basquetebol': ['ARM', 'ALA', 'PIV', 'ESC'],
+  };
+
+  final List<String> _evaluationTypes = [
+    'Estrelas (1 a 5)',
+    'Estrelas Fracionadas (1 a 5)',
+    'Numérico (1 a 5)',
+    'Numérico (1 a 10)',
   ];
+
   final List<String> _selectedPositions = [];
 
   final _playerBloc = Modular.get<PlayerBloc>();
@@ -42,9 +51,12 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
     if (widget.playerToEdit != null) {
       _nameController.text = widget.playerToEdit!.name;
       _nicknameController.text = widget.playerToEdit!.nickname ?? '';
+      _birthDateController.text = widget.playerToEdit!.birthDate ?? '';
       _isGuest = widget.playerToEdit!.isGuest;
       _sport = widget.playerToEdit!.sport;
       _rating = widget.playerToEdit!.rating;
+      _evaluationType =
+          widget.playerToEdit!.evaluationType ?? 'Estrelas (1 a 5)';
       _selectedPositions.addAll(widget.playerToEdit!.selectedPositions);
     }
   }
@@ -53,34 +65,36 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
   void dispose() {
     _nameController.dispose();
     _nicknameController.dispose();
+    _birthDateController.dispose();
     super.dispose();
   }
 
   void _savePlayer() {
     if (_formKey.currentState!.validate()) {
+      if (_sport == null) {
+        _showError('Selecione uma modalidade esportiva.');
+        return;
+      }
+
       if (_selectedPositions.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Selecione ao menos uma posição tática.',
-              style: TextStyle(fontFamily: 'Jura'),
-            ),
-            backgroundColor: AppColors.accent,
-          ),
-        );
+        _showError('Selecione ao menos uma posição tática.');
         return;
       }
 
       final player = Player(
         id: widget.playerToEdit?.id ?? const Uuid().v4(),
-        name: _nameController.text,
-        nickname: _nicknameController.text.isEmpty
+        name: _nameController.text.trim(),
+        nickname: _nicknameController.text.trim().isEmpty
             ? null
-            : _nicknameController.text,
+            : _nicknameController.text.trim(),
+        birthDate: _birthDateController.text.trim().isEmpty
+            ? null
+            : _birthDateController.text.trim(),
         isGuest: _isGuest,
-        sport: _sport,
+        sport: _sport!,
         selectedPositions: _selectedPositions,
         rating: _rating,
+        evaluationType: _evaluationType,
         includeInDraw: true,
         createdAt:
             widget.playerToEdit?.createdAt ?? DateTime.now().toIso8601String(),
@@ -100,14 +114,62 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
     }
   }
 
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(fontFamily: 'Jura')),
+        backgroundColor: AppColors.accent,
+      ),
+    );
+  }
+
+  Color _getRatingColor() {
+    if (_evaluationType.contains('10')) {
+      if (_rating <= 4) return Colors.redAccent;
+      if (_rating <= 8) return Colors.blueAccent;
+      return Colors.greenAccent;
+    } else if (_evaluationType.contains('Numérico')) {
+      if (_rating <= 2) return Colors.redAccent;
+      if (_rating <= 4) return Colors.blueAccent;
+      return Colors.greenAccent;
+    }
+    return AppColors.secondary;
+  }
+
+  double _getRatingMin() => 1.0;
+  double _getRatingMax() => _evaluationType.contains('10') ? 10.0 : 5.0;
+  int _getRatingDivisions() {
+    if (_evaluationType == 'Estrelas Fracionadas (1 a 5)') {
+      return 8; // steps of 0.5 (1, 1.5, 2... 5) -> 8 divs
+    }
+    if (_evaluationType.contains('10')) {
+      return 9; // steps of 1 -> 9 divs
+    }
+    return 4; // steps of 1 -> 4 divs
+  }
+
+  void _onEvaluationTypeChange(String? newValue) {
+    if (newValue != null) {
+      setState(() {
+        _evaluationType = newValue;
+        // Adjust rating if out of bounds
+        if (_rating > _getRatingMax()) {
+          _rating = _getRatingMax();
+        }
+        // Round to nearest acceptable step
+        if (newValue != 'Estrelas Fracionadas (1 a 5)') {
+          _rating = _rating.roundToDouble();
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.playerToEdit == null
-              ? 'CADASTRAR OPERADOR'
-              : 'ATUALIZAR OPERADOR',
+          widget.playerToEdit == null ? 'CADASTRAR ATLETA' : 'ATUALIZAR ATLETA',
           style: const TextStyle(
             fontFamily: 'Chakra Petch',
             fontWeight: FontWeight.bold,
@@ -127,132 +189,93 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionTitle('DADOS BIOMÉTRICOS'),
-              _buildTextField(
-                _nameController,
-                "Nome Completo",
-                Icons.person_outline,
-              ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                _nicknameController,
-                "Codinome (Opcional)",
-                Icons.badge_outlined,
-                isRequired: false,
-              ),
-              const SizedBox(height: 24),
-
-              _buildSectionTitle('ESPECIFICAÇÕES TÁTICAS'),
-              _buildDropdown(),
-              const SizedBox(height: 24),
-
-              const Text(
-                'POSIÇÕES DE COMBATE',
-                style: TextStyle(
-                  color: AppColors.muted,
-                  fontFamily: 'Jura',
-                  fontSize: 12,
-                  letterSpacing: 1,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: _availablePositions.map((pos) {
-                  final isSelected = _selectedPositions.contains(pos);
-                  return ChoiceChip(
-                    label: Text(
-                      pos,
-                      style: TextStyle(
-                        fontFamily: 'Chakra Petch',
-                        fontWeight: FontWeight.bold,
-                        color: isSelected
-                            ? AppColors.background
-                            : AppColors.foreground,
-                      ),
-                    ),
-                    selected: isSelected,
-                    selectedColor: AppColors.primary,
-                    backgroundColor: AppColors.cardBackground,
-                    side: BorderSide(
-                      color: isSelected ? AppColors.primary : AppColors.border,
-                    ),
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          _selectedPositions.add(pos);
-                        } else {
-                          _selectedPositions.remove(pos);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
+              _buildSectionTitle('MODALIDADE ESPORTIVA'),
+              _buildSportChips(),
               const SizedBox(height: 30),
 
-              _buildSectionTitle('NÍVEL DE AMEAÇA / RATING: $_rating ★'),
-              Slider(
-                value: _rating.toDouble(),
-                min: 1,
-                max: 10,
-                divisions: 9,
-                activeColor: AppColors.secondary,
-                inactiveColor: AppColors.border,
-                label: _rating.toString(),
-                onChanged: (val) {
-                  setState(() => _rating = val.toInt());
-                },
-              ),
-              const SizedBox(height: 16),
-
-              SwitchListTile(
-                title: const Text(
-                  'Visitante / Convidado',
-                  style: TextStyle(
-                    fontFamily: 'Jura',
-                    color: AppColors.foreground,
-                  ),
+              if (_sport != null) ...[
+                _buildSectionTitle('DADOS DO ATLETA'),
+                _buildTextField(
+                  _nameController,
+                  "Nome Completo",
+                  Icons.person_outline,
                 ),
-                subtitle: const Text(
-                  'Operador temporário sem registro fixo',
-                  style: TextStyle(fontSize: 12, color: AppColors.muted),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  _nicknameController,
+                  "Apelido",
+                  Icons.badge_outlined,
+                  isRequired: false,
                 ),
-                value: _isGuest,
-                activeColor: AppColors.primary,
-                contentPadding: EdgeInsets.zero,
-                onChanged: (val) => setState(() => _isGuest = val),
-              ),
-              const SizedBox(height: 40),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  _birthDateController,
+                  "Data de Nascimento (Ex: 01/01/1990)",
+                  Icons.calendar_today,
+                  isRequired: false,
+                ),
+                const SizedBox(height: 16),
 
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 10,
-                    shadowColor: AppColors.primary.withValues(alpha: 0.5),
-                  ),
-                  onPressed: _savePlayer,
-                  child: const Text(
-                    'INICIALIZAR REGISTRO',
+                SwitchListTile(
+                  title: const Text(
+                    'Visitante / Convidado',
                     style: TextStyle(
-                      fontFamily: 'Chakra Petch',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
+                      fontFamily: 'Jura',
+                      color: AppColors.foreground,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Obrigatório informar se é participante fixo',
+                    style: TextStyle(fontSize: 12, color: AppColors.muted),
+                  ),
+                  value: _isGuest,
+                  activeColor: AppColors.primary,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (val) => setState(() => _isGuest = val),
+                ),
+                const SizedBox(height: 30),
+
+                _buildSectionTitle('POSIÇÕES DE COMBATE ($_sport)'),
+                _buildPositionChips(),
+                const SizedBox(height: 30),
+
+                _buildSectionTitle('AVALIAÇÃO DO ATLETA'),
+                _buildEvaluationDropdown(),
+                const SizedBox(height: 16),
+                _buildRatingSlider(),
+                const SizedBox(height: 40),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 10,
+                      shadowColor: AppColors.primary.withValues(alpha: 0.5),
+                    ),
+                    onPressed: _savePlayer,
+                    child: const Text(
+                      'SALVAR REGISTRO',
+                      style: TextStyle(
+                        fontFamily: 'Chakra Petch',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
+                const SizedBox(height: 40),
+              ],
             ],
           ),
         ),
@@ -286,6 +309,161 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSportChips() {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: _sportPositions.keys.map((s) {
+        final isSelected = _sport == s;
+        return ChoiceChip(
+          label: Text(
+            s,
+            style: TextStyle(
+              fontFamily: 'Chakra Petch',
+              fontWeight: FontWeight.bold,
+              color: isSelected ? AppColors.background : AppColors.foreground,
+            ),
+          ),
+          selected: isSelected,
+          selectedColor: AppColors.primary,
+          backgroundColor: AppColors.cardBackground,
+          side: BorderSide(
+            color: isSelected ? AppColors.primary : AppColors.border,
+          ),
+          onSelected: (selected) {
+            if (selected) {
+              setState(() {
+                _sport = s;
+                _selectedPositions.clear();
+              });
+            }
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPositionChips() {
+    final available = _sportPositions[_sport] ?? [];
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: available.map((pos) {
+        final isSelected = _selectedPositions.contains(pos);
+        return ChoiceChip(
+          label: Text(
+            pos,
+            style: TextStyle(
+              fontFamily: 'Chakra Petch',
+              fontWeight: FontWeight.bold,
+              color: isSelected ? AppColors.background : AppColors.foreground,
+            ),
+          ),
+          selected: isSelected,
+          selectedColor: AppColors.secondary,
+          backgroundColor: AppColors.cardBackground,
+          side: BorderSide(
+            color: isSelected ? AppColors.secondary : AppColors.border,
+          ),
+          onSelected: (selected) {
+            setState(() {
+              if (selected) {
+                _selectedPositions.add(pos);
+              } else {
+                _selectedPositions.remove(pos);
+              }
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildEvaluationDropdown() {
+    return DropdownButtonFormField<String>(
+      value: _evaluationType,
+      dropdownColor: AppColors.background,
+      style: const TextStyle(color: AppColors.foreground, fontFamily: 'Jura'),
+      decoration: InputDecoration(
+        labelText: 'Tipo de Avaliação',
+        labelStyle: const TextStyle(color: AppColors.muted, fontFamily: 'Jura'),
+        prefixIcon: const Icon(
+          Icons.analytics_outlined,
+          color: AppColors.muted,
+        ),
+        filled: true,
+        fillColor: AppColors.cardBackground.withValues(alpha: 0.5),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+      ),
+      items: _evaluationTypes.map((String value) {
+        return DropdownMenuItem<String>(value: value, child: Text(value));
+      }).toList(),
+      onChanged: _onEvaluationTypeChange,
+    );
+  }
+
+  Widget _buildRatingSlider() {
+    final ratingColor = _getRatingColor();
+    final isFractional = _evaluationType.contains('Fracionada');
+    final valueDisplay = _evaluationType.contains('Estrelas')
+        ? '${_rating.toStringAsFixed(isFractional ? 1 : 0)} ★'
+        : 'NÍVEL: ${_rating.toInt()}';
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Mínimo (\${_getRatingMin().toInt()})',
+              style: const TextStyle(color: AppColors.muted, fontSize: 12),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: ratingColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: ratingColor),
+              ),
+              child: Text(
+                valueDisplay,
+                style: TextStyle(
+                  color: ratingColor,
+                  fontFamily: 'Chakra Petch',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Text(
+              'Máximo (\${_getRatingMax().toInt()})',
+              style: const TextStyle(color: AppColors.muted, fontSize: 12),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Slider(
+          value: _rating,
+          min: _getRatingMin(),
+          max: _getRatingMax(),
+          divisions: _getRatingDivisions(),
+          activeColor: ratingColor,
+          inactiveColor: AppColors.border,
+          onChanged: (val) {
+            setState(() => _rating = val);
+          },
+        ),
+      ],
     );
   }
 
@@ -329,37 +507,6 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
               return null;
             }
           : null,
-    );
-  }
-
-  Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _sport,
-      dropdownColor: AppColors.background,
-      style: const TextStyle(color: AppColors.foreground, fontFamily: 'Jura'),
-      decoration: InputDecoration(
-        labelText: 'Modalidade',
-        labelStyle: const TextStyle(color: AppColors.muted, fontFamily: 'Jura'),
-        prefixIcon: const Icon(Icons.sports_soccer, color: AppColors.muted),
-        filled: true,
-        fillColor: AppColors.cardBackground.withValues(alpha: 0.5),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
-        ),
-      ),
-      items: ['Futebol', 'Futsal', 'Society'].map((String value) {
-        return DropdownMenuItem<String>(value: value, child: Text(value));
-      }).toList(),
-      onChanged: (newValue) {
-        setState(() {
-          _sport = newValue!;
-        });
-      },
     );
   }
 }

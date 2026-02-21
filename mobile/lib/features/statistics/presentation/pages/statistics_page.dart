@@ -40,7 +40,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
           final players = state.players;
 
           // Process the rating distribution
-          final ratingsDist = <int, int>{};
+          final ratingsDist = <double, int>{};
           for (var p in players) {
             ratingsDist[p.rating] = (ratingsDist[p.rating] ?? 0) + 1;
           }
@@ -132,16 +132,19 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 
-  Widget _buildRatingChart(Map<int, int> ratingsDist) {
+  Widget _buildRatingChart(Map<double, int> ratingsDist) {
     List<BarChartGroupData> barGroups = [];
     int maxCount = 0;
 
-    for (int i = 1; i <= 10; i++) {
-      final count = ratingsDist[i] ?? 0;
+    final sortedKeys = ratingsDist.keys.toList()..sort();
+    int idx = 0;
+
+    for (var key in sortedKeys) {
+      final count = ratingsDist[key] ?? 0;
       if (count > maxCount) maxCount = count;
       barGroups.add(
         BarChartGroupData(
-          x: i,
+          x: idx,
           barRods: [
             BarChartRodData(
               toY: count.toDouble(),
@@ -155,6 +158,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
           ],
         ),
       );
+      idx++;
     }
 
     return Column(
@@ -182,17 +186,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) => Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        value.toInt().toString(),
-                        style: const TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 10,
-                          fontFamily: 'Jura',
-                        ),
-                      ),
-                    ),
+                    getTitlesWidget: (value, meta) {
+                      final i = value.toInt();
+                      if (i >= 0 && i < sortedKeys.length) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            sortedKeys[i].toStringAsFixed(1),
+                            style: const TextStyle(
+                              color: AppColors.muted,
+                              fontSize: 10,
+                              fontFamily: 'Jura',
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                    },
                   ),
                 ),
                 leftTitles: const AxisTitles(
