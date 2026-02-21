@@ -18,7 +18,7 @@ class _DashboardPageState extends State<DashboardPage>
       'description': 'Inicialize o cadastro de novos jogadores no núcleo',
       'icon': Icons.person_add_outlined,
       'color': AppColors.primary,
-      'route': '/player-form',
+      'route': '/players/form',
     },
     {
       'title': 'Jogadores',
@@ -32,7 +32,7 @@ class _DashboardPageState extends State<DashboardPage>
       'description': 'Registre a assinatura térmica (presença) e pagamentos',
       'icon': Icons.check_circle_outline,
       'color': AppColors.accent,
-      'route': '/presence',
+      'route': '/players/presence',
     },
     {
       'title': 'Sorteio',
