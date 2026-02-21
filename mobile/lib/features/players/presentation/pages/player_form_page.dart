@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:lottie/lottie.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../domain/models/player.dart';
@@ -313,36 +314,107 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
   }
 
   Widget _buildSportChips() {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: _sportPositions.keys.map((s) {
-        final isSelected = _sport == s;
-        return ChoiceChip(
-          label: Text(
-            s,
-            style: TextStyle(
-              fontFamily: 'Chakra Petch',
-              fontWeight: FontWeight.bold,
-              color: isSelected ? AppColors.background : AppColors.foreground,
-            ),
-          ),
-          selected: isSelected,
-          selectedColor: AppColors.primary,
-          backgroundColor: AppColors.cardBackground,
-          side: BorderSide(
-            color: isSelected ? AppColors.primary : AppColors.border,
-          ),
-          onSelected: (selected) {
-            if (selected) {
-              setState(() {
-                _sport = s;
-                _selectedPositions.clear();
-              });
-            }
-          },
+    final Map<String, String?> sportAssets = {
+      'Futebol': 'assets/lottie/Futebol.json',
+      'Futsal': 'assets/lottie/Futsal.json',
+      'Vôlei': 'assets/lottie/Volleyball.json',
+      'Handebol': null,
+      'Basquetebol': 'assets/lottie/Basketball.json',
+    };
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cardWidth = (constraints.maxWidth - 16) / 2; // 2 items per row
+        return Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: _sportPositions.keys.map((s) {
+            final isSelected = _sport == s;
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _sport = s;
+                  _selectedPositions.clear();
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: cardWidth,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : AppColors.border,
+                    width: isSelected ? 2 : 1,
+                  ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 10,
+                            spreadRadius: 1,
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: sportAssets[s] != null
+                            ? Opacity(
+                                opacity: isSelected ? 1.0 : 0.5,
+                                child: Lottie.asset(
+                                  sportAssets[s]!,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(
+                                        Icons.broken_image,
+                                        color: AppColors.muted,
+                                        size: 40,
+                                      ),
+                                ),
+                              )
+                            : Opacity(
+                                opacity: isSelected ? 1.0 : 0.5,
+                                child: Icon(
+                                  s == 'Handebol'
+                                      ? Icons.sports_handball
+                                      : Icons.sports,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.muted,
+                                  size: 40,
+                                ),
+                              ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        s,
+                        style: TextStyle(
+                          fontFamily: 'Chakra Petch',
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.foreground,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 
