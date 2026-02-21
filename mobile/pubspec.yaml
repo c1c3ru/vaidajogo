@@ -21,6 +21,7 @@ dependencies:
   fl_chart: ^0.69.0
   uuid: ^4.5.3
   vector_math: ^2.1.4
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +37,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/lottie/
 
 flutter_launcher_icons:
   android: "launcher_icon"

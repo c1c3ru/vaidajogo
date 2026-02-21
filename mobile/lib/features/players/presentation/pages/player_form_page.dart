@@ -235,7 +235,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
                 ),
                 const SizedBox(height: 30),
 
-                _buildSectionTitle('POSIÇÕES DE COMBATE ($_sport)'),
+                _buildSectionTitle('POSIÇÕES NO JOGO ($_sport)'),
                 _buildPositionChips(),
                 const SizedBox(height: 30),
 
