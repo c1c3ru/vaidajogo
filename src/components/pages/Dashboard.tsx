@@ -3,73 +3,82 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TEXTS } from '@/constants/texts';
-import { 
-  Users, 
-  Calendar, 
-  Shuffle, 
-  BarChart3, 
-  Trophy, 
+import { Logo } from '@/components/ui/logo';
+import {
+  Users,
+  Calendar,
+  Shuffle,
+  BarChart3,
+  Trophy,
   UserPlus,
   CheckCircle,
   Star,
-  TrendingUp
+  TrendingUp,
+  Cpu,
+  Fingerprint
 } from 'lucide-react';
 
 const Dashboard = () => {
   const menuItems = [
     {
       title: TEXTS.PAGE_TITLES.PLAYER_FORM,
-      description: 'Cadastre novos jogadores no sistema',
+      description: 'Inicialize o cadastro de novos jogadores no núcleo',
       icon: UserPlus,
       route: '/player-form',
-      color: 'from-blue-500 to-cyan-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
+      color: 'text-primary',
+      bgHover: 'group-hover:bg-primary/10',
+      borderHover: 'group-hover:border-primary',
+      shadowHover: 'group-hover:shadow-[0_0_20px_rgba(0,179,255,0.4)]'
     },
     {
       title: TEXTS.PAGE_TITLES.PLAYER_LIST,
-      description: 'Visualize e gerencie todos os jogadores',
+      description: 'Visualize dados biométricos de todos os jogadores',
       icon: Users,
       route: '/players',
-      color: 'from-green-500 to-emerald-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
+      color: 'text-secondary',
+      bgHover: 'group-hover:bg-secondary/10',
+      borderHover: 'group-hover:border-secondary',
+      shadowHover: 'group-hover:shadow-[0_0_20px_rgba(81,0,255,0.4)]'
     },
     {
       title: TEXTS.PAGE_TITLES.PRESENCE,
-      description: 'Controle presenças e pagamentos',
+      description: 'Registre a assinatura térmica (presença) e pagamentos',
       icon: CheckCircle,
       route: '/presence',
-      color: 'from-purple-500 to-pink-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200'
+      color: 'text-accent',
+      bgHover: 'group-hover:bg-accent/10',
+      borderHover: 'group-hover:border-accent',
+      shadowHover: 'group-hover:shadow-[0_0_20px_rgba(255,0,85,0.4)]'
     },
     {
       title: TEXTS.PAGE_TITLES.TEAM_DRAW,
-      description: 'Organize jogadores em times equilibrados',
+      description: 'Algoritmo de balanceamento matricial de esquadrões',
       icon: Shuffle,
       route: '/team-draw',
-      color: 'from-orange-500 to-amber-600',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200'
+      color: 'text-primary',
+      bgHover: 'group-hover:bg-primary/10',
+      borderHover: 'group-hover:border-primary',
+      shadowHover: 'group-hover:shadow-[0_0_20px_rgba(0,179,255,0.4)]'
     },
     {
       title: TEXTS.PAGE_TITLES.STATISTICS,
-      description: 'Acompanhe estatísticas e relatórios',
+      description: 'Métricas preditivas avançadas do sistema',
       icon: BarChart3,
       route: '/statistics',
-      color: 'from-indigo-500 to-blue-600',
-      bgColor: 'bg-indigo-50',
-      borderColor: 'border-indigo-200'
+      color: 'text-secondary',
+      bgHover: 'group-hover:bg-secondary/10',
+      borderHover: 'group-hover:border-secondary',
+      shadowHover: 'group-hover:shadow-[0_0_20px_rgba(81,0,255,0.4)]'
     },
     {
       title: TEXTS.PAGE_TITLES.CHAMPIONSHIP,
-      description: 'Gerencie campeonatos e torneios',
+      description: 'Supervisione simulações e torneios de combate virtual',
       icon: Trophy,
       route: '/championship',
-      color: 'from-yellow-500 to-orange-600',
-      bgColor: 'bg-yellow-50',
-      borderColor: 'border-yellow-200'
+      color: 'text-accent',
+      bgHover: 'group-hover:bg-accent/10',
+      borderHover: 'group-hover:border-accent',
+      shadowHover: 'group-hover:shadow-[0_0_20px_rgba(255,0,85,0.4)]'
     }
   ];
 
@@ -77,126 +86,149 @@ const Dashboard = () => {
     window.location.href = route;
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', duration: 0.6 } },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+    <div className="min-h-screen pt-8 pb-16 relative overflow-hidden">
+      {/* Elementos de UI Cibernéticos bg */}
+      <div className="absolute top-10 right-10 opacity-20 hidden lg:block">
+        <Cpu className="w-64 h-64 text-primary animate-pulse" />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
+
+        {/* Header Section */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="flex flex-col items-center justify-center mb-16 space-y-4"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <TrendingUp className="h-8 w-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              {TEXTS.PAGE_TITLES.DASHBOARD}
-            </h1>
-          </div>
-          
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            {TEXTS.DASHBOARD.DESCRIPTION}
+          <Logo />
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-center font-body bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+            Acesso ao Mainframe Estratégico Autorizado. Seja bem-vindo ao Hub.
           </p>
         </motion.div>
 
         {/* Menu Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {menuItems.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card 
-                className={`border-2 ${item.borderColor} shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group`}
+            <motion.div key={item.title} variants={itemVariants}>
+              <Card
+                className={`relative overflow-hidden bg-card/80 backdrop-blur-xl border border-border/50 ${item.borderHover} ${item.shadowHover} transition-all duration-300 cursor-pointer group h-full flex flex-col`}
                 onClick={() => handleNavigation(item.route)}
               >
-                <CardHeader className={`${item.bgColor} border-b-2 ${item.borderColor}`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${item.color} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-200`}>
-                      <item.icon className="h-6 w-6 text-white" />
+                {/* Efeito Neon */}
+                <div className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-current to-transparent opacity-50 ${item.color}`} />
+
+                <CardHeader className="relative pb-2 z-10">
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-lg bg-card/50 border border-border/50 shadow-inner group-hover:scale-110 transition-transform duration-300`}>
+                      <item.icon className={`h-8 w-8 ${item.color} drop-shadow-[0_0_8px_currentColor]`} />
                     </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
-                        {item.title}
-                      </CardTitle>
-                    </div>
+                    <CardTitle className={`text-xl font-heading tracking-wide text-foreground transition-colors`}>
+                      {item.title}
+                    </CardTitle>
                   </div>
                 </CardHeader>
-                
-                <CardContent className="p-6">
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+
+                <CardContent className="p-6 pt-4 flex-1 flex flex-col justify-between relative z-10">
+                  <p className="text-muted-foreground font-body leading-relaxed text-sm mb-6">
                     {item.description}
                   </p>
-                  
-                  <Button 
-                    className={`w-full bg-gradient-to-r ${item.color} hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-white font-semibold`}
-                  >
-                    Acessar
-                  </Button>
+
+                  <div className="mt-auto">
+                    <Button
+                      variant="outline"
+                      className={`w-full group-hover:text-background group-hover:bg-foreground border-border/50 transition-all font-heading tracking-wide uppercase text-xs h-10`}
+                    >
+                      <Fingerprint className="w-4 h-4 mr-2" />
+                      Acessar Módulo
+                    </Button>
+                  </div>
                 </CardContent>
+
+                {/* Background glow on hover */}
+                <div className={`absolute inset-0 z-0 opacity-0 ${item.bgHover} transition-opacity duration-500`} />
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats Panel */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-12 max-w-4xl mx-auto"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-16 max-w-4xl mx-auto"
         >
-          <Card className="border-2 border-gray-200 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50 border-b-2 border-gray-200">
-              <CardTitle className="flex items-center gap-2 text-gray-800">
-                <Star className="h-5 w-5 text-yellow-500" />
-                Dicas Rápidas
+          <Card className="border border-border/50 shadow-[0_0_30px_rgba(0,179,255,0.1)] bg-card/60 backdrop-blur-xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+
+            <CardHeader className="border-b border-border/30 bg-background/50">
+              <CardTitle className="flex items-center gap-3 text-foreground font-heading uppercase text-sm tracking-[0.2em]">
+                <Star className="h-5 w-5 text-primary animate-pulse" />
+                Dicas de Operação do Sistema
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                    <Users className="h-4 w-4 text-blue-600" />
-                    Primeiros Passos
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <div className="space-y-4">
+                  <h4 className="font-heading font-medium text-foreground flex items-center gap-2 text-lg">
+                    <Users className="h-5 w-5 text-secondary glow-sm" />
+                    Protocolos Iniciais
                   </h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
-                      Comece cadastrando jogadores no sistema
+                  <ul className="space-y-3 text-sm text-muted-foreground font-body">
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-secondary/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
+                      Injete os dados biométricos de seus jogadores no terminal
                     </li>
-                    <li className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
-                      Configure o esporte e sistema de avaliação
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-secondary/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
+                      Calibre a matriz de avaliação e peso por modalidade
                     </li>
-                    <li className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
-                      Controle presenças e pagamentos
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-secondary/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
+                      Controle frequências e taxas via logs de presença
                     </li>
                   </ul>
                 </div>
-                
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                    Funcionalidades Avançadas
+
+                <div className="space-y-4">
+                  <h4 className="font-heading font-medium text-foreground flex items-center gap-2 text-lg">
+                    <TrendingUp className="h-5 w-5 text-accent glow-sm" />
+                    Módulos Avançados
                   </h4>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></div>
-                      Organize sorteios automáticos de times
+                  <ul className="space-y-3 text-sm text-muted-foreground font-body">
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-accent/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
+                      Ative o algoritmo de pareamento para esquadrões equilibrados
                     </li>
-                    <li className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></div>
-                      Acompanhe estatísticas detalhadas
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-accent/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
+                      Exporte relatórios vitais em tempo-real do modo analítico
                     </li>
-                    <li className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></div>
-                      Gerencie campeonatos e torneios
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-accent/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
+                      Gerencie chaves e eliminatórias de simulações de campeonato
                     </li>
                   </ul>
                 </div>
@@ -204,7 +236,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </motion.div>
-
 
       </div>
     </div>

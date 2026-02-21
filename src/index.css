@@ -2,91 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Design Tokens (HEX originais da paleta futurista) */
+    --color-background-hex: #F5F7FA;
+    --color-foreground-hex: #050511;
+    --color-primary-hex: #00B3FF;
+    --color-secondary-hex: #5100FF;
+    --color-accent-hex: #FF0055;
+
+    /* Shadcn UI mapping - Light Theme */
+    --background: 216 33% 97%;   /* #F5F7FA */
+    --foreground: 240 54% 4%;    /* #050511 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 54% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 54% 4%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 198 100% 50%;     /* #00B3FF */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 259 100% 50%;   /* #5100FF */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
+    --accent: 340 100% 50%;      /* #FF0055 */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 210 40% 90%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 85%;
+    --input: 214.3 31.8% 85%;
+    --ring: 198 100% 50%;        /* Primary color */
 
-    --radius: 0.5rem;
+    --radius: 0.25rem; /* cantos mais definidos/tecnológicos */
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
+    --sidebar-primary: 198 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 90%;
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 198 100% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Design Tokens (HEX originais da paleta futurista Dark) */
+    --color-background-hex: #050511;
+    --color-foreground-hex: #E0E7FF;
+    --color-primary-hex: #00F0FF;
+    --color-secondary-hex: #7000FF;
+    --color-accent-hex: #FF003C;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    /* Shadcn UI mapping - Dark Theme */
+    --background: 240 54% 4%;    /* #050511 */
+    --foreground: 226 100% 94%;  /* #E0E7FF */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --card: 240 40% 8%;          /* Ligeiramente mais claro que o bg */
+    --card-foreground: 226 100% 94%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --popover: 240 40% 8%;
+    --popover-foreground: 226 100% 94%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --primary: 184 100% 50%;     /* #00F0FF */
+    --primary-foreground: 240 54% 4%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --secondary: 266 100% 50%;   /* #7000FF */
+    --secondary-foreground: 0 0% 100%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 346 100% 50%;      /* #FF003C */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --muted: 240 30% 15%;
+    --muted-foreground: 215 20.2% 75.1%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive: 346 100% 50%; /* #FF003C */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 30% 20%;
+    --input: 240 30% 20%;
+    --ring: 184 100% 50%;
+
+    --sidebar-background: 240 54% 4%;
+    --sidebar-foreground: 226 100% 94%;
+    --sidebar-primary: 184 100% 50%;
+    --sidebar-primary-foreground: 240 54% 4%;
+    --sidebar-accent: 240 30% 15%;
+    --sidebar-accent-foreground: 226 100% 94%;
+    --sidebar-border: 240 30% 20%;
+    --sidebar-ring: 184 100% 50%;
   }
 }
 
@@ -94,8 +108,33 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body bg-[url('/grid-pattern.svg')] bg-fixed;
+    background-size: 50px 50px;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading uppercase tracking-wider;
+  }
+}
+
+/* Scrollbar futurista */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+/* Seleção de texto */
+::selection {
+  background: hsl(var(--accent));
+  color: white;
 }
