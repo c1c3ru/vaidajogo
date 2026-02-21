@@ -17,5 +17,8 @@ class AppModule extends Module {
   void routes(RouteManager r) {
     r.module('/', module: DashboardModule());
     r.module('/players', module: PlayersModule());
+    // Mapeamento direto das rotas antigas do Dashboard pra dentro do módulo novo
+    r.module('/player-form', module: PlayersModule(), initialRoute: '/form');
+    r.module('/presence', module: PlayersModule(), initialRoute: '/presence');
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'presentation/pages/players_page.dart';
+import 'presentation/pages/player_form_page.dart';
+import 'presentation/pages/presence_page.dart';
 
 class PlayersModule extends Module {
   @override
@@ -10,5 +12,10 @@ class PlayersModule extends Module {
   @override
   void routes(RouteManager r) {
     r.child('/', child: (context) => const PlayersPage());
+    r.child(
+      '/form',
+      child: (context) => PlayerFormPage(playerToEdit: r.args.data),
+    );
+    r.child('/presence', child: (context) => const PresencePage());
   }
 }

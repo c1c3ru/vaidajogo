@@ -45,9 +45,7 @@ class _PlayersPageState extends State<PlayersPage> {
           IconButton(
             icon: const Icon(Icons.person_add, color: AppColors.secondary),
             onPressed: () {
-              // TODO: Ir para tela de criação de jogador real
-              // Para testes, vamos injetar um mock
-              _mockPlayer();
+              Modular.to.pushNamed('/players/form');
             },
           ),
         ],
