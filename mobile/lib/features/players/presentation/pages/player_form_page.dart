@@ -318,7 +318,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
       'Futebol': 'assets/lottie/Futebol.json',
       'Futsal': 'assets/lottie/Futsal.json',
       'Vôlei': 'assets/lottie/Volleyball.json',
-      'Handebol': null,
+      'Handebol': 'assets/lottie/Handball.json',
       'Basquetebol': 'assets/lottie/Basketball.json',
     };
 

@@ -22,7 +22,7 @@ const Dashboard = () => {
   const menuItems = [
     {
       title: TEXTS.PAGE_TITLES.PLAYER_FORM,
-      description: 'Inicialize o cadastro de novos jogadores no núcleo',
+      description: 'Cadastro de novos jogadores',
       icon: UserPlus,
       route: '/player-form',
       color: 'text-primary',
@@ -32,7 +32,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.PLAYER_LIST,
-      description: 'Visualize dados biométricos de todos os jogadores',
+      description: 'Visualize dados de todos os jogadores',
       icon: Users,
       route: '/players',
       color: 'text-secondary',
@@ -42,7 +42,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.PRESENCE,
-      description: 'Registre a assinatura térmica (presença) e pagamentos',
+      description: 'Registre a presença e pagamentos',
       icon: CheckCircle,
       route: '/presence',
       color: 'text-accent',
@@ -52,7 +52,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.TEAM_DRAW,
-      description: 'Algoritmo de balanceamento matricial de esquadrões',
+      description: 'Algoritmo de balanceamento de equipes',
       icon: Shuffle,
       route: '/team-draw',
       color: 'text-primary',
@@ -62,7 +62,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.STATISTICS,
-      description: 'Métricas preditivas avançadas do sistema',
+      description: 'Estatísticas e performance dos jogadores',
       icon: BarChart3,
       route: '/statistics',
       color: 'text-secondary',
@@ -72,7 +72,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.CHAMPIONSHIP,
-      description: 'Supervisione simulações e torneios de combate virtual',
+      description: 'Supervisione simulações e torneios',
       icon: Trophy,
       route: '/championship',
       color: 'text-accent',

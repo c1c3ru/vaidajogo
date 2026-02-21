@@ -50,7 +50,7 @@ class _DashboardPageState extends State<DashboardPage>
     },
     {
       'title': 'Campeonatos',
-      'description': 'Supervisione simulações e torneios de combate virtual',
+      'description': 'Supervisione simulações e torneios',
       'icon': Icons.emoji_events_outlined,
       'color': AppColors.accent,
       'route': '/championship',

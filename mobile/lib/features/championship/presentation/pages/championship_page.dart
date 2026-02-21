@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:lottie/lottie.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'bracket_prototype_page.dart';
+import 'groups_prototype_page.dart';
 
 class ChampionshipPage extends StatefulWidget {
   const ChampionshipPage({super.key});
@@ -97,7 +99,74 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BracketPrototypePage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'TESTAR PROTÓTIPO DE CHAVES',
+                  style: TextStyle(
+                    fontFamily: 'Chakra Petch',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
+                  foregroundColor: AppColors.secondary,
+                  side: const BorderSide(color: AppColors.secondary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const GroupsPrototypePage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'TESTAR PROTÓTIPO FASE DE GRUPOS',
+                  style: TextStyle(
+                    fontFamily: 'Chakra Petch',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Expanded(
             child: PageView.builder(
               controller: _pageController,

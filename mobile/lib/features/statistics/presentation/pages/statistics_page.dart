@@ -230,7 +230,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'TOPOLOGIA DE COMBATE (POSIÇÕES)',
+          'POSIÇÕES NO JOGO',
           style: TextStyle(
             color: AppColors.primary,
             fontFamily: 'Chakra Petch',
