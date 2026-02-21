@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -232,14 +231,14 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
                 height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary.withOpacity(0.1),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary, width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 10,
-                    shadowColor: AppColors.primary.withOpacity(0.5),
+                    shadowColor: AppColors.primary.withValues(alpha: 0.5),
                   ),
                   onPressed: _savePlayer,
                   child: const Text(
@@ -282,7 +281,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
           Expanded(
             child: Container(
               height: 1,
-              color: AppColors.primary.withOpacity(0.2),
+              color: AppColors.primary.withValues(alpha: 0.2),
             ),
           ),
         ],
@@ -304,7 +303,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
         labelStyle: const TextStyle(color: AppColors.muted, fontFamily: 'Jura'),
         prefixIcon: Icon(icon, color: AppColors.muted),
         filled: true,
-        fillColor: AppColors.cardBackground.withOpacity(0.5),
+        fillColor: AppColors.cardBackground.withValues(alpha: 0.5),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.border),
@@ -324,8 +323,9 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
       ),
       validator: isRequired
           ? (value) {
-              if (value == null || value.trim().isEmpty)
+              if (value == null || value.trim().isEmpty) {
                 return 'Campo obrigatório para o sistema.';
+              }
               return null;
             }
           : null,
@@ -342,7 +342,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
         labelStyle: const TextStyle(color: AppColors.muted, fontFamily: 'Jura'),
         prefixIcon: const Icon(Icons.sports_soccer, color: AppColors.muted),
         filled: true,
-        fillColor: AppColors.cardBackground.withOpacity(0.5),
+        fillColor: AppColors.cardBackground.withValues(alpha: 0.5),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.border),

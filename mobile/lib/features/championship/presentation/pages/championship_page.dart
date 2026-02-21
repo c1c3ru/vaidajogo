@@ -32,12 +32,12 @@ class ChampionshipPage extends StatelessWidget {
                 Icon(
                   Icons.emoji_events_outlined,
                   size: 100,
-                  color: AppColors.muted.withOpacity(0.2),
+                  color: AppColors.muted.withValues(alpha: 0.2),
                 ),
                 Icon(
                   Icons.lock_outline,
                   size: 30,
-                  color: AppColors.accent.withOpacity(0.8),
+                  color: AppColors.accent.withValues(alpha: 0.8),
                 ),
               ],
             ),

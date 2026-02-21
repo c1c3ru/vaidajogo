@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../domain/models/player.dart';
 import '../bloc/player_bloc.dart';
 import '../bloc/player_event.dart';
 import '../bloc/player_state.dart';
@@ -83,7 +82,7 @@ class _PlayersPageState extends State<PlayersPage> {
                   Icon(
                     Icons.person_off_outlined,
                     size: 60,
-                    color: AppColors.muted.withOpacity(0.5),
+                    color: AppColors.muted.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -113,29 +112,6 @@ class _PlayersPageState extends State<PlayersPage> {
             },
           );
         },
-      ),
-    );
-  }
-
-  void _mockPlayer() {
-    final mockId = DateTime.now().millisecondsSinceEpoch.toString();
-    _playerBloc.add(
-      AddPlayerEvent(
-        Player(
-          id: mockId,
-          name: 'Operador $mockId',
-          nickname: 'Ghost',
-          isGuest: false,
-          sport: 'Futebol',
-          selectedPositions: const ['ATACANTE', 'MEIA'],
-          rating: 8,
-          includeInDraw: true,
-          createdAt: DateTime.now().toIso8601String(),
-          selected: false,
-          present: false,
-          paid: true,
-          registered: true,
-        ),
       ),
     );
   }

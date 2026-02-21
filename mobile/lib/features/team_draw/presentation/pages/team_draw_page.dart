@@ -87,7 +87,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
                           Icon(
                             Icons.shuffle,
                             size: 60,
-                            color: AppColors.muted.withOpacity(0.5),
+                            color: AppColors.muted.withValues(alpha: 0.5),
                           ),
                           const SizedBox(height: 16),
                           const Text(
@@ -194,7 +194,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
             height: 50,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary.withOpacity(0.1),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                 foregroundColor: AppColors.primary,
                 side: const BorderSide(color: AppColors.primary, width: 2),
                 shape: RoundedRectangleBorder(
@@ -240,10 +240,10 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
           decoration: BoxDecoration(
             color: AppColors.background,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.5)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
@@ -282,7 +282,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.secondary.withOpacity(0.2),
+                        color: AppColors.secondary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

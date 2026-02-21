@@ -16,13 +16,13 @@ class PlayerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderColor = player.present ? AppColors.primary : AppColors.border;
     final shadowColor = player.present
-        ? AppColors.primary.withOpacity(0.3)
+        ? AppColors.primary.withValues(alpha: 0.3)
         : Colors.transparent;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground.withOpacity(0.8),
+        color: AppColors.cardBackground.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor, width: player.present ? 2 : 1),
         boxShadow: [
@@ -118,13 +118,13 @@ class PlayerCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: player.present
-                        ? AppColors.primary.withOpacity(0.2)
-                        : AppColors.muted.withOpacity(0.1),
+                        ? AppColors.primary.withValues(alpha: 0.2)
+                        : AppColors.muted.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: player.present
                           ? AppColors.primary
-                          : AppColors.muted.withOpacity(0.5),
+                          : AppColors.muted.withValues(alpha: 0.5),
                     ),
                   ),
                   child: Row(

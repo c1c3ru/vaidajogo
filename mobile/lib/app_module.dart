@@ -23,8 +23,5 @@ class AppModule extends Module {
     r.module('/team-draw', module: TeamDrawModule());
     r.module('/statistics', module: StatisticsModule());
     r.module('/championship', module: ChampionshipModule());
-    // Mapeamento direto das rotas antigas do Dashboard pra dentro do módulo novo
-    r.module('/player-form', module: PlayersModule(), initialRoute: '/form');
-    r.module('/presence', module: PlayersModule(), initialRoute: '/presence');
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class LogoWidget extends StatefulWidget {
   final double size;
@@ -51,7 +51,7 @@ class _LogoWidgetState extends State<LogoWidget>
               border: Border.all(color: AppColors.primary, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),

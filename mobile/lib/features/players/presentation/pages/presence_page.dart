@@ -152,7 +152,7 @@ class _PresencePageState extends State<PresencePage> {
                         height: 40,
                         decoration: BoxDecoration(
                           color: player.present
-                              ? AppColors.primary.withOpacity(0.1)
+                              ? AppColors.primary.withValues(alpha: 0.1)
                               : Colors.transparent,
                           shape: BoxShape.circle,
                           border: Border.all(

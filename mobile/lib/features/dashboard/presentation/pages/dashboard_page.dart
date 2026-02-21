@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../shared/widgets/logo_widget.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../shared/widgets/logo_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -88,10 +89,10 @@ class _DashboardPageState extends State<DashboardPage>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary.withOpacity(0.05),
+                color: AppColors.primary.withValues(alpha: 0.05),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     blurRadius: 100,
                     spreadRadius: 50,
                   ),
@@ -172,12 +173,12 @@ class _DashboardPageState extends State<DashboardPage>
         ).animate(animation),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.cardBackground.withOpacity(0.6),
+            color: AppColors.cardBackground.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withOpacity(0.3), width: 1),
+            border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.05),
+                color: color.withValues(alpha: 0.05),
                 blurRadius: 15,
                 spreadRadius: 2,
               ),
@@ -187,8 +188,8 @@ class _DashboardPageState extends State<DashboardPage>
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
-              splashColor: color.withOpacity(0.2),
-              highlightColor: color.withOpacity(0.1),
+              splashColor: color.withValues(alpha: 0.2),
+              highlightColor: color.withValues(alpha: 0.1),
               onTap: () {
                 Modular.to.pushNamed(item['route']);
               },
@@ -202,10 +203,10 @@ class _DashboardPageState extends State<DashboardPage>
                       decoration: BoxDecoration(
                         color: AppColors.background,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: color.withOpacity(0.5)),
+                        border: Border.all(color: color.withValues(alpha: 0.5)),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withOpacity(0.2),
+                            color: color.withValues(alpha: 0.2),
                             blurRadius: 8,
                           ),
                         ],
@@ -238,7 +239,7 @@ class _DashboardPageState extends State<DashboardPage>
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
-                        border: Border.all(color: color.withOpacity(0.3)),
+                        border: Border.all(color: color.withValues(alpha: 0.3)),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       alignment: Alignment.center,
