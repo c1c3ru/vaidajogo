@@ -18,7 +18,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
 
   final List<Map<String, String>> _comingSoonFeatures = [
     {
-      'title': 'NOVA ARENA',
+      'title': 'NOVO CAMPEONATO',
       'description': 'Estamos preparando um simulador de torneios completo.',
       'asset': 'assets/lottie/Campeonato.json',
     },
@@ -43,6 +43,12 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
       'description':
           'Controle de quartos, cronômetro central e sistema de faltas técnicas.',
       'asset': 'assets/lottie/Basketball.json',
+    },
+    {
+      'title': 'HANDBOL',
+      'description':
+          'Controle de quartos, cronômetro central e sistema de faltas técnicas.',
+      'asset': 'assets/lottie/Handball.json',
     },
   ];
 
@@ -75,7 +81,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              'MÓDULO RESTRITO',
+              'Organize seus torneios',
               style: TextStyle(
                 color: AppColors.accent,
                 fontFamily: 'Chakra Petch',

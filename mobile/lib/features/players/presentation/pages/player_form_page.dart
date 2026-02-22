@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:lottie/lottie.dart';
 import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../domain/models/player.dart';
 import '../bloc/player_bloc.dart';
@@ -26,6 +27,8 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
   String? _sport;
   double _rating = 3.0;
   String _evaluationType = 'Estrelas (1 a 5)';
+
+  bool _isConfigLocked = false;
 
   final Map<String, List<String>> _sportPositions = {
     'Futebol': ['GOL', 'ZAG', 'LAT', 'VOL', 'MEI', 'ATA'],
@@ -59,6 +62,38 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
       _evaluationType =
           widget.playerToEdit!.evaluationType ?? 'Estrelas (1 a 5)';
       _selectedPositions.addAll(widget.playerToEdit!.selectedPositions);
+    } else {
+      _loadSavedConfig();
+    }
+  }
+
+  Future<void> _loadSavedConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedSport = prefs.getString('locked_sport');
+    final savedEval = prefs.getString('locked_evaluation');
+
+    if (savedSport != null && savedEval != null) {
+      if (mounted) {
+        setState(() {
+          _sport = savedSport;
+          _evaluationType = savedEval;
+          _isConfigLocked = true;
+        });
+      }
+    }
+  }
+
+  Future<void> _resetConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('locked_sport');
+    await prefs.remove('locked_evaluation');
+    if (mounted) {
+      setState(() {
+        _isConfigLocked = false;
+        _sport = null;
+        _evaluationType = 'Estrelas (1 a 5)';
+        _selectedPositions.clear();
+      });
     }
   }
 
@@ -107,6 +142,12 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
 
       if (widget.playerToEdit == null) {
         _playerBloc.add(AddPlayerEvent(player));
+
+        // Registrar e amarrar configuração global para a sessão
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString('locked_sport', _sport!);
+          prefs.setString('locked_evaluation', _evaluationType);
+        });
       } else {
         _playerBloc.add(UpdatePlayerEvent(player));
       }
@@ -190,7 +231,29 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionTitle('MODALIDADE ESPORTIVA'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildSectionTitle('MODALIDADE ESPORTIVA'),
+                  if (_isConfigLocked && widget.playerToEdit == null)
+                    TextButton.icon(
+                      onPressed: _resetConfig,
+                      icon: const Icon(
+                        Icons.refresh,
+                        color: AppColors.secondary,
+                        size: 16,
+                      ),
+                      label: const Text(
+                        'Resetar Regras',
+                        style: TextStyle(
+                          color: AppColors.secondary,
+                          fontSize: 12,
+                          fontFamily: 'Chakra Petch',
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               _buildSportChips(),
               const SizedBox(height: 30),
 
@@ -288,6 +351,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.memory, color: AppColors.primary, size: 16),
           const SizedBox(width: 8),
@@ -302,12 +366,6 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              height: 1,
-              color: AppColors.primary.withValues(alpha: 0.2),
-            ),
-          ),
         ],
       ),
     );
@@ -331,12 +389,14 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
           children: _sportPositions.keys.map((s) {
             final isSelected = _sport == s;
             return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _sport = s;
-                  _selectedPositions.clear();
-                });
-              },
+              onTap: _isConfigLocked
+                  ? null
+                  : () {
+                      setState(() {
+                        _sport = s;
+                        _selectedPositions.clear();
+                      });
+                    },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 width: cardWidth,
@@ -358,57 +418,79 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
                         ]
                       : [],
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: sportAssets[s] != null
-                            ? Opacity(
-                                opacity: isSelected ? 1.0 : 0.5,
-                                child: Lottie.asset(
-                                  sportAssets[s]!,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
-                                        Icons.broken_image,
-                                        color: AppColors.muted,
-                                        size: 40,
-                                      ),
-                                ),
-                              )
-                            : Opacity(
-                                opacity: isSelected ? 1.0 : 0.5,
-                                child: Icon(
-                                  s == 'Handebol'
-                                      ? Icons.sports_handball
-                                      : Icons.sports,
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : AppColors.muted,
-                                  size: 40,
-                                ),
-                              ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        s,
-                        style: TextStyle(
-                          fontFamily: 'Chakra Petch',
-                          fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.foreground,
-                          fontSize: 12,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    children: [
+                      if (sportAssets[s] != null) ...[
+                        Positioned.fill(
+                          child: Opacity(
+                            opacity: isSelected ? 0.4 : 0.1,
+                            child: Lottie.asset(
+                              sportAssets[s]!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: AppColors.muted,
+                                      size: 40,
+                                    ),
+                                  ),
+                            ),
+                          ),
                         ),
-                        textAlign: TextAlign.center,
+                      ] else ...[
+                        Positioned.fill(
+                          child: Opacity(
+                            opacity: isSelected ? 0.3 : 0.1,
+                            child: Icon(
+                              s == 'Handebol'
+                                  ? Icons.sports_handball
+                                  : Icons.sports,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.muted,
+                              size: 80,
+                            ),
+                          ),
+                        ),
+                      ],
+                      Positioned(
+                        bottom: 10,
+                        left: 0,
+                        right: 0,
+                        child: Text(
+                          s,
+                          style: TextStyle(
+                            fontFamily: 'Chakra Petch',
+                            fontWeight: FontWeight.bold,
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.foreground,
+                            fontSize: 14,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.8),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  ],
+                      if (isSelected && _isConfigLocked)
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Icon(
+                            Icons.lock,
+                            size: 14,
+                            color: AppColors.primary.withValues(alpha: 0.7),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -480,7 +562,9 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
       items: _evaluationTypes.map((String value) {
         return DropdownMenuItem<String>(value: value, child: Text(value));
       }).toList(),
-      onChanged: _onEvaluationTypeChange,
+      onChanged: (_isConfigLocked && widget.playerToEdit == null)
+          ? null
+          : _onEvaluationTypeChange,
     );
   }
 

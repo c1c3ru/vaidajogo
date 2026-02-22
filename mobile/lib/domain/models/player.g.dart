@@ -24,7 +24,7 @@ class PlayerAdapter extends TypeAdapter<Player> {
       isGuest: fields[4] as bool,
       sport: fields[5] as String,
       selectedPositions: (fields[6] as List).cast<String>(),
-      rating: fields[7] as double,
+      rating: (fields[7] as num).toDouble(),
       evaluationType: fields[14] as String?,
       includeInDraw: fields[8] as bool,
       createdAt: fields[9] as String,
