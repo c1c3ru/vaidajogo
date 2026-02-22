@@ -10,6 +10,8 @@ class MatchInfo {
   String team2;
   String score1;
   String score2;
+  String? pen1;
+  String? pen2;
   bool isLive;
 
   MatchInfo({
@@ -17,6 +19,8 @@ class MatchInfo {
     required this.team2,
     this.score1 = '0',
     this.score2 = '0',
+    this.pen1,
+    this.pen2,
     this.isLive = false,
   });
 
@@ -25,6 +29,8 @@ class MatchInfo {
     'team2': team2,
     'score1': score1,
     'score2': score2,
+    'pen1': pen1,
+    'pen2': pen2,
     'isLive': isLive,
   };
 
@@ -33,6 +39,8 @@ class MatchInfo {
     team2: json['team2'] as String,
     score1: json['score1'] as String,
     score2: json['score2'] as String,
+    pen1: json['pen1'] as String?,
+    pen2: json['pen2'] as String?,
     isLive: json['isLive'] as bool,
   );
 }
@@ -128,6 +136,12 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
     TextEditingController score2Controller = TextEditingController(
       text: match.score2 == '-' ? '' : match.score2,
     );
+    TextEditingController pen1Controller = TextEditingController(
+      text: match.pen1 ?? '',
+    );
+    TextEditingController pen2Controller = TextEditingController(
+      text: match.pen2 ?? '',
+    );
 
     showDialog(
       context: context,
@@ -157,7 +171,7 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
-                  width: 60,
+                  width: 50,
                   child: TextField(
                     controller: score1Controller,
                     keyboardType: TextInputType.number,
@@ -165,6 +179,22 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                     decoration: const InputDecoration(
                       labelText: 'Placar',
                       labelStyle: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: pen1Controller,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: AppColors.secondary),
+                    decoration: const InputDecoration(
+                      labelText: 'Pênaltis',
+                      labelStyle: TextStyle(
+                        color: AppColors.muted,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
                 ),
@@ -185,7 +215,7 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
-                  width: 60,
+                  width: 50,
                   child: TextField(
                     controller: score2Controller,
                     keyboardType: TextInputType.number,
@@ -193,6 +223,22 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                     decoration: const InputDecoration(
                       labelText: 'Placar',
                       labelStyle: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: pen2Controller,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: AppColors.secondary),
+                    decoration: const InputDecoration(
+                      labelText: 'Pênaltis',
+                      labelStyle: TextStyle(
+                        color: AppColors.muted,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
                 ),
@@ -224,15 +270,32 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                     ? '-'
                     : score2Controller.text.trim();
 
+                match.pen1 = pen1Controller.text.trim().isEmpty
+                    ? null
+                    : pen1Controller.text.trim();
+                match.pen2 = pen2Controller.text.trim().isEmpty
+                    ? null
+                    : pen2Controller.text.trim();
+
                 if (match.score1 != '-' && match.score2 != '-') {
                   int? s1 = int.tryParse(match.score1);
                   int? s2 = int.tryParse(match.score2);
+                  int? p1 = int.tryParse(match.pen1 ?? '');
+                  int? p2 = int.tryParse(match.pen2 ?? '');
+
                   if (s1 != null &&
                       s2 != null &&
                       roundIndex < _rounds.length - 1) {
-                    String winner = (s1 > s2)
-                        ? match.team1
-                        : ((s2 > s1) ? match.team2 : 'A Definir');
+                    String winner = 'A Definir';
+                    if (s1 > s2) {
+                      winner = match.team1;
+                    } else if (s2 > s1) {
+                      winner = match.team2;
+                    } else if (p1 != null && p2 != null) {
+                      if (p1 > p2) winner = match.team1;
+                      if (p2 > p1) winner = match.team2;
+                    }
+
                     if (winner != 'A Definir') {
                       int nextMatchIndex = matchIndex ~/ 2;
                       bool isTeam1 = (matchIndex % 2 == 0);
@@ -395,13 +458,28 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      match.score1,
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontFamily: 'Chakra Petch',
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (match.pen1 != null)
+                          Text(
+                            '(${match.pen1}) ',
+                            style: const TextStyle(
+                              color: AppColors.secondary,
+                              fontSize: 10,
+                              fontFamily: 'Chakra Petch',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        Text(
+                          match.score1,
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontFamily: 'Chakra Petch',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -427,13 +505,28 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      match.score2,
-                      style: const TextStyle(
-                        color: AppColors.muted,
-                        fontFamily: 'Chakra Petch',
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (match.pen2 != null)
+                          Text(
+                            '(${match.pen2}) ',
+                            style: const TextStyle(
+                              color: AppColors.secondary,
+                              fontSize: 10,
+                              fontFamily: 'Chakra Petch',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        Text(
+                          match.score2,
+                          style: const TextStyle(
+                            color: AppColors.muted,
+                            fontFamily: 'Chakra Petch',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

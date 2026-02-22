@@ -80,15 +80,45 @@ class TeamInfo {
   );
 }
 
+class GroupMatch {
+  String team1;
+  String team2;
+  String score1;
+  String score2;
+
+  GroupMatch({
+    required this.team1,
+    required this.team2,
+    this.score1 = '-',
+    this.score2 = '-',
+  });
+
+  Map<String, dynamic> toJson() => {
+    'team1': team1,
+    'team2': team2,
+    'score1': score1,
+    'score2': score2,
+  };
+
+  factory GroupMatch.fromJson(Map<String, dynamic> json) => GroupMatch(
+    team1: json['team1'] as String? ?? 'A Definir',
+    team2: json['team2'] as String? ?? 'A Definir',
+    score1: json['score1'] as String? ?? '-',
+    score2: json['score2'] as String? ?? '-',
+  );
+}
+
 class GroupInfo {
   String name;
   List<TeamInfo> teams;
+  List<GroupMatch> matches;
 
-  GroupInfo({required this.name, required this.teams});
+  GroupInfo({required this.name, required this.teams, this.matches = const []});
 
   Map<String, dynamic> toJson() => {
     'name': name,
     'teams': teams.map((t) => t.toJson()).toList(),
+    'matches': matches.map((m) => m.toJson()).toList(),
   };
 
   factory GroupInfo.fromJson(Map<String, dynamic> json) => GroupInfo(
@@ -96,6 +126,11 @@ class GroupInfo {
     teams:
         (json['teams'] as List?)
             ?.map((t) => TeamInfo.fromJson(t as Map<String, dynamic>))
+            .toList() ??
+        [],
+    matches:
+        (json['matches'] as List?)
+            ?.map((m) => GroupMatch.fromJson(m as Map<String, dynamic>))
             .toList() ??
         [],
   );
@@ -251,6 +286,30 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
     );
   }
 
+  void _syncMatchesForGroup(GroupInfo group) {
+    final currentTeamNames = group.teams.map((t) => t.name).toSet();
+    group.matches.removeWhere(
+      (m) =>
+          !currentTeamNames.contains(m.team1) ||
+          !currentTeamNames.contains(m.team2),
+    );
+
+    for (int i = 0; i < group.teams.length; i++) {
+      for (int j = i + 1; j < group.teams.length; j++) {
+        final t1 = group.teams[i].name;
+        final t2 = group.teams[j].name;
+        final exists = group.matches.any(
+          (m) =>
+              (m.team1 == t1 && m.team2 == t2) ||
+              (m.team1 == t2 && m.team2 == t1),
+        );
+        if (!exists) {
+          group.matches.add(GroupMatch(team1: t1, team2: t2));
+        }
+      }
+    }
+  }
+
   void _addOrEditTeam(int groupIndex, {int? teamIndex}) {
     bool isEditing = teamIndex != null;
     TextEditingController nameController = TextEditingController(
@@ -323,6 +382,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
               onPressed: () {
                 setState(() {
                   _groups[groupIndex].teams.removeAt(teamIndex);
+                  _syncMatchesForGroup(_groups[groupIndex]);
                 });
                 _saveGroups();
                 Navigator.pop(ctx);
@@ -346,10 +406,16 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                     isEdited: true,
                   );
                   if (isEditing) {
+                    final oldName = _groups[groupIndex].teams[teamIndex].name;
                     _groups[groupIndex].teams[teamIndex] = newTeam;
+                    for (var m in _groups[groupIndex].matches) {
+                      if (m.team1 == oldName) m.team1 = newTeam.name;
+                      if (m.team2 == oldName) m.team2 = newTeam.name;
+                    }
                   } else {
                     _groups[groupIndex].teams.add(newTeam);
                   }
+                  _syncMatchesForGroup(_groups[groupIndex]);
                 });
                 _saveGroups();
                 Navigator.pop(ctx);
@@ -440,7 +506,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -465,11 +531,18 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
             unselectedLabelColor: AppColors.muted,
             tabs: [
               Tab(text: 'TIMES'),
+              Tab(text: 'CONFRONTOS'),
               Tab(text: 'CLASSIFICAÇÃO'),
             ],
           ),
         ),
-        body: TabBarView(children: [_buildGroupsGrid(), _buildStandingsGrid()]),
+        body: TabBarView(
+          children: [
+            _buildGroupsGrid(),
+            _buildMatchesGrid(),
+            _buildStandingsGrid(),
+          ],
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: _addGroup,
           backgroundColor: AppColors.secondary,
@@ -663,6 +736,233 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
     );
   }
 
+  Widget _buildMatchesGrid() {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(20),
+      itemCount: _groups.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: _buildMatchGroupCard(_groups[index], index),
+        );
+      },
+    );
+  }
+
+  Widget _buildMatchGroupCard(GroupInfo group, int groupIndex) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.15),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              border: const Border(
+                bottom: BorderSide(color: AppColors.primary, width: 2),
+              ),
+            ),
+            child: Text(
+              group.name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontFamily: 'Chakra Petch',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          if (group.matches.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  'Adicione times para gerar confrontos',
+                  style: TextStyle(color: AppColors.muted, fontFamily: 'Jura'),
+                ),
+              ),
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: group.matches.length,
+              itemBuilder: (ctx, idx) {
+                final match = group.matches[idx];
+                final isLast = idx == group.matches.length - 1;
+                return InkWell(
+                  onTap: () => _editStandingsMatch(groupIndex, idx),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      border: isLast
+                          ? null
+                          : const Border(
+                              bottom: BorderSide(color: AppColors.border),
+                            ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            match.team1,
+                            style: const TextStyle(
+                              color: AppColors.foreground,
+                              fontFamily: 'Jura',
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          '${match.score1} x ${match.score2}',
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontFamily: 'Chakra Petch',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            match.team2,
+                            style: const TextStyle(
+                              color: AppColors.foreground,
+                              fontFamily: 'Jura',
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.right,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _editStandingsMatch(int groupIndex, int matchIndex) {
+    final match = _groups[groupIndex].matches[matchIndex];
+    TextEditingController score1Controller = TextEditingController(
+      text: match.score1 == '-' ? '' : match.score1,
+    );
+    TextEditingController score2Controller = TextEditingController(
+      text: match.score2 == '-' ? '' : match.score2,
+    );
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: const Text(
+          'Editar Placar',
+          style: TextStyle(
+            color: AppColors.primary,
+            fontFamily: 'Chakra Petch',
+          ),
+        ),
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    match.team1,
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontFamily: 'Jura',
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  TextField(
+                    controller: score1Controller,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.foreground),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text('x', style: TextStyle(color: AppColors.muted)),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    match.team2,
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontFamily: 'Jura',
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  TextField(
+                    controller: score2Controller,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.foreground),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: AppColors.muted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                match.score1 = score1Controller.text.trim().isEmpty
+                    ? '-'
+                    : score1Controller.text.trim();
+                match.score2 = score2Controller.text.trim().isEmpty
+                    ? '-'
+                    : score2Controller.text.trim();
+              });
+              _saveGroups();
+              Navigator.pop(ctx);
+            },
+            child: const Text(
+              'Salvar',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStandingsGrid() {
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
@@ -724,6 +1024,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
+              showCheckboxColumn: false,
               columnSpacing: 16,
               headingTextStyle: const TextStyle(
                 color: AppColors.muted,
@@ -757,6 +1058,16 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                     DataCell(
                       Row(
                         children: [
+                          Icon(
+                            team.isEdited
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            size: 16,
+                            color: team.isEdited
+                                ? AppColors.primary
+                                : AppColors.muted,
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             '${idx + 1}',
                             style: TextStyle(
