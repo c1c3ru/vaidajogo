@@ -129,7 +129,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
                   );
                 },
                 child: const Text(
-                  'TESTAR PROTÓTIPO DE CHAVES',
+                  'CRIAR CHAVES',
                   style: TextStyle(
                     fontFamily: 'Chakra Petch',
                     fontWeight: FontWeight.bold,
@@ -162,7 +162,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
                   );
                 },
                 child: const Text(
-                  'TESTAR PROTÓTIPO FASE DE GRUPOS',
+                  'CRIAR FASE DE GRUPOS',
                   style: TextStyle(
                     fontFamily: 'Chakra Petch',
                     fontWeight: FontWeight.bold,

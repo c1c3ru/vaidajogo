@@ -15,7 +15,7 @@ class _DashboardPageState extends State<DashboardPage>
   final List<Map<String, dynamic>> menuItems = [
     {
       'title': 'Cadastro',
-      'description': 'Inicialize o cadastro de novos jogadores no núcleo',
+      'description': 'Cadastro de novos jogadores',
       'icon': Icons.person_add_outlined,
       'color': AppColors.primary,
       'route': '/players/form',
@@ -29,28 +29,28 @@ class _DashboardPageState extends State<DashboardPage>
     },
     {
       'title': 'Presença',
-      'description': 'Registre a assinatura térmica (presença) e pagamentos',
+      'description': 'Registre a presença e pagamentos',
       'icon': Icons.check_circle_outline,
       'color': AppColors.accent,
       'route': '/players/presence',
     },
     {
       'title': 'Sorteio',
-      'description': 'Algoritmo de balanceamento matricial de esquadrões',
+      'description': 'Sorteio de times balanceados',
       'icon': Icons.shuffle_outlined,
       'color': AppColors.primary,
       'route': '/team-draw',
     },
     {
       'title': 'Estatísticas',
-      'description': 'Métricas preditivas avançadas do sistema',
+      'description': 'Métricas do sistema',
       'icon': Icons.bar_chart_outlined,
       'color': AppColors.secondary,
       'route': '/statistics',
     },
     {
       'title': 'Campeonatos',
-      'description': 'Supervisione simulações e torneios',
+      'description': 'Controle de campeonatos e torneios',
       'icon': Icons.emoji_events_outlined,
       'color': AppColors.accent,
       'route': '/championship',
