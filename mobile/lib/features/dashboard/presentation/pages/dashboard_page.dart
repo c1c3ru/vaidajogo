@@ -112,7 +112,7 @@ class _DashboardPageState extends State<DashboardPage>
                         const LogoWidget(),
                         const SizedBox(height: 16),
                         Text(
-                          'Acesso ao Mainframe Estratégico Autorizado. Seja bem-vindo ao Hub.',
+                          'Seja bem-vindo ao VAIDAJOGO.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.muted,

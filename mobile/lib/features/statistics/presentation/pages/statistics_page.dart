@@ -22,7 +22,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'TELEMETRIA / ESTATÍSTICAS',
+          'ESTATÍSTICAS',
           style: TextStyle(
             fontFamily: 'Chakra Petch',
             fontWeight: FontWeight.bold,
@@ -99,7 +99,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('OPERADORES', '${players.length}', AppColors.primary),
+          _buildStatItem('JOGADORES', '${players.length}', AppColors.primary),
           Container(width: 1, height: 40, color: AppColors.border),
           _buildStatItem('ATIVOS', '$present', AppColors.secondary),
         ],
@@ -165,7 +165,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'DISTRIBUIÇÃO DE NÍVEL DE AMEAÇA',
+          'DISTRIBUIÇÃO DE ACORDO COM O NÍVEL',
           style: TextStyle(
             color: AppColors.primary,
             fontFamily: 'Chakra Petch',

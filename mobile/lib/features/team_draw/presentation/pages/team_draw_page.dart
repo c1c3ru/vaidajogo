@@ -32,7 +32,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'SORTEIO MATRICIAL',
+          'SORTEIO DAS EQUIPES',
           style: TextStyle(
             fontFamily: 'Chakra Petch',
             fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
                 ),
               ),
               Text(
-                '${presentPlayers.length} OPERADORES',
+                '${presentPlayers.length} JOGADORES',
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 16,
@@ -145,7 +145,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'FORMATO TÁTICO (JOGADORES POR TIME)',
+            'JOGADORES POR TIME',
             style: TextStyle(
               color: AppColors.muted,
               fontSize: 12,

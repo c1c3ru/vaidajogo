@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 
 class MatchInfo {
@@ -17,6 +19,22 @@ class MatchInfo {
     this.score2 = '0',
     this.isLive = false,
   });
+
+  Map<String, dynamic> toJson() => {
+    'team1': team1,
+    'team2': team2,
+    'score1': score1,
+    'score2': score2,
+    'isLive': isLive,
+  };
+
+  factory MatchInfo.fromJson(Map<String, dynamic> json) => MatchInfo(
+    team1: json['team1'] as String,
+    team2: json['team2'] as String,
+    score1: json['score1'] as String,
+    score2: json['score2'] as String,
+    isLive: json['isLive'] as bool,
+  );
 }
 
 class BracketPrototypePage extends StatefulWidget {
@@ -33,7 +51,46 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
   @override
   void initState() {
     super.initState();
-    _generateBrackets(_teamCount);
+    _loadBrackets();
+  }
+
+  Future<void> _loadBrackets() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? bracketsJson = prefs.getString('brackets_data');
+    final int? storedTeamCount = prefs.getInt('brackets_team_count');
+
+    if (bracketsJson != null && storedTeamCount != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(bracketsJson);
+        setState(() {
+          _teamCount = storedTeamCount;
+          _rounds = decoded
+              .map(
+                (roundList) => (roundList as List)
+                    .map((m) => MatchInfo.fromJson(m as Map<String, dynamic>))
+                    .toList(),
+              )
+              .toList();
+        });
+      } catch (e) {
+        setState(() {
+          _generateBrackets(_teamCount);
+        });
+      }
+    } else {
+      setState(() {
+        _generateBrackets(_teamCount);
+      });
+    }
+  }
+
+  Future<void> _saveBrackets() async {
+    final prefs = await SharedPreferences.getInstance();
+    final serialized = _rounds
+        .map((round) => round.map((m) => m.toJson()).toList())
+        .toList();
+    await prefs.setString('brackets_data', jsonEncode(serialized));
+    await prefs.setInt('brackets_team_count', _teamCount);
   }
 
   void _generateBrackets(int teams) {
@@ -166,7 +223,29 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                 match.score2 = score2Controller.text.trim().isEmpty
                     ? '-'
                     : score2Controller.text.trim();
+
+                if (match.score1 != '-' && match.score2 != '-') {
+                  int? s1 = int.tryParse(match.score1);
+                  int? s2 = int.tryParse(match.score2);
+                  if (s1 != null &&
+                      s2 != null &&
+                      roundIndex < _rounds.length - 1) {
+                    String winner = (s1 > s2)
+                        ? match.team1
+                        : ((s2 > s1) ? match.team2 : 'A Definir');
+                    if (winner != 'A Definir') {
+                      int nextMatchIndex = matchIndex ~/ 2;
+                      bool isTeam1 = (matchIndex % 2 == 0);
+                      if (isTeam1) {
+                        _rounds[roundIndex + 1][nextMatchIndex].team1 = winner;
+                      } else {
+                        _rounds[roundIndex + 1][nextMatchIndex].team2 = winner;
+                      }
+                    }
+                  }
+                }
               });
+              _saveBrackets();
               Navigator.pop(ctx);
             },
             child: const Text(
@@ -210,6 +289,7 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                 _teamCount = value;
                 _generateBrackets(value);
               });
+              _saveBrackets();
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 4, child: Text('4 Times')),
@@ -381,11 +461,6 @@ class _BracketPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-
     for (int r = 0; r < rounds.length - 1; r++) {
       int matchesInRound = rounds[r].length;
 
@@ -396,6 +471,21 @@ class _BracketPainter extends CustomPainter {
       double yStepNext = size.height / (matchesInRound / 2);
 
       for (int i = 0; i < matchesInRound; i++) {
+        var match = rounds[r][i];
+        bool hasWinner = false;
+        if (match.score1 != '-' && match.score2 != '-') {
+          int? s1 = int.tryParse(match.score1);
+          int? s2 = int.tryParse(match.score2);
+          if (s1 != null && s2 != null && s1 != s2) hasWinner = true;
+        }
+
+        final linePaint = Paint()
+          ..color = hasWinner
+              ? AppColors.accent.withValues(alpha: 0.8)
+              : AppColors.primary.withValues(alpha: 0.5)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0;
+
         // Calculate coordinates for the connecting lines
         double startX = (r * columnWidth) + (columnWidth / 2) + (cardWidth / 2);
         double startY = (i * yStepCurrent) + (yStepCurrent / 2);
@@ -407,13 +497,17 @@ class _BracketPainter extends CustomPainter {
 
         // Draw horizontal line out of the current match
         double midX = startX + (endX - startX) / 2;
-        canvas.drawLine(Offset(startX, startY), Offset(midX, startY), paint);
+        canvas.drawLine(
+          Offset(startX, startY),
+          Offset(midX, startY),
+          linePaint,
+        );
 
         // Draw vertical connecting line
-        canvas.drawLine(Offset(midX, startY), Offset(midX, endY), paint);
+        canvas.drawLine(Offset(midX, startY), Offset(midX, endY), linePaint);
 
         // Draw horizontal line into the next match
-        canvas.drawLine(Offset(midX, endY), Offset(endX, endY), paint);
+        canvas.drawLine(Offset(midX, endY), Offset(endX, endY), linePaint);
       }
     }
   }

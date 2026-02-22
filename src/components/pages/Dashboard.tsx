@@ -119,7 +119,7 @@ const Dashboard = () => {
         >
           <Logo />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-center font-body bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            Acesso ao Mainframe Estratégico Autorizado. Seja bem-vindo ao Hub.
+            Seja bem-vindo ao Vai de Jogo.
           </p>
         </motion.div>
 

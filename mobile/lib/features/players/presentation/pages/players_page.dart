@@ -61,7 +61,7 @@ class _PlayersPageState extends State<PlayersPage> {
           if (state is PlayerErrorState) {
             return Center(
               child: Text(
-                'Falha Crítica no Mainframe:\n${state.message}',
+                'Falha Crítica no app:\n${state.message}',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: AppColors.accent,

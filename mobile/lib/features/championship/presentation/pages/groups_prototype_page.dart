@@ -1,12 +1,57 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamInfo {
   String name;
   String code;
+  int pts;
+  int pj;
+  int vit;
+  int emp;
+  int der;
+  int gm;
+  int gc;
 
-  TeamInfo({required this.name, required this.code});
+  int get sg => gm - gc;
+
+  TeamInfo({
+    required this.name,
+    required this.code,
+    this.pts = 0,
+    this.pj = 0,
+    this.vit = 0,
+    this.emp = 0,
+    this.der = 0,
+    this.gm = 0,
+    this.gc = 0,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'code': code,
+    'pts': pts,
+    'pj': pj,
+    'vit': vit,
+    'emp': emp,
+    'der': der,
+    'gm': gm,
+    'gc': gc,
+  };
+
+  factory TeamInfo.fromJson(Map<String, dynamic> json) => TeamInfo(
+    name: json['name'] as String? ?? 'Time',
+    code: json['code'] as String? ?? '',
+    pts: json['pts'] as int? ?? 0,
+    pj: json['pj'] as int? ?? 0,
+    vit: json['vit'] as int? ?? 0,
+    emp: json['emp'] as int? ?? 0,
+    der: json['der'] as int? ?? 0,
+    gm: json['gm'] as int? ?? 0,
+    gc: json['gc'] as int? ?? 0,
+  );
 }
 
 class GroupInfo {
@@ -14,6 +59,20 @@ class GroupInfo {
   List<TeamInfo> teams;
 
   GroupInfo({required this.name, required this.teams});
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'teams': teams.map((t) => t.toJson()).toList(),
+  };
+
+  factory GroupInfo.fromJson(Map<String, dynamic> json) => GroupInfo(
+    name: json['name'] as String? ?? 'GRUPO',
+    teams:
+        (json['teams'] as List?)
+            ?.map((t) => TeamInfo.fromJson(t as Map<String, dynamic>))
+            .toList() ??
+        [],
+  );
 }
 
 class GroupsPrototypePage extends StatefulWidget {
@@ -30,6 +89,28 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
   void initState() {
     super.initState();
     _groups = [];
+    _loadGroups();
+  }
+
+  Future<void> _loadGroups() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? groupsJson = prefs.getString('groups_data');
+    if (groupsJson != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(groupsJson);
+        setState(() {
+          _groups = decoded
+              .map((g) => GroupInfo.fromJson(g as Map<String, dynamic>))
+              .toList();
+        });
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _saveGroups() async {
+    final prefs = await SharedPreferences.getInstance();
+    final serialized = _groups.map((g) => g.toJson()).toList();
+    await prefs.setString('groups_data', jsonEncode(serialized));
   }
 
   void _addGroup() {
@@ -72,6 +153,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                     ),
                   );
                 });
+                _saveGroups();
                 Navigator.pop(ctx);
               }
             },
@@ -114,6 +196,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
               setState(() {
                 _groups.removeAt(groupIndex);
               });
+              _saveGroups();
               Navigator.pop(ctx);
             },
             child: const Text(
@@ -203,6 +286,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 setState(() {
                   _groups[groupIndex].teams.removeAt(teamIndex);
                 });
+                _saveGroups();
                 Navigator.pop(ctx);
               },
               child: const Text('Excluir', style: TextStyle(color: Colors.red)),
@@ -228,6 +312,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                     _groups[groupIndex].teams.add(newTeam);
                   }
                 });
+                _saveGroups();
                 Navigator.pop(ctx);
               }
             },
@@ -241,97 +326,116 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(
-          'FASE DE GRUPOS',
-          style: TextStyle(
-            fontFamily: 'Chakra Petch',
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.primary),
-          onPressed: () => Modular.to.pop(),
-        ),
-      ),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.emoji_events,
-                    size: 80,
-                    color: AppColors.secondary,
+  Widget _buildGroupsGrid() {
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.emoji_events,
+                  size: 80,
+                  color: AppColors.secondary,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'CAMPEONATO OFICIAL',
+                  style: TextStyle(
+                    color: AppColors.foreground,
+                    fontFamily: 'Chakra Petch',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'CAMPEONATO OFICIAL',
-                    style: TextStyle(
-                      color: AppColors.foreground,
-                      fontFamily: 'Chakra Petch',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    textAlign: TextAlign.center,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Monte seus grupos personalizados',
+                  style: TextStyle(
+                    color: AppColors.muted.withValues(alpha: 0.8),
+                    fontFamily: 'Jura',
+                    fontSize: 14,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Monte seus grupos personalizados',
-                    style: TextStyle(
-                      color: AppColors.muted.withValues(alpha: 0.8),
-                      fontFamily: 'Jura',
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  if (_groups.isEmpty) ...[
-                    const SizedBox(height: 40),
-                    const Center(
-                      child: Text(
-                        'Nenhum grupo criado. Clique em [+] para iniciar.',
-                        style: TextStyle(
-                          color: AppColors.muted,
-                          fontFamily: 'Jura',
-                          fontSize: 16,
-                        ),
+                  textAlign: TextAlign.center,
+                ),
+                if (_groups.isEmpty) ...[
+                  const SizedBox(height: 40),
+                  const Center(
+                    child: Text(
+                      'Nenhum grupo criado. Clique em [+] para iniciar.',
+                      style: TextStyle(
+                        color: AppColors.muted,
+                        fontFamily: 'Jura',
+                        fontSize: 16,
                       ),
                     ),
-                  ],
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 350,
-                mainAxisExtent: 320,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-              ),
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return _buildGroupCard(_groups[index], index);
-              }, childCount: _groups.length),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 350,
+              mainAxisExtent: 320,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return _buildGroupCard(_groups[index], index);
+            }, childCount: _groups.length),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 80)),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text(
+            'FASE DE GRUPOS',
+            style: TextStyle(
+              fontFamily: 'Chakra Petch',
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 80)),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addGroup,
-        backgroundColor: AppColors.secondary,
-        child: const Icon(Icons.add, color: AppColors.background),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: AppColors.primary,
+            ),
+            onPressed: () => Modular.to.pop(),
+          ),
+          bottom: const TabBar(
+            indicatorColor: AppColors.primary,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: AppColors.muted,
+            tabs: [
+              Tab(text: 'TIMES'),
+              Tab(text: 'CLASSIFICAÇÃO'),
+            ],
+          ),
+        ),
+        body: TabBarView(children: [_buildGroupsGrid(), _buildStandingsGrid()]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _addGroup,
+          backgroundColor: AppColors.secondary,
+          child: const Icon(Icons.add, color: AppColors.background),
+        ),
       ),
     );
   }
@@ -507,6 +611,248 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                   ),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStandingsGrid() {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(20),
+      itemCount: _groups.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: _buildStandingsCard(_groups[index], index),
+        );
+      },
+    );
+  }
+
+  Widget _buildStandingsCard(GroupInfo group, int groupIndex) {
+    // Ordenar os times (Pts > VIT > SG)
+    final sortedTeams = List<TeamInfo>.from(group.teams);
+    sortedTeams.sort((a, b) {
+      if (b.pts != a.pts) return b.pts.compareTo(a.pts);
+      if (b.vit != a.vit) return b.vit.compareTo(a.vit);
+      return b.sg.compareTo(a.sg);
+    });
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.15),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              border: const Border(
+                bottom: BorderSide(color: AppColors.primary, width: 2),
+              ),
+            ),
+            child: Text(
+              group.name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontFamily: 'Chakra Petch',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columnSpacing: 16,
+              headingTextStyle: const TextStyle(
+                color: AppColors.muted,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Jura',
+              ),
+              dataTextStyle: const TextStyle(
+                color: AppColors.foreground,
+                fontFamily: 'Chakra Petch',
+              ),
+              columns: const [
+                DataColumn(label: Text('Clube')),
+                DataColumn(label: Text('Pts')),
+                DataColumn(label: Text('PJ')),
+                DataColumn(label: Text('VIT')),
+                DataColumn(label: Text('E')),
+                DataColumn(label: Text('DER')),
+                DataColumn(label: Text('GM')),
+                DataColumn(label: Text('GC')),
+                DataColumn(label: Text('SG')),
+              ],
+              rows: sortedTeams.map((team) {
+                final idx = sortedTeams.indexOf(team);
+                final bool isQualified = idx < 2; // Top 2 advance
+                final originalIdx = group.teams.indexOf(team);
+                return DataRow(
+                  onSelectChanged: (_) =>
+                      _editTeamStats(groupIndex, originalIdx),
+                  cells: [
+                    DataCell(
+                      Row(
+                        children: [
+                          Text(
+                            '\${idx + 1}',
+                            style: TextStyle(
+                              color: isQualified
+                                  ? AppColors.secondary
+                                  : AppColors.muted,
+                              fontWeight: isQualified
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(team.name),
+                        ],
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        team.pts.toString(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataCell(Text(team.pj.toString())),
+                    DataCell(Text(team.vit.toString())),
+                    DataCell(Text(team.emp.toString())),
+                    DataCell(Text(team.der.toString())),
+                    DataCell(Text(team.gm.toString())),
+                    DataCell(Text(team.gc.toString())),
+                    DataCell(Text(team.sg.toString())),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'Toque em uma linha para editar a pontuação',
+              style: TextStyle(
+                color: AppColors.muted,
+                fontSize: 10,
+                fontFamily: 'Jura',
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editTeamStats(int groupIndex, int teamIndex) {
+    final team = _groups[groupIndex].teams[teamIndex];
+    final ptsCtrl = TextEditingController(text: team.pts.toString());
+    final pjCtrl = TextEditingController(text: team.pj.toString());
+    final vitCtrl = TextEditingController(text: team.vit.toString());
+    final empCtrl = TextEditingController(text: team.emp.toString());
+    final derCtrl = TextEditingController(text: team.der.toString());
+    final gmCtrl = TextEditingController(text: team.gm.toString());
+    final gcCtrl = TextEditingController(text: team.gc.toString());
+
+    Widget buildNumberField(String label, TextEditingController controller) {
+      return Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(color: AppColors.foreground),
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: const TextStyle(color: AppColors.muted, fontSize: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 8,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: Text(
+          'Estatísticas - \${team.name}',
+          style: const TextStyle(
+            color: AppColors.primary,
+            fontFamily: 'Chakra Petch',
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  buildNumberField('Pts', ptsCtrl),
+                  buildNumberField('PJ', pjCtrl),
+                ],
+              ),
+              Row(
+                children: [
+                  buildNumberField('VIT', vitCtrl),
+                  buildNumberField('E', empCtrl),
+                ],
+              ),
+              Row(children: [buildNumberField('DER', derCtrl)]),
+              Row(
+                children: [
+                  buildNumberField('GM', gmCtrl),
+                  buildNumberField('GC', gcCtrl),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: AppColors.muted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                team.pts = int.tryParse(ptsCtrl.text.trim()) ?? team.pts;
+                team.pj = int.tryParse(pjCtrl.text.trim()) ?? team.pj;
+                team.vit = int.tryParse(vitCtrl.text.trim()) ?? team.vit;
+                team.emp = int.tryParse(empCtrl.text.trim()) ?? team.emp;
+                team.der = int.tryParse(derCtrl.text.trim()) ?? team.der;
+                team.gm = int.tryParse(gmCtrl.text.trim()) ?? team.gm;
+                team.gc = int.tryParse(gcCtrl.text.trim()) ?? team.gc;
+              });
+              _saveGroups();
+              Navigator.pop(ctx);
+            },
+            child: const Text(
+              'Salvar',
+              style: TextStyle(color: AppColors.primary),
             ),
           ),
         ],

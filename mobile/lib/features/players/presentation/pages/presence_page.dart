@@ -27,7 +27,7 @@ class _PresencePageState extends State<PresencePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'CHECK-IN TÁTICO',
+          'CHECK-IN',
           style: TextStyle(
             fontFamily: 'Chakra Petch',
             fontWeight: FontWeight.bold,

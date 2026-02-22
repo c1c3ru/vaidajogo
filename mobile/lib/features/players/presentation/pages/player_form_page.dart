@@ -581,7 +581,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Mínimo (\${_getRatingMin().toInt()})',
+              'Mínimo (${_getRatingMin().toInt()})',
               style: const TextStyle(color: AppColors.muted, fontSize: 12),
             ),
             Container(
@@ -602,7 +602,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
               ),
             ),
             Text(
-              'Máximo (\${_getRatingMax().toInt()})',
+              'Máximo (${_getRatingMax().toInt()})',
               style: const TextStyle(color: AppColors.muted, fontSize: 12),
             ),
           ],
