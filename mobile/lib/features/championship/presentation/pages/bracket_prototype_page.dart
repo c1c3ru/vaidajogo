@@ -4,11 +4,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'dart:math';
 
 class MatchInfo {
-  final String team1;
-  final String team2;
-  final String score1;
-  final String score2;
-  final bool isLive;
+  String team1;
+  String team2;
+  String score1;
+  String score2;
+  bool isLive;
 
   MatchInfo({
     required this.team1,
@@ -39,32 +39,144 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
   void _generateBrackets(int teams) {
     _rounds = [];
     int currentTeams = teams;
-    int roundNum = 1;
 
     while (currentTeams >= 2) {
       int matchesInRound = currentTeams ~/ 2;
       List<MatchInfo> roundMatches = [];
       for (int i = 0; i < matchesInRound; i++) {
-        if (roundNum == 1) {
-          roundMatches.add(
-            MatchInfo(
-              team1: 'Equipe \${i * 2 + 1}',
-              team2: 'Equipe \${i * 2 + 2}',
-            ),
-          );
-        } else {
-          roundMatches.add(
-            MatchInfo(
-              team1: 'Vencedor \${(i * 2) + 1}',
-              team2: 'Vencedor \${(i * 2) + 2}',
-            ),
-          );
-        }
+        roundMatches.add(
+          MatchInfo(
+            team1: 'A Definir',
+            team2: 'A Definir',
+            score1: '-',
+            score2: '-',
+          ),
+        );
       }
       _rounds.add(roundMatches);
       currentTeams = matchesInRound;
-      roundNum++;
     }
+  }
+
+  void _editMatch(MatchInfo match, int roundIndex, int matchIndex) {
+    TextEditingController team1Controller = TextEditingController(
+      text: match.team1 == 'A Definir' ? '' : match.team1,
+    );
+    TextEditingController team2Controller = TextEditingController(
+      text: match.team2 == 'A Definir' ? '' : match.team2,
+    );
+    TextEditingController score1Controller = TextEditingController(
+      text: match.score1 == '-' ? '' : match.score1,
+    );
+    TextEditingController score2Controller = TextEditingController(
+      text: match.score2 == '-' ? '' : match.score2,
+    );
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: const Text(
+          'Editar Chave',
+          style: TextStyle(
+            color: AppColors.primary,
+            fontFamily: 'Chakra Petch',
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: team1Controller,
+                    style: const TextStyle(color: AppColors.foreground),
+                    decoration: const InputDecoration(
+                      labelText: 'Time 1',
+                      labelStyle: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 60,
+                  child: TextField(
+                    controller: score1Controller,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: AppColors.primary),
+                    decoration: const InputDecoration(
+                      labelText: 'Placar',
+                      labelStyle: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: team2Controller,
+                    style: const TextStyle(color: AppColors.foreground),
+                    decoration: const InputDecoration(
+                      labelText: 'Time 2',
+                      labelStyle: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 60,
+                  child: TextField(
+                    controller: score2Controller,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: AppColors.muted),
+                    decoration: const InputDecoration(
+                      labelText: 'Placar',
+                      labelStyle: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: AppColors.muted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                match.team1 = team1Controller.text.trim().isEmpty
+                    ? 'A Definir'
+                    : team1Controller.text.trim();
+                match.team2 = team2Controller.text.trim().isEmpty
+                    ? 'A Definir'
+                    : team2Controller.text.trim();
+                match.score1 = score1Controller.text.trim().isEmpty
+                    ? '-'
+                    : score1Controller.text.trim();
+                match.score2 = score2Controller.text.trim().isEmpty
+                    ? '-'
+                    : score2Controller.text.trim();
+              });
+              Navigator.pop(ctx);
+            },
+            child: const Text(
+              'Salvar',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -143,6 +255,7 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
                           return _buildMatchCard(
                             _rounds[roundIndex][matchIndex],
                             roundIndex,
+                            matchIndex,
                           );
                         }),
                       ),
@@ -157,90 +270,97 @@ class _BracketPrototypePageState extends State<BracketPrototypePage> {
     );
   }
 
-  Widget _buildMatchCard(MatchInfo match, int roundIndex) {
-    return Container(
-      width: 160,
-      height: 60,
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            blurRadius: 4,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: AppColors.border, width: 1),
+  Widget _buildMatchCard(MatchInfo match, int roundIndex, int matchIndex) {
+    return GestureDetector(
+      onTap: () => _editMatch(match, roundIndex, matchIndex),
+      child: Container(
+        width: 160,
+        height: 60,
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              blurRadius: 4,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: AppColors.border, width: 1),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        match.team1,
+                        style: TextStyle(
+                          color: match.team1 == 'A Definir'
+                              ? AppColors.muted.withValues(alpha: 0.5)
+                              : AppColors.foreground,
+                          fontFamily: 'Jura',
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      match.score1,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontFamily: 'Chakra Petch',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      match.team1,
-                      style: const TextStyle(
-                        color: AppColors.foreground,
-                        fontFamily: 'Jura',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    match.score1,
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontFamily: 'Chakra Petch',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      match.team2,
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        match.team2,
+                        style: TextStyle(
+                          color: match.team2 == 'A Definir'
+                              ? AppColors.muted.withValues(alpha: 0.5)
+                              : AppColors.foreground,
+                          fontFamily: 'Jura',
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      match.score2,
                       style: const TextStyle(
                         color: AppColors.muted,
-                        fontFamily: 'Jura',
-                        fontSize: 12,
+                        fontFamily: 'Chakra Petch',
                         fontWeight: FontWeight.bold,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    match.score2,
-                    style: const TextStyle(
-                      color: AppColors.muted,
-                      fontFamily: 'Chakra Petch',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
