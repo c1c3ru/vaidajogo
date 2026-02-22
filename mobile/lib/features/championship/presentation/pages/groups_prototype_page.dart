@@ -286,25 +286,53 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
     );
   }
 
-  void _syncMatchesForGroup(GroupInfo group) {
-    final currentTeamNames = group.teams.map((t) => t.name).toSet();
-    group.matches.removeWhere(
-      (m) =>
-          !currentTeamNames.contains(m.team1) ||
-          !currentTeamNames.contains(m.team2),
-    );
+  void _recalculateStandings(GroupInfo group) {
+    for (var team in group.teams) {
+      team.pts = 0;
+      team.pj = 0;
+      team.vit = 0;
+      team.emp = 0;
+      team.der = 0;
+      team.gm = 0;
+      team.gc = 0;
+    }
 
-    for (int i = 0; i < group.teams.length; i++) {
-      for (int j = i + 1; j < group.teams.length; j++) {
-        final t1 = group.teams[i].name;
-        final t2 = group.teams[j].name;
-        final exists = group.matches.any(
-          (m) =>
-              (m.team1 == t1 && m.team2 == t2) ||
-              (m.team1 == t2 && m.team2 == t1),
-        );
-        if (!exists) {
-          group.matches.add(GroupMatch(team1: t1, team2: t2));
+    for (var match in group.matches) {
+      if (match.score1 == '-' || match.score2 == '-') continue;
+      final s1 = int.tryParse(match.score1);
+      final s2 = int.tryParse(match.score2);
+      if (s1 == null || s2 == null) continue;
+
+      final t1 = group.teams.where((t) => t.name == match.team1).firstOrNull;
+      final t2 = group.teams.where((t) => t.name == match.team2).firstOrNull;
+
+      if (t1 != null) {
+        t1.pj++;
+        t1.gm += s1;
+        t1.gc += s2;
+        if (s1 > s2) {
+          t1.vit++;
+          t1.pts += 3;
+        } else if (s1 == s2) {
+          t1.emp++;
+          t1.pts += 1;
+        } else {
+          t1.der++;
+        }
+      }
+
+      if (t2 != null) {
+        t2.pj++;
+        t2.gm += s2;
+        t2.gc += s1;
+        if (s2 > s1) {
+          t2.vit++;
+          t2.pts += 3;
+        } else if (s2 == s1) {
+          t2.emp++;
+          t2.pts += 1;
+        } else {
+          t2.der++;
         }
       }
     }
@@ -381,8 +409,15 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
             TextButton(
               onPressed: () {
                 setState(() {
+                  final deletedTeamName =
+                      _groups[groupIndex].teams[teamIndex].name;
                   _groups[groupIndex].teams.removeAt(teamIndex);
-                  _syncMatchesForGroup(_groups[groupIndex]);
+                  _groups[groupIndex].matches.removeWhere(
+                    (m) =>
+                        m.team1 == deletedTeamName ||
+                        m.team2 == deletedTeamName,
+                  );
+                  _recalculateStandings(_groups[groupIndex]);
                 });
                 _saveGroups();
                 Navigator.pop(ctx);
@@ -413,9 +448,14 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                       if (m.team2 == oldName) m.team2 = newTeam.name;
                     }
                   } else {
+                    for (var t in _groups[groupIndex].teams) {
+                      _groups[groupIndex].matches.add(
+                        GroupMatch(team1: t.name, team2: newTeam.name),
+                      );
+                    }
                     _groups[groupIndex].teams.add(newTeam);
                   }
-                  _syncMatchesForGroup(_groups[groupIndex]);
+                  _recalculateStandings(_groups[groupIndex]);
                 });
                 _saveGroups();
                 Navigator.pop(ctx);
@@ -788,7 +828,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
               padding: EdgeInsets.all(20),
               child: Center(
                 child: Text(
-                  'Adicione times para gerar confrontos',
+                  'Nenhum confronto. Adicione times ou crie manualmente.',
                   style: TextStyle(color: AppColors.muted, fontFamily: 'Jura'),
                 ),
               ),
@@ -856,7 +896,144 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 );
               },
             ),
+          // ADD MATCH BUTTON
+          InkWell(
+            onTap: () => _addMatchManual(groupIndex),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+            ),
+            child: Container(
+              height: 40,
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: AppColors.border, width: 1),
+                ),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_circle_outline,
+                    color: AppColors.secondary,
+                    size: 16,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Adicionar Confronto',
+                    style: TextStyle(
+                      color: AppColors.secondary,
+                      fontFamily: 'Jura',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  void _addMatchManual(int groupIndex) {
+    if (_groups[groupIndex].teams.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Adicione pelo menos 2 times no grupo.')),
+      );
+      return;
+    }
+
+    String? selectedTeam1 = _groups[groupIndex].teams.first.name;
+    String? selectedTeam2 = _groups[groupIndex].teams.last.name;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setStateModal) {
+          return AlertDialog(
+            backgroundColor: AppColors.cardBackground,
+            title: const Text(
+              'Novo Confronto',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontFamily: 'Chakra Petch',
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  value: selectedTeam1,
+                  dropdownColor: AppColors.cardBackground,
+                  style: const TextStyle(color: AppColors.foreground),
+                  decoration: const InputDecoration(
+                    labelText: 'Time Mandante',
+                    labelStyle: TextStyle(color: AppColors.muted),
+                  ),
+                  items: _groups[groupIndex].teams.map((t) {
+                    return DropdownMenuItem(value: t.name, child: Text(t.name));
+                  }).toList(),
+                  onChanged: (val) {
+                    setStateModal(() {
+                      selectedTeam1 = val;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedTeam2,
+                  dropdownColor: AppColors.cardBackground,
+                  style: const TextStyle(color: AppColors.foreground),
+                  decoration: const InputDecoration(
+                    labelText: 'Time Visitante',
+                    labelStyle: TextStyle(color: AppColors.muted),
+                  ),
+                  items: _groups[groupIndex].teams.map((t) {
+                    return DropdownMenuItem(value: t.name, child: Text(t.name));
+                  }).toList(),
+                  onChanged: (val) {
+                    setStateModal(() {
+                      selectedTeam2 = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: AppColors.muted),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (selectedTeam1 == selectedTeam2) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Selecione times diferentes.'),
+                      ),
+                    );
+                    return;
+                  }
+                  setState(() {
+                    _groups[groupIndex].matches.add(
+                      GroupMatch(team1: selectedTeam1!, team2: selectedTeam2!),
+                    );
+                  });
+                  _saveGroups();
+                  Navigator.pop(ctx);
+                },
+                child: const Text(
+                  'Criar',
+                  style: TextStyle(color: AppColors.primary),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -934,6 +1111,17 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
         ),
         actions: [
           TextButton(
+            onPressed: () {
+              setState(() {
+                _groups[groupIndex].matches.removeAt(matchIndex);
+                _recalculateStandings(_groups[groupIndex]);
+              });
+              _saveGroups();
+              Navigator.pop(ctx);
+            },
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text(
               'Cancelar',
@@ -949,6 +1137,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 match.score2 = score2Controller.text.trim().isEmpty
                     ? '-'
                     : score2Controller.text.trim();
+                _recalculateStandings(_groups[groupIndex]);
               });
               _saveGroups();
               Navigator.pop(ctx);
@@ -1053,7 +1242,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 final originalIdx = group.teams.indexOf(team);
                 return DataRow(
                   onSelectChanged: (_) =>
-                      _editTeamStats(groupIndex, originalIdx),
+                      _editTeamConduta(groupIndex, originalIdx),
                   cells: [
                     DataCell(
                       Row(
@@ -1107,7 +1296,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
-              'Toque em uma linha para editar a pontuação',
+              'Toque em uma linha para editar a Conduta Esportiva',
               style: TextStyle(
                 color: AppColors.muted,
                 fontSize: 10,
@@ -1121,15 +1310,8 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
     );
   }
 
-  void _editTeamStats(int groupIndex, int teamIndex) {
+  void _editTeamConduta(int groupIndex, int teamIndex) {
     final team = _groups[groupIndex].teams[teamIndex];
-    final ptsCtrl = TextEditingController(text: team.pts.toString());
-    final pjCtrl = TextEditingController(text: team.pj.toString());
-    final vitCtrl = TextEditingController(text: team.vit.toString());
-    final empCtrl = TextEditingController(text: team.emp.toString());
-    final derCtrl = TextEditingController(text: team.der.toString());
-    final gmCtrl = TextEditingController(text: team.gm.toString());
-    final gcCtrl = TextEditingController(text: team.gc.toString());
     final amareloCtrl = TextEditingController(text: team.amarelos.toString());
     final vermelhoSubCtrl = TextEditingController(
       text: team.vermelhoSubsequente.toString(),
@@ -1167,7 +1349,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.cardBackground,
         title: Text(
-          'Estatísticas - ${team.name}',
+          'Conduta Esportiva\n${team.name}',
           style: const TextStyle(
             color: AppColors.primary,
             fontFamily: 'Chakra Petch',
@@ -1177,29 +1359,10 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  buildNumberField('Pts', ptsCtrl),
-                  buildNumberField('PJ', pjCtrl),
-                ],
-              ),
-              Row(
-                children: [
-                  buildNumberField('VIT', vitCtrl),
-                  buildNumberField('E', empCtrl),
-                ],
-              ),
-              Row(children: [buildNumberField('DER', derCtrl)]),
-              Row(
-                children: [
-                  buildNumberField('GM', gmCtrl),
-                  buildNumberField('GC', gcCtrl),
-                ],
-              ),
               const Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 8),
                 child: Text(
-                  'Conduta Esportiva (Cartões)',
+                  'Lance Cartões para calcular o CD:',
                   style: TextStyle(
                     color: AppColors.secondary,
                     fontSize: 14,
@@ -1233,13 +1396,6 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
           TextButton(
             onPressed: () {
               setState(() {
-                team.pts = int.tryParse(ptsCtrl.text.trim()) ?? team.pts;
-                team.pj = int.tryParse(pjCtrl.text.trim()) ?? team.pj;
-                team.vit = int.tryParse(vitCtrl.text.trim()) ?? team.vit;
-                team.emp = int.tryParse(empCtrl.text.trim()) ?? team.emp;
-                team.der = int.tryParse(derCtrl.text.trim()) ?? team.der;
-                team.gm = int.tryParse(gmCtrl.text.trim()) ?? team.gm;
-                team.gc = int.tryParse(gcCtrl.text.trim()) ?? team.gc;
                 team.amarelos =
                     int.tryParse(amareloCtrl.text.trim()) ?? team.amarelos;
                 team.vermelhoSubsequente =
@@ -1251,6 +1407,8 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 team.amareloVermelhoDireto =
                     int.tryParse(amareloVermDirCtrl.text.trim()) ??
                     team.amareloVermelhoDireto;
+                team.isEdited = true;
+                _recalculateStandings(_groups[groupIndex]);
               });
               _saveGroups();
               Navigator.pop(ctx);
