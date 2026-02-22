@@ -709,7 +709,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                       Row(
                         children: [
                           Text(
-                            '\${idx + 1}',
+                            '${idx + 1}',
                             style: TextStyle(
                               color: isQualified
                                   ? AppColors.secondary
@@ -796,7 +796,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.cardBackground,
         title: Text(
-          'Estatísticas - \${team.name}',
+          'Estatísticas - ${team.name}',
           style: const TextStyle(
             color: AppColors.primary,
             fontFamily: 'Chakra Petch',
