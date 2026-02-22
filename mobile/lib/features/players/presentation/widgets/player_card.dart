@@ -5,18 +5,23 @@ import '../../../../domain/models/player.dart';
 class PlayerCard extends StatelessWidget {
   final Player player;
   final VoidCallback onTogglePresence;
+  final VoidCallback onTogglePaid;
 
   const PlayerCard({
     super.key,
     required this.player,
     required this.onTogglePresence,
+    required this.onTogglePaid,
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = player.present ? AppColors.primary : AppColors.border;
+    // Convidados (guests) have a distinct tint (e.g. amber)
+    final baseColor = player.isGuest ? Colors.amber : AppColors.primary;
+
+    final borderColor = player.present ? baseColor : AppColors.border;
     final shadowColor = player.present
-        ? AppColors.primary.withValues(alpha: 0.3)
+        ? baseColor.withValues(alpha: 0.3)
         : Colors.transparent;
 
     return Container(
@@ -59,9 +64,7 @@ class PlayerCard extends StatelessWidget {
                       fontFamily: 'Chakra Petch',
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: player.present
-                          ? AppColors.primary
-                          : AppColors.muted,
+                      color: player.present ? baseColor : AppColors.muted,
                     ),
                   ),
                 ),
@@ -110,50 +113,108 @@ class PlayerCard extends StatelessWidget {
                   ),
                 ),
 
-                // Biometrics/Status Badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: player.present
-                        ? AppColors.primary.withValues(alpha: 0.2)
-                        : AppColors.muted.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: player.present
-                          ? AppColors.primary
-                          : AppColors.muted.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        player.present
-                            ? Icons.check_circle
-                            : Icons.radio_button_unchecked,
-                        size: 14,
-                        color: player.present
-                            ? AppColors.primary
-                            : AppColors.muted,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        player.present ? 'PRESENTE' : 'OFFLINE',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Jura',
-                          letterSpacing: 1,
+                // Badge list
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Status Badge (Presence)
+                    GestureDetector(
+                      onTap: onTogglePresence,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
                           color: player.present
-                              ? AppColors.primary
-                              : AppColors.muted,
+                              ? baseColor.withValues(alpha: 0.2)
+                              : AppColors.muted.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: player.present
+                                ? baseColor
+                                : AppColors.muted.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              player.present
+                                  ? Icons.check_circle
+                                  : Icons.radio_button_unchecked,
+                              size: 14,
+                              color: player.present
+                                  ? baseColor
+                                  : AppColors.muted,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              player.present ? 'PRESENTE' : 'OFFLINE',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Jura',
+                                letterSpacing: 1,
+                                color: player.present
+                                    ? baseColor
+                                    : AppColors.muted,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Status Badge (Paid)
+                    GestureDetector(
+                      onTap: onTogglePaid,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: player.paid
+                              ? AppColors.secondary.withValues(alpha: 0.2)
+                              : AppColors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: player.paid
+                                ? AppColors.secondary
+                                : AppColors.accent.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              player.paid
+                                  ? Icons.attach_money
+                                  : Icons.money_off,
+                              size: 14,
+                              color: player.paid
+                                  ? AppColors.secondary
+                                  : AppColors.accent,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              player.paid ? 'PAGO' : 'PENDENTE',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Jura',
+                                letterSpacing: 1,
+                                color: player.paid
+                                    ? AppColors.secondary
+                                    : AppColors.accent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

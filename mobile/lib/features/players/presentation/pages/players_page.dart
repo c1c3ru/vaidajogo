@@ -108,6 +108,9 @@ class _PlayersPageState extends State<PlayersPage> {
                 onTogglePresence: () {
                   _playerBloc.add(TogglePlayerPresenceEvent(player.id));
                 },
+                onTogglePaid: () {
+                  _playerBloc.add(TogglePlayerPaidEvent(player.id));
+                },
               );
             },
           );

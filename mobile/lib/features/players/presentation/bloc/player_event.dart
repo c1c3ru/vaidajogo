@@ -41,3 +41,11 @@ class TogglePlayerPresenceEvent extends PlayerEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class TogglePlayerPaidEvent extends PlayerEvent {
+  final String id;
+  const TogglePlayerPaidEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

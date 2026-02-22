@@ -24,6 +24,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
   final _birthDateController = TextEditingController();
 
   bool _isGuest = false;
+  bool _isPaid = false;
   String? _sport;
   double _rating = 3.0;
   String _evaluationType = 'Estrelas (1 a 5)';
@@ -57,6 +58,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
       _nicknameController.text = widget.playerToEdit!.nickname ?? '';
       _birthDateController.text = widget.playerToEdit!.birthDate ?? '';
       _isGuest = widget.playerToEdit!.isGuest;
+      _isPaid = widget.playerToEdit!.paid;
       _sport = widget.playerToEdit!.sport;
       _rating = widget.playerToEdit!.rating;
       _evaluationType =
@@ -136,7 +138,7 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
             widget.playerToEdit?.createdAt ?? DateTime.now().toIso8601String(),
         selected: widget.playerToEdit?.selected ?? false,
         present: widget.playerToEdit?.present ?? false,
-        paid: widget.playerToEdit?.paid ?? false,
+        paid: _isPaid,
         registered: widget.playerToEdit?.registered ?? true,
       );
 
@@ -296,6 +298,23 @@ class _PlayerFormPageState extends State<PlayerFormPage> {
                   activeColor: AppColors.primary,
                   contentPadding: EdgeInsets.zero,
                   onChanged: (val) => setState(() => _isGuest = val),
+                ),
+                SwitchListTile(
+                  title: const Text(
+                    'Mensalidade Paga',
+                    style: TextStyle(
+                      fontFamily: 'Jura',
+                      color: AppColors.foreground,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Marque se o atleta já realizou o pagamento',
+                    style: TextStyle(fontSize: 12, color: AppColors.muted),
+                  ),
+                  value: _isPaid,
+                  activeColor: AppColors.secondary,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (val) => setState(() => _isPaid = val),
                 ),
                 const SizedBox(height: 30),
 

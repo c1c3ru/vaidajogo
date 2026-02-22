@@ -12,6 +12,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     on<UpdatePlayerEvent>(_onUpdatePlayer);
     on<DeletePlayerEvent>(_onDeletePlayer);
     on<TogglePlayerPresenceEvent>(_onTogglePlayerPresence);
+    on<TogglePlayerPaidEvent>(_onTogglePlayerPaid);
   }
 
   Future<void> _onLoadPlayers(
@@ -106,6 +107,32 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
       emit(
         PlayerErrorState(
           "Erro ao alternar presença: ${e.toString()}",
+          players: state.players,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onTogglePlayerPaid(
+    TogglePlayerPaidEvent event,
+    Emitter<PlayerState> emit,
+  ) async {
+    try {
+      final playerIndex = state.players.indexWhere((p) => p.id == event.id);
+      if (playerIndex >= 0) {
+        final player = state.players[playerIndex];
+        final updatedPlayer = player.copyWith(paid: !player.paid);
+
+        await _repository.updatePlayer(updatedPlayer);
+
+        final currentPlayers = List.of(state.players);
+        currentPlayers[playerIndex] = updatedPlayer;
+        emit(PlayerLoadedState(currentPlayers));
+      }
+    } catch (e) {
+      emit(
+        PlayerErrorState(
+          "Erro ao alternar status de pagamento: ${e.toString()}",
           players: state.players,
         ),
       );

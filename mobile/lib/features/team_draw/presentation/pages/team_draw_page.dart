@@ -48,7 +48,7 @@ class _TeamDrawPageState extends State<TeamDrawPage> {
         bloc: _playerBloc,
         builder: (context, playerState) {
           final presentPlayers = playerState.players
-              .where((p) => p.present && p.includeInDraw)
+              .where((p) => p.present && p.paid && p.includeInDraw)
               .toList();
 
           return Column(
