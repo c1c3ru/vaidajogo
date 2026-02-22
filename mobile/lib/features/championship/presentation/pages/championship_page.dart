@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'bracket_prototype_page.dart';
 import 'groups_prototype_page.dart';
+import 'scoreboard_page.dart';
 
 class ChampionshipPage extends StatefulWidget {
   const ChampionshipPage({super.key});
@@ -96,7 +97,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40.0),
             child: Text(
-              'O simulador de torneios oficiais está sendo calibrado. Aguarde a liberação deste protocolo.',
+              'Selecione a modalidade abaixo para abrir o painel de Ferramentas de Partida (Placar/Cronômetro) do seu evento oficial.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.muted.withValues(alpha: 0.8),
@@ -189,81 +190,108 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
                 final double margin = active ? 0 : 20.0;
                 final double opacity = active ? 1.0 : 0.4;
 
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  curve: Curves.easeInOutCubic,
-                  margin: EdgeInsets.only(
-                    top: margin,
-                    bottom: margin + 30, // For bottom spacing
-                    right: 15,
-                    left: 15,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBackground,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: active
-                          ? AppColors.primary
-                          : AppColors.primary.withValues(alpha: 0.2),
-                      width: active ? 2 : 1,
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate only if the feature corresponds to an actual sport (has title)
+                    if (feature['title'] != 'NOVO CAMPEONATO') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ScoreboardPage(sportName: feature['title']!),
+                        ),
+                      );
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOutCubic,
+                    margin: EdgeInsets.only(
+                      top: margin,
+                      bottom: margin + 30, // For bottom spacing
+                      right: 15,
+                      left: 15,
                     ),
-                    boxShadow: active
-                        ? [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.2),
-                              blurRadius: 15,
-                              spreadRadius: 2,
-                              offset: const Offset(0, 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBackground,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: active
+                            ? AppColors.primary
+                            : AppColors.primary.withValues(alpha: 0.2),
+                        width: active ? 2 : 1,
+                      ),
+                      boxShadow: active
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.2),
+                                blurRadius: 15,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 5),
+                              ),
+                            ]
+                          : [],
+                    ),
+                    child: Opacity(
+                      opacity: opacity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Lottie.asset(
+                                feature['asset']!,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      size: 60,
+                                      color: AppColors.muted,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ]
-                        : [],
-                  ),
-                  child: Opacity(
-                    opacity: opacity,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Lottie.asset(
-                              feature['asset']!,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Center(
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    size: 60,
-                                    color: AppColors.muted,
+                            const SizedBox(height: 24),
+                            Text(
+                              feature['title']!,
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontFamily: 'Chakra Petch',
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            if (feature['title'] != 'NOVO CAMPEONATO')
+                              const Padding(
+                                padding: EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  'CLIQUE PARA ABRIR O PLACAR',
+                                  style: TextStyle(
+                                    color: AppColors.secondary,
+                                    fontFamily: 'Chakra Petch',
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                );
-                              },
+                                ),
+                              ),
+                            const SizedBox(height: 12),
+                            Text(
+                              feature['description']!,
+                              style: const TextStyle(
+                                color: AppColors.foreground,
+                                fontFamily: 'Jura',
+                                fontSize: 14,
+                                height: 1.4,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          Text(
-                            feature['title']!,
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontFamily: 'Chakra Petch',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            feature['description']!,
-                            style: const TextStyle(
-                              color: AppColors.foreground,
-                              fontFamily: 'Jura',
-                              fontSize: 14,
-                              height: 1.4,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
