@@ -14,8 +14,19 @@ class TeamInfo {
   int der;
   int gm;
   int gc;
+  int amarelos;
+  int vermelhoSubsequente; // Cartão vermelho por dois amarelos
+  int vermelhoDireto;
+  int amareloVermelhoDireto; // Amarelo seguido de vermelho direto
+
+  bool isEdited;
 
   int get sg => gm - gc;
+  int get condutaEsportiva =>
+      (amarelos * -1) +
+      (vermelhoSubsequente * -3) +
+      (vermelhoDireto * -4) +
+      (amareloVermelhoDireto * -5);
 
   TeamInfo({
     required this.name,
@@ -27,6 +38,11 @@ class TeamInfo {
     this.der = 0,
     this.gm = 0,
     this.gc = 0,
+    this.amarelos = 0,
+    this.vermelhoSubsequente = 0,
+    this.vermelhoDireto = 0,
+    this.amareloVermelhoDireto = 0,
+    this.isEdited = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -39,6 +55,11 @@ class TeamInfo {
     'der': der,
     'gm': gm,
     'gc': gc,
+    'amarelos': amarelos,
+    'vermelhoSubsequente': vermelhoSubsequente,
+    'vermelhoDireto': vermelhoDireto,
+    'amareloVermelhoDireto': amareloVermelhoDireto,
+    'isEdited': isEdited,
   };
 
   factory TeamInfo.fromJson(Map<String, dynamic> json) => TeamInfo(
@@ -51,6 +72,11 @@ class TeamInfo {
     der: json['der'] as int? ?? 0,
     gm: json['gm'] as int? ?? 0,
     gc: json['gc'] as int? ?? 0,
+    amarelos: json['amarelos'] as int? ?? 0,
+    vermelhoSubsequente: json['vermelhoSubsequente'] as int? ?? 0,
+    vermelhoDireto: json['vermelhoDireto'] as int? ?? 0,
+    amareloVermelhoDireto: json['amareloVermelhoDireto'] as int? ?? 0,
+    isEdited: json['isEdited'] as bool? ?? false,
   );
 }
 
@@ -267,6 +293,18 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 }
               },
             ),
+            if (!isEditing)
+              const Padding(
+                padding: EdgeInsets.only(top: 6, left: 4),
+                child: Text(
+                  '💡 Dica: O 1º campo auto-preenche a sigla.',
+                  style: TextStyle(
+                    color: AppColors.secondary,
+                    fontSize: 11,
+                    fontFamily: 'Jura',
+                  ),
+                ),
+              ),
             const SizedBox(height: 10),
             TextField(
               controller: codeController,
@@ -305,6 +343,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                   final newTeam = TeamInfo(
                     name: nameController.text.trim(),
                     code: codeController.text.trim().toUpperCase(),
+                    isEdited: true,
                   );
                   if (isEditing) {
                     _groups[groupIndex].teams[teamIndex] = newTeam;
@@ -565,11 +604,17 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if (idx < 2 && group.teams.length >= 3)
+                              if (team.isEdited)
                                 const Icon(
-                                  Icons.check_circle_outline,
+                                  Icons.check_box,
                                   color: AppColors.primary,
-                                  size: 16,
+                                  size: 18,
+                                )
+                              else
+                                const Icon(
+                                  Icons.check_box_outline_blank,
+                                  color: AppColors.muted,
+                                  size: 18,
                                 ),
                             ],
                           ),
@@ -633,12 +678,15 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
   }
 
   Widget _buildStandingsCard(GroupInfo group, int groupIndex) {
-    // Ordenar os times (Pts > VIT > SG)
+    // Ordenar os times:
+    // 1: Pts, 2: SG, 3: GM, 4: Conduta Esportiva (Fair Play), 5: Random (implicit)
     final sortedTeams = List<TeamInfo>.from(group.teams);
     sortedTeams.sort((a, b) {
       if (b.pts != a.pts) return b.pts.compareTo(a.pts);
-      if (b.vit != a.vit) return b.vit.compareTo(a.vit);
-      return b.sg.compareTo(a.sg);
+      if (b.sg != a.sg) return b.sg.compareTo(a.sg);
+      if (b.gm != a.gm) return b.gm.compareTo(a.gm);
+      // Aqui entraria confronto direto se tivessemos os resultados de partidas, pulamos pro Fair Play
+      return b.condutaEsportiva.compareTo(a.condutaEsportiva);
     });
 
     return Container(
@@ -696,6 +744,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 DataColumn(label: Text('GM')),
                 DataColumn(label: Text('GC')),
                 DataColumn(label: Text('SG')),
+                DataColumn(label: Text('CD')),
               ],
               rows: sortedTeams.map((team) {
                 final idx = sortedTeams.indexOf(team);
@@ -737,6 +786,7 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                     DataCell(Text(team.gm.toString())),
                     DataCell(Text(team.gc.toString())),
                     DataCell(Text(team.sg.toString())),
+                    DataCell(Text(team.condutaEsportiva.toString())),
                   ],
                 );
               }).toList(),
@@ -769,6 +819,16 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
     final derCtrl = TextEditingController(text: team.der.toString());
     final gmCtrl = TextEditingController(text: team.gm.toString());
     final gcCtrl = TextEditingController(text: team.gc.toString());
+    final amareloCtrl = TextEditingController(text: team.amarelos.toString());
+    final vermelhoSubCtrl = TextEditingController(
+      text: team.vermelhoSubsequente.toString(),
+    );
+    final vermelhoDirCtrl = TextEditingController(
+      text: team.vermelhoDireto.toString(),
+    );
+    final amareloVermDirCtrl = TextEditingController(
+      text: team.amareloVermelhoDireto.toString(),
+    );
 
     Widget buildNumberField(String label, TextEditingController controller) {
       return Expanded(
@@ -825,6 +885,29 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                   buildNumberField('GC', gcCtrl),
                 ],
               ),
+              const Padding(
+                padding: EdgeInsets.only(top: 16, bottom: 8),
+                child: Text(
+                  'Conduta Esportiva (Cartões)',
+                  style: TextStyle(
+                    color: AppColors.secondary,
+                    fontSize: 14,
+                    fontFamily: 'Jura',
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  buildNumberField('Amarelo (-1)', amareloCtrl),
+                  buildNumberField('2º Amar. (-3)', vermelhoSubCtrl),
+                ],
+              ),
+              Row(
+                children: [
+                  buildNumberField('V. Direto (-4)', vermelhoDirCtrl),
+                  buildNumberField('Ama+V.Dir (-5)', amareloVermDirCtrl),
+                ],
+              ),
             ],
           ),
         ),
@@ -846,6 +929,17 @@ class _GroupsPrototypePageState extends State<GroupsPrototypePage> {
                 team.der = int.tryParse(derCtrl.text.trim()) ?? team.der;
                 team.gm = int.tryParse(gmCtrl.text.trim()) ?? team.gm;
                 team.gc = int.tryParse(gcCtrl.text.trim()) ?? team.gc;
+                team.amarelos =
+                    int.tryParse(amareloCtrl.text.trim()) ?? team.amarelos;
+                team.vermelhoSubsequente =
+                    int.tryParse(vermelhoSubCtrl.text.trim()) ??
+                    team.vermelhoSubsequente;
+                team.vermelhoDireto =
+                    int.tryParse(vermelhoDirCtrl.text.trim()) ??
+                    team.vermelhoDireto;
+                team.amareloVermelhoDireto =
+                    int.tryParse(amareloVermDirCtrl.text.trim()) ??
+                    team.amareloVermelhoDireto;
               });
               _saveGroups();
               Navigator.pop(ctx);

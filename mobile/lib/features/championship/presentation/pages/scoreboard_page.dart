@@ -112,6 +112,110 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
     });
   }
 
+  void _editTimer() {
+    TextEditingController minutesController = TextEditingController(
+      text: (timeRemainingSeconds ~/ 60).toString(),
+    );
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: const Text(
+          'Configurar Tempo',
+          style: TextStyle(
+            color: AppColors.primary,
+            fontFamily: 'Chakra Petch',
+          ),
+        ),
+        content: TextField(
+          controller: minutesController,
+          keyboardType: TextInputType.number,
+          style: const TextStyle(color: AppColors.foreground),
+          decoration: const InputDecoration(
+            labelText: 'Minutos',
+            labelStyle: TextStyle(color: AppColors.muted),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: AppColors.muted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              int? newMinutes = int.tryParse(minutesController.text.trim());
+              if (newMinutes != null && newMinutes >= 0) {
+                setState(() {
+                  timeRemainingSeconds = newMinutes * 60;
+                  isRunning = false;
+                  _timer?.cancel();
+                });
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text(
+              'Salvar',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitScore() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: const Text(
+          'Enviar Resultado',
+          style: TextStyle(
+            color: AppColors.primary,
+            fontFamily: 'Chakra Petch',
+          ),
+        ),
+        content: const Text(
+          'Deseja enviar este placar para o chaveamento ou tabelas de classificação?\n\nCaso já exista um envio deste confronto, ele será sobrescrito.',
+          style: TextStyle(color: AppColors.foreground),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: AppColors.muted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Resultado enviado para a mesa com sucesso!',
+                    style: TextStyle(fontFamily: 'Jura'),
+                  ),
+                  backgroundColor: AppColors.secondary,
+                ),
+              );
+            },
+            child: const Text(
+              'Enviar / Sobrescrever',
+              style: TextStyle(
+                color: AppColors.secondary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _formatTime() {
     int minutes = timeRemainingSeconds ~/ 60;
     int seconds = timeRemainingSeconds % 60;
@@ -179,7 +283,7 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          'PLACAR: \${widget.sportName.toUpperCase()}',
+          'PLACAR: ${widget.sportName.toUpperCase()}',
           style: const TextStyle(
             fontFamily: 'Chakra Petch',
             fontWeight: FontWeight.bold,
@@ -219,6 +323,32 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
               ),
 
               const Spacer(),
+
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _submitScore,
+                  icon: const Icon(Icons.cloud_upload_outlined),
+                  label: const Text(
+                    'ENVIAR RESULTADO PARA CHAVES/TABELAS',
+                    style: TextStyle(
+                      fontFamily: 'Chakra Petch',
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
 
               const Text(
                 'Toque no nome do time para editá-lo',
@@ -263,15 +393,28 @@ class _ScoreboardPageState extends State<ScoreboardPage> {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              _formatTime(),
-              style: const TextStyle(
-                fontFamily: 'Chakra Petch',
-                color: AppColors.foreground,
-                fontSize: 72,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 4,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _formatTime(),
+                  style: const TextStyle(
+                    fontFamily: 'Chakra Petch',
+                    color: AppColors.foreground,
+                    fontSize: 72,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 4,
+                  ),
+                ),
+                IconButton(
+                  onPressed: _editTimer,
+                  icon: const Icon(
+                    Icons.edit,
+                    color: AppColors.muted,
+                    size: 28,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Row(
