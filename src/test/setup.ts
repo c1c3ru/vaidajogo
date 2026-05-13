@@ -15,7 +15,7 @@ const localStorageMock = {
     clear: vi.fn(),
 };
 
-global.localStorage = localStorageMock as any;
+global.localStorage = localStorageMock as unknown as Storage;
 
 // Mock do matchMedia
 Object.defineProperty(window, 'matchMedia', {
