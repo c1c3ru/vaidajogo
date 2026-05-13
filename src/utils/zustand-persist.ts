@@ -6,7 +6,7 @@
 import { StateCreator, StoreApi } from 'zustand';
 import { create } from 'zustand';
 import { useState, useEffect } from 'react';
-import { localStorageManager, sessionStorageManager, indexedDBManager } from './storage';
+import { localStorageManager, sessionStorageManager, indexedDBManager, LocalStorageManager, SessionStorageManager, IndexedDBManager } from './storage';
 
 export interface PersistOptions<T = any> {
   name: string;
@@ -57,9 +57,9 @@ export const persist = <T extends object>(
         };
 
         if (isAsync) {
-          await (storageManager as any).set(name, dataToStore);
+          await (storageManager as IndexedDBManager).set(name, dataToStore);
         } else {
-          (storageManager as any).set(name, dataToStore);
+          (storageManager as LocalStorageManager | SessionStorageManager).set(name, dataToStore);
         }
       } catch (error) {
         console.error('Erro ao persistir estado:', error);
@@ -69,12 +69,12 @@ export const persist = <T extends object>(
     // Função para carregar estado
     const loadState = async (): Promise<Partial<T> | null> => {
       try {
-        let storedData: any = null;
+        let storedData: { state: unknown; version: number; timestamp: number } | null = null;
 
         if (isAsync) {
-          storedData = await (storageManager as any).get(name);
+          storedData = await (storageManager as IndexedDBManager).get(name);
         } else {
-          storedData = (storageManager as any).get(name);
+          storedData = (storageManager as LocalStorageManager | SessionStorageManager).get(name);
         }
 
         if (!storedData) return null;
@@ -84,7 +84,7 @@ export const persist = <T extends object>(
           storedData.state = migrate(storedData.state, storedData.version);
         }
 
-        return storedData.state;
+        return storedData.state as Partial<T>;
       } catch (error) {
         console.error('Erro ao carregar estado persistido:', error);
         return null;
@@ -123,9 +123,9 @@ export const persist = <T extends object>(
       // Adicionar método para limpar persistência
       clearPersistedState: () => {
         if (isAsync) {
-          (storageManager as any).remove(name);
+          (storageManager as IndexedDBManager).remove(name);
         } else {
-          (storageManager as any).remove(name);
+          (storageManager as LocalStorageManager | SessionStorageManager).remove(name);
         }
       },
     };
