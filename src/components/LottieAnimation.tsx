@@ -6,10 +6,10 @@ import futsalAnimation from '../assets/Futsal.json';
 import campeonatoAnimation from '../assets/Campeonato.json';
 import basketballAnimation from '../assets/Basketball.json';
 import volleyballAnimation from '../assets/Volleyball.json';
-import futeboAnimation from '../assets/Futebo.json';
+import futebolAnimation from '../assets/Futebol.json';
 
 interface LottieAnimationProps {
-  type: 'futsal' | 'campeonato' | 'basketball' | 'volleyball' | 'futebo';
+  type: 'futsal' | 'campeonato' | 'basketball' | 'volleyball' | 'futebol';
   width?: number;
   height?: number;
   loop?: boolean;
@@ -22,7 +22,7 @@ const animationData = {
   campeonato: campeonatoAnimation,
   basketball: basketballAnimation,
   volleyball: volleyballAnimation,
-  futebo: futeboAnimation,
+  futebol: futebolAnimation,
 };
 
 export const LottieAnimation: React.FC<LottieAnimationProps> = ({
