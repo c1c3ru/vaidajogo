@@ -37,7 +37,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.SOCCER.NAME,
       description: TEXTS.SPORTS.SOCCER.DESCRIPTION,
       icon: Users,
-      animation: 'futebo' as const,
+      animation: 'futebol' as const,
       positions: Object.values(TEXTS.SPORTS.SOCCER.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.SOCCER.AVAILABLE_RATING_SYSTEMS
     },
@@ -73,7 +73,7 @@ const SportRatingSelector = () => {
       name: TEXTS.SPORTS.HANDBALL.NAME,
       description: TEXTS.SPORTS.HANDBALL.DESCRIPTION,
       icon: Users,
-      animation: 'futebo' as const, // Usando futebol como fallback para handebol
+      animation: 'futebol' as const, // Usando futebol como fallback para handebol
       positions: Object.values(TEXTS.SPORTS.HANDBALL.POSITIONS),
       availableRatingSystems: TEXTS.SPORTS.HANDBALL.AVAILABLE_RATING_SYSTEMS
     }
