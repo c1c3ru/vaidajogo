@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['lottie-react', 'lottie-web'],
+  },
   test: {
     globals: true,
     environment: 'happy-dom',
