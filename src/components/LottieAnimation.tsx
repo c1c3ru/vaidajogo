@@ -1,5 +1,12 @@
 import React from 'react';
-import Lottie from 'lottie-react';
+import * as LottieLib from 'lottie-react';
+import type { LottieComponentProps } from 'lottie-react';
+
+// lottie-react é um módulo CJS. Em builds de produção (Vite/Rolldown), o import
+// padrão pode resolver para o objeto do módulo inteiro em vez do componente,
+// causando o React error #130. Este padrão garante o componente correto em runtime.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Lottie = ((LottieLib as any).default ?? LottieLib) as React.FC<LottieComponentProps>;
 
 // Importando as animações JSON
 import futsalAnimation from '../assets/Futsal.json';
