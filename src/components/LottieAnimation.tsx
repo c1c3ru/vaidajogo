@@ -1,5 +1,10 @@
 import React from 'react';
-import Lottie from 'lottie-react';
+import * as LottieLib from 'lottie-react';
+import type { LottieComponentProps } from 'lottie-react';
+
+// Resolve o componente Lottie de forma segura independente da interop CJS/ESM
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Lottie = ((LottieLib as any).default ?? LottieLib) as React.FC<LottieComponentProps>;
 
 // Importando as animações JSON
 import futsalAnimation from '../assets/Futsal.json';
@@ -52,4 +57,4 @@ export const LottieAnimation: React.FC<LottieAnimationProps> = ({
   );
 };
 
-export default LottieAnimation; 
+export default LottieAnimation;
