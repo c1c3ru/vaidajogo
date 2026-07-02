@@ -110,6 +110,7 @@ const PlayerForm = () => {
     }
 
     const newPlayer: Player = {
+      // eslint-disable-next-line react-hooks/purity
       id: Date.now().toString(),
       name: formData.name.trim(),
       nickname: formData.nickname.trim(),

@@ -16,12 +16,9 @@ interface PlayerProviderProps {
 }
 
 export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children }) => {
-  const [players, setPlayers] = useState<Player[]>([]);
-
-  useEffect(() => {
-    const savedPlayers = getFromLocalStorage("players") || [];
-    setPlayers(savedPlayers);
-  }, []);
+  const [players, setPlayers] = useState<Player[]>(() => {
+    return getFromLocalStorage("players") || [];
+  });
 
   const savePlayersToStorage = (updatedPlayers: Player[]) => {
     saveToLocalStorage("players", updatedPlayers);
