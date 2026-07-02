@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,8 +83,10 @@ const Dashboard = () => {
     }
   ];
 
+  const navigate = useNavigate();
+
   const handleNavigation = (route: string) => {
-    window.location.href = route;
+    navigate(route);
   };
 
   const containerVariants = {
@@ -231,6 +234,45 @@ const Dashboard = () => {
                       Gerencie chaves e eliminatórias de simulações de campeonato
                     </li>
                   </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Pix Donation Panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.0 }}
+          className="mt-8 max-w-4xl mx-auto"
+        >
+          <Card className="border border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.1)] bg-card/60 backdrop-blur-xl relative overflow-hidden group cursor-pointer"
+                onClick={() => {
+                  navigator.clipboard.writeText('ed6bc858-5f8b-466d-b212-d0f59b583238');
+                  alert('Chave Pix copiada com sucesso! 💚');
+                }}>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-green-500 to-green-600 opacity-80" />
+
+            <CardContent className="p-6">
+              <div className="flex items-center gap-6 relative z-10">
+                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30">
+                  <span className="text-2xl">💚</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-heading font-medium text-foreground flex items-center gap-2 text-lg">
+                    Apoie o Projeto
+                  </h4>
+                  <p className="font-body text-muted-foreground text-sm mt-1">
+                    Ganhou uma pelada ou curtiu o app? Me presenteie com qualquer valor! 🎉
+                  </p>
+                  <p className="font-body text-green-400 font-mono text-sm tracking-widest mt-2 bg-green-500/10 inline-block px-3 py-1 rounded-md border border-green-500/20">
+                    ed6bc858-5f8b-466d-b212-d0f59b583238
+                  </p>
+                  <p className="font-body text-muted-foreground text-xs italic mt-2 opacity-70">
+                    👆 Toque no card para copiar a chave PIX
+                  </p>
                 </div>
               </div>
             </CardContent>
