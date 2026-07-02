@@ -12,7 +12,8 @@
         "escala",
         "itens",
         "lista",
-        "listas"
+        "listas",
+        "vaidarjogo"
     ],
     "ignoreWords": [],
     "import": []
