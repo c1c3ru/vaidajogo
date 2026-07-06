@@ -1,0 +1,29 @@
+default_platform(:android)
+
+platform :android do
+  desc "Incrementa a versão automaticamente e gera o build"
+  lane :build_and_bump do
+    # 1. Usa o cider para aumentar o versionCode no pubspec.yaml automaticamente
+    # (Usamos 'cd ..' porque o fastlane roda de dentro da pasta mobile/android)
+    sh("cd .. && dart run cider bump build")
+    
+    # 2. Executa o build do App Bundle
+    sh("cd .. && flutter build appbundle --release")
+    
+    UI.success("✅ Novo versionCode gerado e App Bundle criado com sucesso!")
+    UI.message("O arquivo .aab está em: mobile/build/app/outputs/bundle/release/app-release.aab")
+  end
+
+  desc "Fluxo completo: Incrementa, Faz Build e Envia para a Play Store"
+  lane :deploy do
+    build_and_bump
+    
+    # 3. Faz upload pro Play Console (Descomente e configure quando tiver a chave JSON)
+    # upload_to_play_store(
+    #   track: 'internal', # ou 'production', 'alpha', 'beta'
+    #   aab: '../build/app/outputs/bundle/release/app-release.aab',
+    #   json_key: 'caminho/para/chave.json', # Arquivo de credencial do Google Cloud
+    #   package_name: 'com.c1c3ru.vaidarjogo'
+    # )
+  end
+end

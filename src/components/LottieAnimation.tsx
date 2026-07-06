@@ -1,20 +1,15 @@
 import React from 'react';
-import * as LottieLib from 'lottie-react';
-import type { LottieComponentProps } from 'lottie-react';
-
-// Resolve o componente Lottie de forma segura independente da interop CJS/ESM
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Lottie = ((LottieLib as any).default ?? LottieLib) as React.FC<LottieComponentProps>;
+import { useLottie } from 'lottie-react';
 
 // Importando as animações JSON
 import futsalAnimation from '../assets/Futsal.json';
 import campeonatoAnimation from '../assets/Campeonato.json';
 import basketballAnimation from '../assets/Basketball.json';
 import volleyballAnimation from '../assets/Volleyball.json';
-import futeboAnimation from '../assets/Futebo.json';
+import futebolAnimation from '../assets/Futebol.json';
 
 interface LottieAnimationProps {
-  type: 'futsal' | 'campeonato' | 'basketball' | 'volleyball' | 'futebo';
+  type: 'futsal' | 'campeonato' | 'basketball' | 'volleyball' | 'futebol';
   width?: number;
   height?: number;
   loop?: boolean;
@@ -27,7 +22,7 @@ const animationData = {
   campeonato: campeonatoAnimation,
   basketball: basketballAnimation,
   volleyball: volleyballAnimation,
-  futebo: futeboAnimation,
+  futebol: futebolAnimation,
 };
 
 export const LottieAnimation: React.FC<LottieAnimationProps> = ({
@@ -40,21 +35,19 @@ export const LottieAnimation: React.FC<LottieAnimationProps> = ({
 }) => {
   const animation = animationData[type];
 
+  const { View } = useLottie({
+    animationData: animation ?? futebolAnimation,
+    loop,
+    autoplay,
+    style: { width, height },
+  });
+
   if (!animation) {
     console.warn(`Animação "${type}" não encontrada`);
     return null;
   }
 
-  return (
-    <div className={className}>
-      <Lottie
-        animationData={animation}
-        loop={loop}
-        autoplay={autoplay}
-        style={{ width, height }}
-      />
-    </div>
-  );
+  return <div className={className}>{View}</div>;
 };
 
 export default LottieAnimation;

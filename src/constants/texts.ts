@@ -140,7 +140,7 @@ export const TEXTS = {
         POWER_FORWARD: 'Ala-pivô',
         CENTER: 'Pivô',
       },
-      AVAILABLE_RATING_SYSTEMS: ['stars', 'numeric10', 'numeric5']
+      AVAILABLE_RATING_SYSTEMS: ['stars', 'halfStars', 'numeric10', 'numeric5']
     },
     HANDBALL: {
       NAME: 'Handebol',

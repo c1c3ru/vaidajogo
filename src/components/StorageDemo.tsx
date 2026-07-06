@@ -34,21 +34,21 @@ export const StorageDemo = () => {
   });
 
   useEffect(() => {
-    // Carregar dados de exemplo
+    const loadDemoData = async () => {
+      const localData = await localStorage.get('demo-data');
+      const sessionData = await sessionStorage.get('demo-data');
+      const indexedData = await indexedStorage.get('demo-data');
+
+      setDemoData({
+        local: (localData as string) || '',
+        session: (sessionData as string) || '',
+        indexed: (indexedData as string) || '',
+      });
+    };
+
     loadDemoData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const loadDemoData = async () => {
-    const localData = await localStorage.get('demo-data');
-    const sessionData = await sessionStorage.get('demo-data');
-    const indexedData = await indexedStorage.get('demo-data');
-
-    setDemoData({
-      local: (localData as string) || '',
-      session: (sessionData as string) || '',
-      indexed: (indexedData as string) || '',
-    });
-  };
 
   const handleSaveData = async (type: 'local' | 'session' | 'indexed') => {
     const data = `Dados salvos em ${type} - ${new Date().toLocaleString()}`;

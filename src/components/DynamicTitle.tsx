@@ -2,16 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 export const DynamicTitle = () => {
-  const [title, setTitle] = useState('Dashboard');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const savedTitle = localStorage.getItem('dashboardTitle');
-    if (savedTitle) {
-      setTitle(savedTitle);
-    }
-    setLoading(false);
-  }, []);
+  const [title, setTitle] = useState(() => {
+    return localStorage.getItem('dashboardTitle') || 'Dashboard';
+  });
+  const [loading, setLoading] = useState(false);
 
   return (
     <motion.h1
