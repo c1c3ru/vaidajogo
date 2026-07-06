@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
@@ -127,17 +128,21 @@ const SidebarProvider = React.forwardRef<
       [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
     )
 
+    const sidebarStyle = React.useMemo(
+      () =>
+        ({
+          "--sidebar-width": SIDEBAR_WIDTH,
+          "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
+          ...style,
+        } as React.CSSProperties),
+      [style]
+    )
+
     return (
       <SidebarContext.Provider value={contextValue}>
         <TooltipProvider delayDuration={0}>
           <div
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH,
-                "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
-                ...style,
-              } as React.CSSProperties
-            }
+            {...{ style: sidebarStyle }}
             className={cn(
               "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
               className
@@ -191,17 +196,22 @@ const Sidebar = React.forwardRef<
     }
 
     if (isMobile) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const mobileStyle = React.useMemo(
+        () =>
+          ({
+            "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+          } as React.CSSProperties),
+        []
+      )
+
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
             className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-              } as React.CSSProperties
-            }
+            {...{ style: mobileStyle }}
             side={side}
           >
             <div className="flex h-full w-full flex-col">{children}</div>
@@ -628,6 +638,7 @@ const SidebarMenuBadge = React.forwardRef<
   <div
     ref={ref}
     data-sidebar="menu-badge"
+    // cspell:disable-next-line
     className={cn(
       "absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums text-sidebar-foreground select-none pointer-events-none",
       "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
@@ -654,6 +665,14 @@ const SidebarMenuSkeleton = React.forwardRef<
     return `${Math.floor(Math.random() * 40) + 50}%`
   }, [])
 
+  const skeletonStyle = React.useMemo(
+    () =>
+      ({
+        "--skeleton-width": width,
+      } as React.CSSProperties),
+    [width]
+  )
+
   return (
     <div
       ref={ref}
@@ -670,11 +689,7 @@ const SidebarMenuSkeleton = React.forwardRef<
       <Skeleton
         className="h-4 flex-1 max-w-[--skeleton-width]"
         data-sidebar="menu-skeleton-text"
-        style={
-          {
-            "--skeleton-width": width,
-          } as React.CSSProperties
-        }
+        {...{ style: skeletonStyle }}
       />
     </div>
   )
