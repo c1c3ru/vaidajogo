@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -17,6 +18,7 @@ import { TEXTS } from "@/constants";
 import { Label } from "./ui/label";
 
 const TeamDraw = () => {
+  const navigate = useNavigate();
   const { players, updatePlayer } = usePlayerStore();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -117,17 +119,49 @@ const TeamDraw = () => {
     const totalPresentPlayers = players.filter(p => p.present).length;
     if (totalPresentPlayers === 0) {
       return (
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center border border-gray-100">
-          <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" aria-hidden="true" />
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Nenhum jogador presente para o sorteio.</h2>
-          <p className="text-gray-500">
-            Certifique-se de adicionar jogadores na página de Presença e marcá-los como presentes para incluí-los no sorteio.
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col items-center justify-center gap-6 py-14 px-8 rounded-xl border border-primary/20 bg-card/60 backdrop-blur-xl shadow-[0_0_30px_rgba(0,179,255,0.08)] text-center"
+        >
+          <div className="p-4 rounded-full bg-primary/10 border border-primary/20">
+            <AlertCircle className="h-10 w-10 text-primary" aria-hidden="true" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-heading font-semibold text-foreground">
+              Nenhum jogador confirmado ainda
+            </h2>
+            <p className="text-sm text-muted-foreground font-body max-w-sm leading-relaxed">
+              Para sortear os times, primeiro marque quais jogadores estão presentes hoje na
+              <strong className="text-foreground"> Lista de Presença</strong>.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              onClick={() => navigate('/presence')}
+              className="font-heading text-xs uppercase tracking-wider flex items-center gap-2"
+            >
+              <Users className="w-4 h-4" />
+              Ir para Lista de Presença
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/player-form')}
+              className="font-heading text-xs uppercase tracking-wider flex items-center gap-2 border-border/50"
+            >
+              <AlertCircle className="w-4 h-4" />
+              Cadastrar Jogadores
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground/60 font-body">
+            Passo 1: Cadastre → Passo 2: Presença → Passo 3: Sorteio
           </p>
-        </div>
+        </motion.div>
       );
     }
     return null;
-  }, [players]);
+  }, [players, navigate]);
 
 
   return (
