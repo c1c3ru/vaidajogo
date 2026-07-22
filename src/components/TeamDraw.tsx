@@ -37,7 +37,7 @@ const TeamDraw = () => {
     presentPlayers.forEach(player => {
       // Se um jogador presente não está marcado para inclusão no sorteio, atualiza para true
       if (player.includeInDraw === false) { // Verifica explicitamente 'false'
-        updatePlayer(Number(player.id), { includeInDraw: true });
+        updatePlayer(player.id, { includeInDraw: true });
       }
     });
   }, [players, updatePlayer]); // Dependências: jogadores e função de atualização
