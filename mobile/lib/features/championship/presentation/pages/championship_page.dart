@@ -20,7 +20,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
   final List<Map<String, String>> _comingSoonFeatures = [
     {
       'title': 'NOVO CAMPEONATO',
-      'description': 'Estamos preparando um simulador de torneios completo.',
+      'description': 'Prepare seu torneio ou camponato de forma rápida e prática.',
       'asset': 'assets/lottie/Campeonato.json',
     },
     {
