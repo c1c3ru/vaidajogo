@@ -20,7 +20,7 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
   final List<Map<String, String>> _comingSoonFeatures = [
     {
       'title': 'NOVO CAMPEONATO',
-      'description': 'Estamos preparando um simulador de torneios completo.',
+      'description': 'Prepare seu torneio ou camponato de forma rápida e prática.',
       'asset': 'assets/lottie/Campeonato.json',
     },
     {
@@ -107,73 +107,6 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
             ),
           ),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BracketPrototypePage(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'CRIAR CHAVES',
-                  style: TextStyle(
-                    fontFamily: 'Chakra Petch',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
-                  foregroundColor: AppColors.secondary,
-                  side: const BorderSide(color: AppColors.secondary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const GroupsPrototypePage(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'CRIAR FASE DE GRUPOS',
-                  style: TextStyle(
-                    fontFamily: 'Chakra Petch',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
           Expanded(
             child: PageView.builder(
               controller: _pageController,
@@ -192,8 +125,11 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
 
                 return GestureDetector(
                   onTap: () {
-                    // Navigate only if the feature corresponds to an actual sport (has title)
-                    if (feature['title'] != 'NOVO CAMPEONATO') {
+                    if (feature['title'] == 'NOVO CAMPEONATO') {
+                      // Abre modal com opções de campeonato
+                      _showChampionshipOptionsModal(context);
+                    } else {
+                      // Navega para o placar do esporte selecionado
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -266,19 +202,20 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            if (feature['title'] != 'NOVO CAMPEONATO')
-                              const Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  'CLIQUE PARA ABRIR O PLACAR',
-                                  style: TextStyle(
-                                    color: AppColors.secondary,
-                                    fontFamily: 'Chakra Petch',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                feature['title'] == 'NOVO CAMPEONATO'
+                                    ? 'TOQUE PARA ORGANIZAR'
+                                    : 'CLIQUE PARA ABRIR O PLACAR',
+                                style: const TextStyle(
+                                  color: AppColors.secondary,
+                                  fontFamily: 'Chakra Petch',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
                             const SizedBox(height: 12),
                             Text(
                               feature['description']!,
@@ -317,6 +254,151 @@ class _ChampionshipPageState extends State<ChampionshipPage> {
                         : AppColors.muted.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(4),
                   ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Exibe o modal com as opções de criação de campeonato.
+  void _showChampionshipOptionsModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _ChampionshipOptionsBottomSheet(
+        onBracket: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const BracketPrototypePage(),
+            ),
+          );
+        },
+        onGroups: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const GroupsPrototypePage(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Bottom sheet com as opções de organização de campeonato.
+class _ChampionshipOptionsBottomSheet extends StatelessWidget {
+  final VoidCallback onBracket;
+  final VoidCallback onGroups;
+
+  const _ChampionshipOptionsBottomSheet({
+    required this.onBracket,
+    required this.onGroups,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.15),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle indicator
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const Text(
+            'ORGANIZAR CAMPEONATO',
+            style: TextStyle(
+              color: AppColors.primary,
+              fontFamily: 'Chakra Petch',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Escolha o formato do seu torneio',
+            style: TextStyle(
+              color: AppColors.muted.withValues(alpha: 0.7),
+              fontFamily: 'Jura',
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Botão CRIAR CHAVES
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: onBracket,
+              child: const Text(
+                'CRIAR CHAVES',
+                style: TextStyle(
+                  fontFamily: 'Chakra Petch',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Botão CRIAR FASE DE GRUPOS
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
+                foregroundColor: AppColors.secondary,
+                side: const BorderSide(color: AppColors.secondary),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: onGroups,
+              child: const Text(
+                'CRIAR FASE DE GRUPOS',
+                style: TextStyle(
+                  fontFamily: 'Chakra Petch',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                 ),
               ),
             ),

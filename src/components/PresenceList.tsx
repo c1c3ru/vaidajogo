@@ -19,6 +19,8 @@ const PresenceList = () => {
   const [filterStatus, setFilterStatus] = useState<'all' | 'present' | 'absent' | 'paid' | 'unpaid'>('all');
 
   const { toast } = useToast();
+  // TODO(multi-user): isAdmin é hardcoded como true pois o app é monousuário no MVP.
+  // Quando autenticação/papéis forem introduzidos, substituir pela role do usuário logado.
   const isAdmin = true;
 
   // Filtrar jogadores
