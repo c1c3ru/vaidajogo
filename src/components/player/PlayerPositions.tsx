@@ -4,6 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+// As posições são gravadas no jogador (player.selectedPositions) e comparadas
+// com PositionEnum, então os rótulos aqui são dados e não texto de interface:
+// traduzi-los invalidaria os cadastros já salvos e a detecção de goleiros.
 import { TEXTS } from '@/constants/texts';
 import { AlertCircle } from 'lucide-react';
 

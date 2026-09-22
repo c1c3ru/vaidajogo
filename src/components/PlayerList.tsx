@@ -8,7 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { usePlayerStore } from "@/stores/usePlayerStore";
-import { TEXTS } from "@/constants";
+import { useTexts } from "@/hooks/useTexts";
+import i18n from "@/i18n/config";
 import { Player } from '@/types';
 
 type Rating = 1 | 2 | 3 | 4 | 5;
@@ -19,6 +20,7 @@ const getRatingMax = (player: Player) => {
 };
 
 const PlayerList = () => {
+  const TEXTS = useTexts();
   const { players, updatePlayer, deletePlayer, editingPlayer, setEditingPlayer } = usePlayerStore();
   const [editValue, setEditValue] = React.useState('');
   const { toast } = useToast();
@@ -87,8 +89,8 @@ const PlayerList = () => {
             <div className="flex items-center justify-between">
               {/* <DynamicTitle /> */}
               <div className="text-right">
-                <p className="text-sm text-gray-600">Data: {new Date().toLocaleDateString('pt-BR')}</p>
-                <p className="text-xs text-gray-500">Lista de Jogadores</p>
+                <p className="text-sm text-gray-600">{TEXTS.PRESENCE.DATE_LABEL}: {new Date().toLocaleDateString(i18n.resolvedLanguage ?? 'pt-BR')}</p>
+                <p className="text-xs text-gray-500">{TEXTS.PLAYER_LIST.TITLE}</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full">
@@ -217,8 +219,8 @@ const PlayerList = () => {
             >
               <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
                 <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">Nenhum jogador cadastrado</h3>
-                <p className="text-gray-500">Adicione jogadores para começar a usar o sistema.</p>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">{TEXTS.PLAYER_LIST.EMPTY}</h3>
+                <p className="text-gray-500">{TEXTS.PLAYER_LIST.EMPTY_DESCRIPTION}</p>
               </div>
             </motion.div>
           )}

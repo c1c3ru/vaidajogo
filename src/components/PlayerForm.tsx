@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { SportEnum, PositionEnum } from '@/utils/enums';
 import { useToast } from '@/hooks/use-toast';
 import { usePlayerStore } from '@/stores/usePlayerStore';
-import { TEXTS } from '@/constants/texts';
+import { useTexts } from '@/hooks/useTexts';
 import { Player } from '@/types';
 import { CalendarIcon, User, Users, Star, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
@@ -26,6 +26,7 @@ import RatingInput from './player/RatingInput';
 import { BackToDashboard } from './BackToDashboard';
 
 const PlayerForm = () => {
+  const TEXTS = useTexts();
   const { toast } = useToast();
   const {
     currentSport,

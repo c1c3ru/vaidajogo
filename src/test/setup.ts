@@ -1,6 +1,11 @@
 import '@testing-library/jest-dom';
 import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import i18n from '@/i18n/config';
+
+// Os testes asseguram os textos em português, então o idioma é fixado
+// independentemente do que o ambiente de teste reporte como idioma do navegador.
+i18n.changeLanguage('pt-BR');
 
 // Cleanup após cada teste
 afterEach(() => {

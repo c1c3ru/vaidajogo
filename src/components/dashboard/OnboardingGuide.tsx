@@ -13,11 +13,13 @@ import {
   ArrowRight,
   HelpCircle
 } from 'lucide-react';
+import { useTexts } from '@/hooks/useTexts';
 
 const STORAGE_KEY = 'vaidajogo_onboarding_dismissed';
 
 export const OnboardingGuide: React.FC = () => {
   const navigate = useNavigate();
+  const TEXTS = useTexts();
   const [isDismissed, setIsDismissed] = useState<boolean>(() => {
     return localStorage.getItem(STORAGE_KEY) === 'true';
   });
@@ -42,7 +44,7 @@ export const OnboardingGuide: React.FC = () => {
           className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5"
         >
           <HelpCircle className="w-3.5 h-3.5" />
-          Ver Guia Rápido de Início (3 passos)
+          {TEXTS.ONBOARDING.REOPEN}
         </Button>
       </div>
     );
@@ -51,33 +53,33 @@ export const OnboardingGuide: React.FC = () => {
   const steps = [
     {
       stepNumber: '1',
-      title: 'Cadastre os Jogadores',
-      description: 'Adicione os nomes e o nível de habilidade (estrelas) dos atletas da sua pelada.',
+      title: TEXTS.ONBOARDING.STEPS.REGISTER.TITLE,
+      description: TEXTS.ONBOARDING.STEPS.REGISTER.DESCRIPTION,
       icon: UserPlus,
       color: 'bg-primary/10 text-primary border-primary/20',
       badgeColor: 'bg-primary text-primary-foreground',
       route: '/player-form',
-      actionText: 'Cadastrar'
+      actionText: TEXTS.ONBOARDING.STEPS.REGISTER.ACTION
     },
     {
       stepNumber: '2',
-      title: 'Marque a Presença',
-      description: 'Confirme quem vai jogar na partida de hoje e acompanhe os pagamentos.',
+      title: TEXTS.ONBOARDING.STEPS.PRESENCE.TITLE,
+      description: TEXTS.ONBOARDING.STEPS.PRESENCE.DESCRIPTION,
       icon: CheckCircle,
       color: 'bg-accent/10 text-accent border-accent/20',
       badgeColor: 'bg-accent text-accent-foreground',
       route: '/presence',
-      actionText: 'Lista de Presença'
+      actionText: TEXTS.ONBOARDING.STEPS.PRESENCE.ACTION
     },
     {
       stepNumber: '3',
-      title: 'Sortear os Times',
-      description: 'Gere automaticamente times equilibrados por nível em questão de segundos.',
+      title: TEXTS.ONBOARDING.STEPS.DRAW.TITLE,
+      description: TEXTS.ONBOARDING.STEPS.DRAW.DESCRIPTION,
       icon: Shuffle,
       color: 'bg-secondary/10 text-secondary border-secondary/20',
       badgeColor: 'bg-secondary text-secondary-foreground',
       route: '/team-draw',
-      actionText: 'Sortear Agora'
+      actionText: TEXTS.ONBOARDING.STEPS.DRAW.ACTION
     }
   ];
 
@@ -100,10 +102,10 @@ export const OnboardingGuide: React.FC = () => {
               </div>
               <div>
                 <CardTitle className="text-lg font-heading tracking-wide flex items-center gap-2">
-                  Guia Rápido: Como Organizar sua Pelada em 3 Passos
+                  {TEXTS.ONBOARDING.TITLE}
                 </CardTitle>
                 <p className="text-xs text-muted-foreground font-body">
-                  Primeira vez por aqui? Siga este passo a passo simples para sortear seus times.
+                  {TEXTS.ONBOARDING.SUBTITLE}
                 </p>
               </div>
             </div>
@@ -111,7 +113,7 @@ export const OnboardingGuide: React.FC = () => {
               variant="ghost"
               size="icon"
               onClick={handleDismiss}
-              title="Fechar guia"
+              title={TEXTS.ONBOARDING.CLOSE}
               className="text-muted-foreground hover:text-foreground h-8 w-8"
             >
               <X className="w-4 h-4" />
@@ -130,7 +132,7 @@ export const OnboardingGuide: React.FC = () => {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <Badge className={`${step.badgeColor} font-heading text-xs px-2.5 py-0.5`}>
-                          Passo {step.stepNumber}
+                          {TEXTS.ONBOARDING.STEP_LABEL} {step.stepNumber}
                         </Badge>
                         <div className={`p-2.5 rounded-lg border ${step.color}`}>
                           <Icon className="w-5 h-5" />
