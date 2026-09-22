@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TEXTS } from '@/constants/texts';
+import { useTexts } from '@/hooks/useTexts';
 import { Logo } from '@/components/ui/logo';
 import { OnboardingGuide } from '@/components/dashboard/OnboardingGuide';
 import { useToast } from '@/hooks/use-toast';
@@ -22,11 +22,12 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const TEXTS = useTexts();
 
   const coreMenuItems = [
     {
       title: TEXTS.PAGE_TITLES.PLAYER_FORM,
-      description: 'Cadastre os atletas especificando posições e nível (1 a 5 estrelas)',
+      description: TEXTS.DASHBOARD.MENU.PLAYER_FORM,
       icon: UserPlus,
       route: '/player-form',
       color: 'text-primary',
@@ -36,7 +37,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.PRESENCE,
-      description: 'Marque a lista de presença do dia e controle os pagamentos',
+      description: TEXTS.DASHBOARD.MENU.PRESENCE,
       icon: CheckCircle,
       route: '/presence',
       color: 'text-accent',
@@ -46,7 +47,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.TEAM_DRAW,
-      description: 'Sorteie automaticamente equipes equilibradas por nível de habilidade',
+      description: TEXTS.DASHBOARD.MENU.TEAM_DRAW,
       icon: Shuffle,
       route: '/team-draw',
       color: 'text-primary',
@@ -59,7 +60,7 @@ const Dashboard = () => {
   const advancedMenuItems = [
     {
       title: TEXTS.PAGE_TITLES.PLAYER_LIST,
-      description: 'Gerencie a lista completa e informações dos atletas',
+      description: TEXTS.DASHBOARD.MENU.PLAYER_LIST,
       icon: Users,
       route: '/players',
       color: 'text-secondary',
@@ -69,7 +70,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.STATISTICS,
-      description: 'Acompanhe a frequência, pagamentos e métricas dos jogadores',
+      description: TEXTS.DASHBOARD.MENU.STATISTICS,
       icon: BarChart3,
       route: '/statistics',
       color: 'text-secondary',
@@ -79,7 +80,7 @@ const Dashboard = () => {
     },
     {
       title: TEXTS.PAGE_TITLES.CHAMPIONSHIP,
-      description: 'Organize torneios completos no formato grupos e mata-mata',
+      description: TEXTS.DASHBOARD.MENU.CHAMPIONSHIP,
       icon: Trophy,
       route: '/championship',
       color: 'text-accent',
@@ -96,8 +97,8 @@ const Dashboard = () => {
   const handleCopyPix = () => {
     navigator.clipboard.writeText('ed6bc858-5f8b-466d-b212-d0f59b583238');
     toast({
-      title: "💚 Chave PIX Copiada!",
-      description: "Chave PIX copiada com sucesso para a área de transferência. Obrigado pelo apoio!",
+      title: TEXTS.DASHBOARD.DONATION.COPIED_TITLE,
+      description: TEXTS.DASHBOARD.DONATION.COPIED_DESCRIPTION,
       className: "bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-600 shadow-lg",
       duration: 4000,
     });
@@ -131,7 +132,7 @@ const Dashboard = () => {
         >
           <Logo />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-center font-body bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            Gerenciador completo de jogadores, presenças e sorteio de times.
+            {TEXTS.DASHBOARD.TAGLINE}
           </p>
         </motion.div>
 
@@ -142,7 +143,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto mb-4">
           <p className="text-xs font-heading uppercase tracking-[0.2em] text-muted-foreground mb-4 flex items-center gap-2">
             <span className="w-6 h-px bg-primary/50 inline-block" />
-            Módulos Essenciais
+            {TEXTS.DASHBOARD.CORE_SECTION}
             <span className="w-6 h-px bg-primary/50 inline-block" />
           </p>
         </div>
@@ -182,7 +183,7 @@ const Dashboard = () => {
                       variant="outline"
                       className={`w-full group-hover:text-background group-hover:bg-foreground border-border/50 transition-all font-heading tracking-wide uppercase text-xs h-10 flex items-center justify-center gap-2`}
                     >
-                      Acessar Módulo
+                      {TEXTS.DASHBOARD.ACCESS_MODULE}
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
@@ -199,7 +200,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto mt-12 mb-4">
           <p className="text-xs font-heading uppercase tracking-[0.2em] text-muted-foreground mb-4 flex items-center gap-2">
             <span className="w-6 h-px bg-secondary/50 inline-block" />
-            Recursos Avançados
+            {TEXTS.DASHBOARD.ADVANCED_SECTION}
             <span className="w-6 h-px bg-secondary/50 inline-block" />
           </p>
         </div>
@@ -239,7 +240,7 @@ const Dashboard = () => {
                       variant="outline"
                       className={`w-full group-hover:text-background group-hover:bg-foreground border-border/30 transition-all font-heading tracking-wide uppercase text-xs h-10 flex items-center justify-center gap-2`}
                     >
-                      Acessar Módulo
+                      {TEXTS.DASHBOARD.ACCESS_MODULE}
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
@@ -265,7 +266,7 @@ const Dashboard = () => {
             <CardHeader className="border-b border-border/30 bg-background/50">
               <CardTitle className="flex items-center gap-3 text-foreground font-heading uppercase text-sm tracking-[0.2em]">
                 <Star className="h-5 w-5 text-primary animate-pulse" />
-                Dicas de Organização da Pelada
+                {TEXTS.DASHBOARD.TIPS.TITLE}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8">
@@ -273,20 +274,20 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   <h4 className="font-heading font-medium text-foreground flex items-center gap-2 text-lg">
                     <Users className="h-5 w-5 text-secondary glow-sm" />
-                    Primeiros Passos
+                    {TEXTS.DASHBOARD.TIPS.FIRST_STEPS_TITLE}
                   </h4>
                   <ul className="space-y-3 text-sm text-muted-foreground font-body">
                     <li className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-secondary/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
-                      Cadastre os jogadores informando suas posições e estrelas de nivelamento
+                      {TEXTS.DASHBOARD.TIPS.FIRST_STEPS_1}
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-secondary/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
-                      Marque a lista de presença para saber quem estará presente no dia da pelada
+                      {TEXTS.DASHBOARD.TIPS.FIRST_STEPS_2}
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-secondary/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
-                      Utilize o sorteio automático para gerar times equilibrados e sem panela
+                      {TEXTS.DASHBOARD.TIPS.FIRST_STEPS_3}
                     </li>
                   </ul>
                 </div>
@@ -294,20 +295,20 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   <h4 className="font-heading font-medium text-foreground flex items-center gap-2 text-lg">
                     <TrendingUp className="h-5 w-5 text-accent glow-sm" />
-                    Recursos Avançados
+                    {TEXTS.DASHBOARD.TIPS.ADVANCED_TITLE}
                   </h4>
                   <ul className="space-y-3 text-sm text-muted-foreground font-body">
                     <li className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-accent/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
-                      Acompanhe o controle financeiro de mensalistas e pagadores no módulo de presenças
+                      {TEXTS.DASHBOARD.TIPS.ADVANCED_1}
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-accent/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
-                      Monte um campeonato completo para o seu grupo com fase de grupos e final
+                      {TEXTS.DASHBOARD.TIPS.ADVANCED_2}
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-accent/80 rounded-sm mt-1.5 shadow-[0_0_5px_currentColor]"></div>
-                      Exporte relatórios e compartilhe os confrontos via WhatsApp com um toque
+                      {TEXTS.DASHBOARD.TIPS.ADVANCED_3}
                     </li>
                   </ul>
                 </div>
@@ -339,16 +340,16 @@ const Dashboard = () => {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-heading font-medium text-foreground/80 flex items-center gap-2 text-sm">
-                    Apoie o Projeto
+                    {TEXTS.DASHBOARD.DONATION.TITLE}
                   </h4>
                   <p className="font-body text-muted-foreground text-xs mt-0.5">
-                    Curtiu o app? Me presenteie com qualquer valor via PIX! 🎉
+                    {TEXTS.DASHBOARD.DONATION.DESCRIPTION}
                   </p>
                   <p className="font-body text-green-400/80 font-mono text-xs tracking-widest mt-1.5 bg-green-500/10 inline-block px-2.5 py-0.5 rounded border border-green-500/15">
                     ed6bc858-5f8b-466d-b212-d0f59b583238
                   </p>
                   <p className="font-body text-muted-foreground text-xs italic mt-1 opacity-60">
-                    👆 Toque para copiar a chave PIX
+                    {TEXTS.DASHBOARD.DONATION.HINT}
                   </p>
                 </div>
               </div>

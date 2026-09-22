@@ -21,6 +21,69 @@ export const TEXTS = {
     WELCOME: 'Bem-vindo ao VaiDaJogo',
     DESCRIPTION: 'Gerencie seus jogadores, controle presenças, organize sorteios e acompanhe estatísticas de forma simples e eficiente. Escolha uma das opções abaixo para começar.',
     MAIN_FEATURES: 'Funcionalidades Principais',
+    TAGLINE: 'Gerenciador completo de jogadores, presenças e sorteio de times.',
+    CORE_SECTION: 'Módulos Essenciais',
+    ADVANCED_SECTION: 'Recursos Avançados',
+    ACCESS_MODULE: 'Acessar Módulo',
+
+    // Descrições dos cards do menu
+    MENU: {
+      PLAYER_FORM: 'Cadastre os atletas especificando posições e nível (1 a 5 estrelas)',
+      PRESENCE: 'Marque a lista de presença do dia e controle os pagamentos',
+      TEAM_DRAW: 'Sorteie automaticamente equipes equilibradas por nível de habilidade',
+      PLAYER_LIST: 'Gerencie a lista completa e informações dos atletas',
+      STATISTICS: 'Acompanhe a frequência, pagamentos e métricas dos jogadores',
+      CHAMPIONSHIP: 'Organize torneios completos no formato grupos e mata-mata',
+    },
+
+    // Painel de dicas
+    TIPS: {
+      TITLE: 'Dicas de Organização da Pelada',
+      FIRST_STEPS_TITLE: 'Primeiros Passos',
+      FIRST_STEPS_1: 'Cadastre os jogadores informando suas posições e estrelas de nivelamento',
+      FIRST_STEPS_2: 'Marque a lista de presença para saber quem estará presente no dia da pelada',
+      FIRST_STEPS_3: 'Utilize o sorteio automático para gerar times equilibrados e sem panela',
+      ADVANCED_TITLE: 'Recursos Avançados',
+      ADVANCED_1: 'Acompanhe o controle financeiro de mensalistas e pagadores no módulo de presenças',
+      ADVANCED_2: 'Monte um campeonato completo para o seu grupo com fase de grupos e final',
+      ADVANCED_3: 'Exporte relatórios e compartilhe os confrontos via WhatsApp com um toque',
+    },
+
+    // Painel de doação via Pix
+    DONATION: {
+      TITLE: 'Apoie o Projeto',
+      DESCRIPTION: 'Curtiu o app? Me presenteie com qualquer valor via PIX! 🎉',
+      HINT: '👆 Toque para copiar a chave PIX',
+      COPIED_TITLE: '💚 Chave PIX Copiada!',
+      COPIED_DESCRIPTION: 'Chave PIX copiada com sucesso para a área de transferência. Obrigado pelo apoio!',
+    },
+  },
+
+  // ===== TEXTS DO GUIA DE PRIMEIROS PASSOS =====
+  ONBOARDING: {
+    TITLE: 'Guia Rápido: Como Organizar sua Pelada em 3 Passos',
+    SUBTITLE: 'Primeira vez por aqui? Siga este passo a passo simples para sortear seus times.',
+    REOPEN: 'Ver Guia Rápido de Início (3 passos)',
+    CLOSE: 'Fechar guia',
+    STEP_LABEL: 'Passo',
+
+    STEPS: {
+      REGISTER: {
+        TITLE: 'Cadastre os Jogadores',
+        DESCRIPTION: 'Adicione os nomes e o nível de habilidade (estrelas) dos atletas da sua pelada.',
+        ACTION: 'Cadastrar',
+      },
+      PRESENCE: {
+        TITLE: 'Marque a Presença',
+        DESCRIPTION: 'Confirme quem vai jogar na partida de hoje e acompanhe os pagamentos.',
+        ACTION: 'Lista de Presença',
+      },
+      DRAW: {
+        TITLE: 'Sortear os Times',
+        DESCRIPTION: 'Gere automaticamente times equilibrados por nível em questão de segundos.',
+        ACTION: 'Sortear Agora',
+      },
+    },
   },
 
   // ===== TEXTS DO FORMULÁRIO DE JOGADOR =====
@@ -255,6 +318,27 @@ export const TEXTS = {
       UNPAID: 'Pendente',
     },
 
+    // Cabeçalho
+    DATE_LABEL: 'Data',
+
+    // Adicionar jogador
+    ADD_PLAYER: {
+      TITLE: 'Adicionar Jogador',
+      PLACEHOLDER: 'Digite o nome do novo jogador...',
+      BUTTON: 'Adicionar',
+    },
+
+    // Seções
+    FILTERS_TITLE: 'Filtros e Busca',
+    LIST_TITLE: 'Lista de Jogadores',
+
+    // Lista vazia
+    EMPTY: {
+      TITLE: 'Nenhum jogador encontrado',
+      NO_PLAYERS: 'Adicione jogadores para começar',
+      ADJUST_FILTERS: 'Tente ajustar os filtros',
+    },
+
     // Mensagens
     MESSAGES: {
       PLAYER_ADDED: 'Jogador adicionado com sucesso!',
@@ -262,6 +346,31 @@ export const TEXTS = {
       PRESENCE_TOGGLED: 'Presença alterada com sucesso!',
       PAYMENT_TOGGLED: 'Status de pagamento alterado!',
       BULK_ACTION_SUCCESS: 'Ação em lote realizada com sucesso!',
+    },
+
+    // Notificações
+    TOASTS: {
+      EMPTY_NAME_TITLE: '❌ Erro',
+      EMPTY_NAME_DESCRIPTION: 'O nome do jogador não pode estar vazio.',
+      PLAYER_EXISTS_TITLE: '⚠️ Jogador Existente',
+      PLAYER_ADDED_TITLE: '✅ Jogador Adicionado',
+      PLAYER_ADDED_DESCRIPTION: '{name} foi adicionado com sucesso!',
+      PRESENT_TITLE: '✅ Presente',
+      ABSENT_TITLE: '❌ Ausente',
+      PRESENCE_DESCRIPTION: '{name} está agora {status}.',
+      PRESENT_STATUS: 'presente',
+      ABSENT_STATUS: 'ausente',
+      PAID_TITLE: '💰 Pago',
+      UNPAID_TITLE: '💸 Pendente',
+      PAYMENT_DESCRIPTION: 'Pagamento de {name} marcado como {status}.',
+      PAID_STATUS: 'pago',
+      UNPAID_STATUS: 'pendente',
+      BULK_TITLE: '✅ Ação em Lote',
+      BULK_DESCRIPTION: '{count} jogadores foram {action}.',
+      BULK_PRESENT: 'marcados como presentes',
+      BULK_ABSENT: 'marcados como ausentes',
+      BULK_PAID: 'marcados como pagos',
+      BULK_UNPAID: 'marcados como pendentes',
     },
   },
 
@@ -339,6 +448,56 @@ export const TEXTS = {
       SHUFFLE_TEAMS: 'Embaralhar Times',
     },
 
+    // Goleiros
+    GOALKEEPERS: {
+      TITLE: 'Goleiros Disponíveis',
+      RATING_LABEL: 'Avaliação',
+    },
+
+    // Rótulos de quantidade
+    PLAYER_SINGULAR: 'Jogador',
+    PLAYER_PLURAL: 'Jogadores',
+
+    // Balanceamento
+    BALANCING: {
+      METHOD_LABEL: 'Método de Balanceamento',
+      METHOD_PLACEHOLDER: 'Selecione o método',
+      METHOD_INTELLIGENT: 'Inteligente (Recomendado)',
+      METHOD_SNAKE: 'Snake Draft',
+      METHOD_RANDOM: 'Aleatório',
+      TOLERANCE_LABEL: 'Tolerância de Balanceamento',
+      TOLERANCE_PLACEHOLDER: 'Selecione a tolerância',
+      TOLERANCE_STRICT: 'Estrito (±5%)',
+      TOLERANCE_MEDIUM: 'Médio (±10%)',
+      TOLERANCE_FLEXIBLE: 'Flexível (±15%)',
+    },
+
+    // Instruções
+    INSTRUCTIONS: {
+      TITLE: 'Instruções Importantes',
+      HIGHLIGHT_LABEL: 'Novo:',
+      HIGHLIGHT: 'Algoritmo de balanceamento inteligente para times mais equilibrados!',
+    },
+
+    // Resultado
+    RESULT: {
+      TITLE: 'Times Sorteados',
+      TEAM_LABEL: 'Time',
+      STRENGTH_LABEL: 'Força',
+      READY_TITLE: 'Pronto para o Sorteio?',
+      READY_DESCRIPTION: 'Clique em "Sortear Times" para gerar as equipes com base nos jogadores presentes.',
+    },
+
+    // Estado vazio
+    EMPTY_STATE: {
+      TITLE: 'Nenhum jogador confirmado ainda',
+      DESCRIPTION_PREFIX: 'Para sortear os times, primeiro marque quais jogadores estão presentes hoje na',
+      DESCRIPTION_LINK: 'Lista de Presença',
+      GO_TO_PRESENCE: 'Ir para Lista de Presença',
+      GO_TO_PLAYER_FORM: 'Cadastrar Jogadores',
+      STEPS_HINT: 'Passo 1: Cadastre → Passo 2: Presença → Passo 3: Sorteio',
+    },
+
     // Mensagens
     MESSAGES: {
       TEAMS_GENERATED: 'Times gerados com sucesso!',
@@ -346,7 +505,21 @@ export const TEXTS = {
       TEAMS_CLEARED: 'Times limpos com sucesso!',
       INVALID_CONFIGURATION: 'Configuração inválida',
       TEAM_GENERATION_FAILED: 'Falha ao gerar times',
+      INSUFFICIENT_PLAYERS_DETAIL: 'Você precisa de pelo menos {count} jogadores de linha presentes para gerar times.',
+      INVALID_PLAYERS_PER_TEAM: 'O número de jogadores por time deve ser maior que zero.',
+      GENERATION_ERROR: 'Ocorreu um erro ao gerar os times. Verifique o número de jogadores e a configuração.',
+      GENERATION_UNEXPECTED_ERROR: 'Ocorreu um erro inesperado ao sortear os times.',
+      TEAMS_GENERATED_DETAIL: 'Os times foram sorteados com sucesso!',
     },
+  },
+
+  // ===== TEXTS DA LISTA DE JOGADORES =====
+  PLAYER_LIST: {
+    TITLE: 'Lista de Jogadores',
+    SUBTITLE: 'Visualize e gerencie os jogadores cadastrados',
+    SEARCH_PLACEHOLDER: 'Buscar jogadores...',
+    EMPTY: 'Nenhum jogador cadastrado',
+    EMPTY_DESCRIPTION: 'Cadastre o primeiro jogador para começar',
   },
 
   // ===== TEXTS DE ESTATÍSTICAS =====
@@ -373,6 +546,14 @@ export const TEXTS = {
 
   // ===== TEXTS GERAIS =====
   COMMON: {
+    // Idioma
+    LANGUAGE: {
+      LABEL: 'Idioma',
+      PT_BR: 'Português (Brasil)',
+      EN_US: 'English (US)',
+      ES: 'Español',
+    },
+
     // Botões
     BUTTONS: {
       SAVE: 'Salvar',

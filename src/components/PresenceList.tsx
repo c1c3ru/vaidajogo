@@ -11,9 +11,12 @@ import { DynamicTitle } from "./DynamicTitle";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { Player, Rating } from "@/types";
 import { SportEnum } from "@/utils/enums";
+import { useTexts } from "@/hooks/useTexts";
+import i18n from "@/i18n/config";
 
 const PresenceList = () => {
   const { players, addPlayer, updatePlayer } = usePlayerStore();
+  const TEXTS = useTexts();
   const newPlayerNameRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'present' | 'absent' | 'paid' | 'unpaid'>('all');
@@ -52,8 +55,8 @@ const PresenceList = () => {
     const newPlayerName = newPlayerNameRef.current?.value.trim();
     if (!newPlayerName) {
       toast({
-        title: "❌ Erro",
-        description: "O nome do jogador não pode estar vazio.",
+        title: TEXTS.PRESENCE.TOASTS.EMPTY_NAME_TITLE,
+        description: TEXTS.PRESENCE.TOASTS.EMPTY_NAME_DESCRIPTION,
         variant: "destructive",
         className: "bg-gradient-to-r from-red-500 to-rose-600 text-white border-red-600 shadow-lg",
       });
@@ -66,8 +69,8 @@ const PresenceList = () => {
 
     if (playerExists) {
       toast({
-        title: "⚠️ Jogador Existente",
-        description: "Este jogador já está cadastrado no sistema.",
+        title: TEXTS.PRESENCE.TOASTS.PLAYER_EXISTS_TITLE,
+        description: TEXTS.PRESENCE.MESSAGES.PLAYER_EXISTS,
         variant: "destructive",
         className: "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
       });
@@ -95,8 +98,8 @@ const PresenceList = () => {
     newPlayerNameRef.current!.value = '';
 
     toast({
-      title: "✅ Jogador Adicionado",
-      description: `${newPlayerName} foi adicionado com sucesso!`,
+      title: TEXTS.PRESENCE.TOASTS.PLAYER_ADDED_TITLE,
+      description: TEXTS.PRESENCE.TOASTS.PLAYER_ADDED_DESCRIPTION.replace("{name}", newPlayerName),
       className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
       duration: 3000,
     });
@@ -109,8 +112,10 @@ const PresenceList = () => {
       updatePlayer(id, { present: newStatus });
 
       toast({
-        title: newStatus ? "✅ Presente" : "❌ Ausente",
-        description: `${player.name} está agora ${newStatus ? 'presente' : 'ausente'}.`,
+        title: newStatus ? TEXTS.PRESENCE.TOASTS.PRESENT_TITLE : TEXTS.PRESENCE.TOASTS.ABSENT_TITLE,
+        description: TEXTS.PRESENCE.TOASTS.PRESENCE_DESCRIPTION
+          .replace("{name}", player.name)
+          .replace("{status}", newStatus ? TEXTS.PRESENCE.TOASTS.PRESENT_STATUS : TEXTS.PRESENCE.TOASTS.ABSENT_STATUS),
         className: newStatus
           ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
           : "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-gray-600 shadow-lg",
@@ -126,8 +131,10 @@ const PresenceList = () => {
       updatePlayer(id, { paid: newStatus });
 
       toast({
-        title: newStatus ? "💰 Pago" : "💸 Pendente",
-        description: `Pagamento de ${player.name} marcado como ${newStatus ? 'pago' : 'pendente'}.`,
+        title: newStatus ? TEXTS.PRESENCE.TOASTS.PAID_TITLE : TEXTS.PRESENCE.TOASTS.UNPAID_TITLE,
+        description: TEXTS.PRESENCE.TOASTS.PAYMENT_DESCRIPTION
+          .replace("{name}", player.name)
+          .replace("{status}", newStatus ? TEXTS.PRESENCE.TOASTS.PAID_STATUS : TEXTS.PRESENCE.TOASTS.UNPAID_STATUS),
         className: newStatus
           ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
           : "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
@@ -154,15 +161,17 @@ const PresenceList = () => {
     });
 
     const actionText = {
-      present: 'marcados como presentes',
-      absent: 'marcados como ausentes',
-      paid: 'marcados como pagos',
-      unpaid: 'marcados como pendentes'
+      present: TEXTS.PRESENCE.TOASTS.BULK_PRESENT,
+      absent: TEXTS.PRESENCE.TOASTS.BULK_ABSENT,
+      paid: TEXTS.PRESENCE.TOASTS.BULK_PAID,
+      unpaid: TEXTS.PRESENCE.TOASTS.BULK_UNPAID
     };
 
     toast({
-      title: "✅ Ação em Lote",
-      description: `${actionPlayers.length} jogadores foram ${actionText[action]}.`,
+      title: TEXTS.PRESENCE.TOASTS.BULK_TITLE,
+      description: TEXTS.PRESENCE.TOASTS.BULK_DESCRIPTION
+        .replace("{count}", String(actionPlayers.length))
+        .replace("{action}", actionText[action]),
       className: "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-blue-600 shadow-lg",
     });
   };
@@ -180,8 +189,8 @@ const PresenceList = () => {
         <div className="flex items-center justify-between">
           {/* <DynamicTitle /> */}
           <div className="text-right">
-            <p className="text-sm text-gray-600">Data: {new Date().toLocaleDateString('pt-BR')}</p>
-            <p className="text-xs text-gray-500">Controle de Presença</p>
+            <p className="text-sm text-gray-600">{TEXTS.PRESENCE.DATE_LABEL}: {new Date().toLocaleDateString(i18n.resolvedLanguage ?? 'pt-BR')}</p>
+            <p className="text-xs text-gray-500">{TEXTS.PRESENCE.TITLE}</p>
           </div>
         </div>
 
@@ -191,7 +200,7 @@ const PresenceList = () => {
             <CardContent className="p-4 text-center">
               <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
-              <p className="text-sm text-gray-600">Total</p>
+              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.TOTAL}</p>
             </CardContent>
           </Card>
 
@@ -199,7 +208,7 @@ const PresenceList = () => {
             <CardContent className="p-4 text-center">
               <Check className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-green-600">{stats.present}</p>
-              <p className="text-sm text-gray-600">Presentes</p>
+              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.PRESENT}</p>
             </CardContent>
           </Card>
 
@@ -207,7 +216,7 @@ const PresenceList = () => {
             <CardContent className="p-4 text-center">
               <X className="h-8 w-8 text-red-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-red-600">{stats.absent}</p>
-              <p className="text-sm text-gray-600">Ausentes</p>
+              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.ABSENT}</p>
             </CardContent>
           </Card>
 
@@ -215,7 +224,7 @@ const PresenceList = () => {
             <CardContent className="p-4 text-center">
               <DollarSign className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-emerald-600">{stats.paid}</p>
-              <p className="text-sm text-gray-600">Pagos</p>
+              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.PAID}</p>
             </CardContent>
           </Card>
 
@@ -223,7 +232,7 @@ const PresenceList = () => {
             <CardContent className="p-4 text-center">
               <DollarSign className="h-8 w-8 text-orange-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-orange-600">{stats.unpaid}</p>
-              <p className="text-sm text-gray-600">Pendentes</p>
+              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.UNPAID}</p>
             </CardContent>
           </Card>
         </div>
@@ -234,20 +243,20 @@ const PresenceList = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Plus className="h-5 w-5 text-green-600" />
-                Adicionar Jogador
+                {TEXTS.PRESENCE.ADD_PLAYER.TITLE}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleAddPlayer} className="flex gap-4">
                 <Input
                   name="newPlayerName"
-                  placeholder="Digite o nome do novo jogador..."
+                  placeholder={TEXTS.PRESENCE.ADD_PLAYER.PLACEHOLDER}
                   ref={newPlayerNameRef}
                   className="flex-1 border-2 border-green-200 focus:border-green-500"
                 />
                 <Button type="submit" className="bg-green-600 hover:bg-green-700">
                   <Plus className="mr-2 h-4 w-4" />
-                  Adicionar
+                  {TEXTS.PRESENCE.ADD_PLAYER.BUTTON}
                 </Button>
               </form>
             </CardContent>
@@ -259,7 +268,7 @@ const PresenceList = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-purple-600" />
-              Filtros e Busca
+              {TEXTS.PRESENCE.FILTERS_TITLE}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -268,7 +277,7 @@ const PresenceList = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Buscar jogadores..."
+                    placeholder={TEXTS.PRESENCE.FILTERS.SEARCH_PLACEHOLDER}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 border-2 border-purple-200 focus:border-purple-500"
@@ -282,7 +291,7 @@ const PresenceList = () => {
                   onClick={() => setFilterStatus('all')}
                   size="sm"
                 >
-                  Todos
+                  {TEXTS.PRESENCE.FILTERS.ALL}
                 </Button>
                 <Button
                   variant={filterStatus === 'present' ? 'default' : 'outline'}
@@ -290,7 +299,7 @@ const PresenceList = () => {
                   size="sm"
                   className="bg-green-100 text-green-700 hover:bg-green-200"
                 >
-                  Presentes
+                  {TEXTS.PRESENCE.FILTERS.PRESENT}
                 </Button>
                 <Button
                   variant={filterStatus === 'absent' ? 'default' : 'outline'}
@@ -298,7 +307,7 @@ const PresenceList = () => {
                   size="sm"
                   className="bg-red-100 text-red-700 hover:bg-red-200"
                 >
-                  Ausentes
+                  {TEXTS.PRESENCE.FILTERS.ABSENT}
                 </Button>
                 <Button
                   variant={filterStatus === 'paid' ? 'default' : 'outline'}
@@ -306,7 +315,7 @@ const PresenceList = () => {
                   size="sm"
                   className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
                 >
-                  Pagos
+                  {TEXTS.PRESENCE.FILTERS.PAID}
                 </Button>
                 <Button
                   variant={filterStatus === 'unpaid' ? 'default' : 'outline'}
@@ -314,7 +323,7 @@ const PresenceList = () => {
                   size="sm"
                   className="bg-orange-100 text-orange-700 hover:bg-orange-200"
                 >
-                  Pendentes
+                  {TEXTS.PRESENCE.FILTERS.UNPAID}
                 </Button>
               </div>
             </div>
@@ -328,7 +337,7 @@ const PresenceList = () => {
                   className="bg-green-600 hover:bg-green-700"
                 >
                   <Check className="mr-2 h-4 w-4" />
-                  Marcar Todos Presentes
+                  {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_PRESENT}
                 </Button>
                 <Button
                   onClick={() => handleBulkAction('absent')}
@@ -336,7 +345,7 @@ const PresenceList = () => {
                   className="bg-red-600 hover:bg-red-700"
                 >
                   <X className="mr-2 h-4 w-4" />
-                  Marcar Todos Ausentes
+                  {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_ABSENT}
                 </Button>
                 <Button
                   onClick={() => handleBulkAction('paid')}
@@ -344,7 +353,7 @@ const PresenceList = () => {
                   className="bg-emerald-600 hover:bg-emerald-700"
                 >
                   <DollarSign className="mr-2 h-4 w-4" />
-                  Marcar Todos Pagos
+                  {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_PAID}
                 </Button>
                 <Button
                   onClick={() => handleBulkAction('unpaid')}
@@ -352,7 +361,7 @@ const PresenceList = () => {
                   className="bg-orange-600 hover:bg-orange-700"
                 >
                   <DollarSign className="mr-2 h-4 w-4" />
-                  Marcar Todos Pendentes
+                  {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_UNPAID}
                 </Button>
               </div>
             )}
@@ -364,16 +373,16 @@ const PresenceList = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserCheck className="h-5 w-5 text-gray-600" />
-              Lista de Jogadores ({filteredPlayers.length})
+              {TEXTS.PRESENCE.LIST_TITLE} ({filteredPlayers.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             {filteredPlayers.length === 0 ? (
               <div className="text-center py-8">
                 <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">Nenhum jogador encontrado</p>
+                <p className="text-gray-500">{TEXTS.PRESENCE.EMPTY.TITLE}</p>
                 <p className="text-sm text-gray-400">
-                  {players.length === 0 ? 'Adicione jogadores para começar' : 'Tente ajustar os filtros'}
+                  {players.length === 0 ? TEXTS.PRESENCE.EMPTY.NO_PLAYERS : TEXTS.PRESENCE.EMPTY.ADJUST_FILTERS}
                 </p>
               </div>
             ) : (
@@ -406,7 +415,7 @@ const PresenceList = () => {
                         <DollarSign className={`h-4 w-4 ${player.paid ? 'text-emerald-600' : 'text-orange-600'
                           }`} />
                         <Badge variant={player.paid ? 'default' : 'secondary'}>
-                          {player.paid ? 'Pago' : 'Pendente'}
+                          {player.paid ? TEXTS.PRESENCE.STATUS.PAID : TEXTS.PRESENCE.STATUS.UNPAID}
                         </Badge>
                       </div>
 
@@ -415,12 +424,12 @@ const PresenceList = () => {
                         {player.present ? (
                           <>
                             <Check className="h-4 w-4 text-green-600" />
-                            <Badge className="bg-green-100 text-green-700">Presente</Badge>
+                            <Badge className="bg-green-100 text-green-700">{TEXTS.PRESENCE.STATUS.PRESENT}</Badge>
                           </>
                         ) : (
                           <>
                             <X className="h-4 w-4 text-red-600" />
-                            <Badge className="bg-red-100 text-red-700">Ausente</Badge>
+                            <Badge className="bg-red-100 text-red-700">{TEXTS.PRESENCE.STATUS.ABSENT}</Badge>
                           </>
                         )}
                       </div>

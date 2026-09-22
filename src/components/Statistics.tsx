@@ -25,9 +25,10 @@ import { Users, UserCheck, UserX, TrendingUp, Award, Activity } from 'lucide-rea
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { BackToDashboard } from './BackToDashboard';
-import { TEXTS } from "@/constants";
+import { useTexts } from "@/hooks/useTexts";
 
 const Statistics = () => {
+  const TEXTS = useTexts();
   const { generatePlayerStats, generatePositionStats, generateRatingStats } = useStatisticsStore();
   const { players } = usePlayerStore();
   const [chartType, setChartType] = useState<'bar' | 'pie' | 'line' | 'area'>('bar');

@@ -1,0 +1,498 @@
+{
+  "PAGE_TITLES": {
+    "DASHBOARD": "VaiDaJogo",
+    "PLAYER_FORM": "Player Registration",
+    "PLAYER_LIST": "Player List",
+    "PRESENCE": "Attendance Control",
+    "TEAM_DRAW": "Team Draw",
+    "STATISTICS": "Statistics",
+    "CHAMPIONSHIP": "Championship"
+  },
+  "DASHBOARD": {
+    "WELCOME": "Welcome to VaiDaJogo",
+    "DESCRIPTION": "Manage your players, track attendance, organize team draws and follow statistics in a simple and efficient way. Pick one of the options below to get started.",
+    "MAIN_FEATURES": "Main Features",
+    "TAGLINE": "A complete manager for players, attendance and team draws.",
+    "CORE_SECTION": "Essential Modules",
+    "ADVANCED_SECTION": "Advanced Features",
+    "ACCESS_MODULE": "Open Module",
+    "MENU": {
+      "PLAYER_FORM": "Register players with their positions and skill level (1 to 5 stars)",
+      "PRESENCE": "Check today's attendance list and keep track of payments",
+      "TEAM_DRAW": "Automatically draw balanced teams based on skill level",
+      "PLAYER_LIST": "Manage the full list and details of your players",
+      "STATISTICS": "Follow attendance, payments and player metrics",
+      "CHAMPIONSHIP": "Run complete tournaments with group and knockout stages"
+    },
+    "TIPS": {
+      "TITLE": "Tips for Organizing Your Game",
+      "FIRST_STEPS_TITLE": "First Steps",
+      "FIRST_STEPS_1": "Register your players with their positions and skill rating",
+      "FIRST_STEPS_2": "Check the attendance list to know who is showing up on game day",
+      "FIRST_STEPS_3": "Use the automatic draw to build balanced teams with no favoritism",
+      "ADVANCED_TITLE": "Advanced Features",
+      "ADVANCED_1": "Track payments and dues for each player in the attendance module",
+      "ADVANCED_2": "Set up a full championship for your group with group and final stages",
+      "ADVANCED_3": "Export reports and share the fixtures over WhatsApp with one tap"
+    },
+    "DONATION": {
+      "TITLE": "Support the Project",
+      "DESCRIPTION": "Enjoying the app? Send me any amount via PIX! 🎉",
+      "HINT": "👆 Tap to copy the PIX key",
+      "COPIED_TITLE": "💚 PIX Key Copied!",
+      "COPIED_DESCRIPTION": "The PIX key was copied to your clipboard. Thanks for the support!"
+    }
+  },
+  "ONBOARDING": {
+    "TITLE": "Quick Guide: Organize Your Game in 3 Steps",
+    "SUBTITLE": "First time here? Follow this simple walkthrough to draw your teams.",
+    "REOPEN": "Show the Quick Start Guide (3 steps)",
+    "CLOSE": "Close guide",
+    "STEP_LABEL": "Step",
+    "STEPS": {
+      "REGISTER": {
+        "TITLE": "Register the Players",
+        "DESCRIPTION": "Add the names and the skill level (stars) of the players in your group.",
+        "ACTION": "Register"
+      },
+      "PRESENCE": {
+        "TITLE": "Check Attendance",
+        "DESCRIPTION": "Confirm who is playing today and keep track of the payments.",
+        "ACTION": "Attendance List"
+      },
+      "DRAW": {
+        "TITLE": "Draw the Teams",
+        "DESCRIPTION": "Automatically generate teams balanced by skill level in seconds.",
+        "ACTION": "Draw Now"
+      }
+    }
+  },
+  "PLAYER_FORM": {
+    "TITLE": "Player Registration",
+    "SUBTITLE": "Fill in the player details",
+    "NAME": {
+      "LABEL": "Full Name",
+      "PLACEHOLDER": "Enter the full name",
+      "ERROR_REQUIRED": "Name is required",
+      "ERROR_MIN_LENGTH": "Name must be at least 3 characters long"
+    },
+    "NICKNAME": {
+      "LABEL": "Nickname (Optional)",
+      "PLACEHOLDER": "Enter the nickname"
+    },
+    "BIRTH_DATE": {
+      "LABEL": "Date of Birth",
+      "PLACEHOLDER": "Pick a date"
+    },
+    "SPORT": {
+      "LABEL": "Sport",
+      "PLACEHOLDER": "Select the sport",
+      "ERROR_REQUIRED": "Sport is required",
+      "LOCKED_MESSAGE": "The sport is locked after the first registration. Use \"Clear\" to change it."
+    },
+    "POSITIONS": {
+      "LABEL": "Positions",
+      "PLACEHOLDER": "Select the positions",
+      "ERROR_REQUIRED": "At least one position must be selected"
+    },
+    "RATING": {
+      "LABEL": "Rating",
+      "PLACEHOLDER": "Select the rating",
+      "ERROR_REQUIRED": "Rating is required",
+      "LOCKED_MESSAGE": "The rating system is locked after the first registration. Use \"Clear\" to change it."
+    },
+    "IS_GUEST": {
+      "LABEL": "Guest Player",
+      "DESCRIPTION": "Check if this is a guest player"
+    },
+    "INCLUDE_IN_DRAW": {
+      "LABEL": "Include in Draw",
+      "DESCRIPTION": "Check to include this player in the team draw"
+    },
+    "BUTTONS": {
+      "SAVE": "Save Player",
+      "UPDATE": "Update Player",
+      "CLEAR": "Clear Form",
+      "CANCEL": "Cancel",
+      "BACK": "Back to Dashboard"
+    },
+    "MESSAGES": {
+      "SUCCESS_SAVE": "Player saved successfully!",
+      "SUCCESS_UPDATE": "Player updated successfully!",
+      "ERROR_SAVE": "Error saving the player",
+      "ERROR_UPDATE": "Error updating the player",
+      "CONFIRM_CLEAR": "Are you sure you want to clear the form?",
+      "SELECT_SPORT_FIRST": "Select a sport first to see the available rating system"
+    }
+  },
+  "SPORTS": {
+    "SOCCER": {
+      "NAME": "Soccer",
+      "DESCRIPTION": "Team sport with 11 players per side",
+      "POSITIONS": {
+        "GOALKEEPER": "Goalkeeper",
+        "DEFENDER": "Defender",
+        "MIDFIELDER": "Midfielder",
+        "FORWARD": "Forward"
+      }
+    },
+    "FUTSAL": {
+      "NAME": "Futsal",
+      "DESCRIPTION": "Indoor soccer with 5 players per side",
+      "POSITIONS": {
+        "FIXO": "Defender",
+        "ALA": "Winger",
+        "PIVO": "Pivot"
+      }
+    },
+    "VOLLEYBALL": {
+      "NAME": "Volleyball",
+      "DESCRIPTION": "Net sport with 6 players per side",
+      "POSITIONS": {
+        "SETTER": "Setter",
+        "LIBERO": "Libero",
+        "CENTER": "Middle Blocker",
+        "WING_SPIKER": "Outside Hitter",
+        "OPPOSITE": "Opposite"
+      }
+    },
+    "BASKETBALL": {
+      "NAME": "Basketball",
+      "DESCRIPTION": "Hoop sport with 5 players per side",
+      "POSITIONS": {
+        "POINT_GUARD": "Point Guard",
+        "SHOOTING_GUARD": "Shooting Guard",
+        "POWER_FORWARD": "Power Forward",
+        "CENTER": "Center"
+      }
+    },
+    "HANDBALL": {
+      "NAME": "Handball",
+      "DESCRIPTION": "Indoor sport with 7 players per side",
+      "POSITIONS": {
+        "WING": "Wing",
+        "BACK": "Back",
+        "PIVOT": "Pivot"
+      }
+    }
+  },
+  "RATING_SYSTEMS": {
+    "STARS": {
+      "NAME": "Stars (1-5)",
+      "DESCRIPTION": "Star based rating system",
+      "LEVELS": {
+        "1": "Beginner",
+        "2": "Basic",
+        "3": "Intermediate",
+        "4": "Advanced",
+        "5": "Excellent"
+      }
+    },
+    "HALF_STARS": {
+      "NAME": "Stars and Halves (1-5)",
+      "DESCRIPTION": "Star based rating system with half steps",
+      "LEVELS": {
+        "1": "Beginner",
+        "1.5": "Beginner+",
+        "2": "Basic",
+        "2.5": "Basic+",
+        "3": "Intermediate",
+        "3.5": "Intermediate+",
+        "4": "Advanced",
+        "4.5": "Advanced+",
+        "5": "Excellent"
+      }
+    },
+    "NUMERIC_10": {
+      "NAME": "Numeric (1-10)",
+      "DESCRIPTION": "Numeric rating system from 1 to 10",
+      "LEVELS": {
+        "1": "Beginner",
+        "2": "Basic",
+        "3": "Intermediate",
+        "4": "Intermediate+",
+        "5": "Advanced",
+        "6": "Advanced+",
+        "7": "Very Good",
+        "8": "Very Good+",
+        "9": "Excellent",
+        "10": "Exceptional"
+      }
+    },
+    "NUMERIC_5": {
+      "NAME": "Numeric (1-5)",
+      "DESCRIPTION": "Numeric rating system from 1 to 5",
+      "LEVELS": {
+        "1": "Beginner",
+        "2": "Basic",
+        "3": "Intermediate",
+        "4": "Advanced",
+        "5": "Excellent"
+      }
+    }
+  },
+  "PRESENCE": {
+    "TITLE": "Attendance Control",
+    "SUBTITLE": "Manage attendance and payments",
+    "STATS": {
+      "TOTAL": "Total",
+      "PRESENT": "Present",
+      "ABSENT": "Absent",
+      "PAID": "Paid",
+      "UNPAID": "Pending"
+    },
+    "FILTERS": {
+      "ALL": "All",
+      "PRESENT": "Present",
+      "ABSENT": "Absent",
+      "PAID": "Paid",
+      "UNPAID": "Pending",
+      "SEARCH_PLACEHOLDER": "Search players..."
+    },
+    "BULK_ACTIONS": {
+      "MARK_ALL_PRESENT": "Mark All Present",
+      "MARK_ALL_ABSENT": "Mark All Absent",
+      "MARK_ALL_PAID": "Mark All Paid",
+      "MARK_ALL_UNPAID": "Mark All Pending"
+    },
+    "STATUS": {
+      "PRESENT": "Present",
+      "ABSENT": "Absent",
+      "PAID": "Paid",
+      "UNPAID": "Pending"
+    },
+    "DATE_LABEL": "Date",
+    "ADD_PLAYER": {
+      "TITLE": "Add Player",
+      "PLACEHOLDER": "Enter the new player's name...",
+      "BUTTON": "Add"
+    },
+    "FILTERS_TITLE": "Filters and Search",
+    "LIST_TITLE": "Player List",
+    "EMPTY": {
+      "TITLE": "No players found",
+      "NO_PLAYERS": "Add players to get started",
+      "ADJUST_FILTERS": "Try adjusting the filters"
+    },
+    "MESSAGES": {
+      "PLAYER_ADDED": "Player added successfully!",
+      "PLAYER_EXISTS": "This player is already registered.",
+      "PRESENCE_TOGGLED": "Attendance updated successfully!",
+      "PAYMENT_TOGGLED": "Payment status updated!",
+      "BULK_ACTION_SUCCESS": "Bulk action completed successfully!"
+    },
+    "TOASTS": {
+      "EMPTY_NAME_TITLE": "❌ Error",
+      "EMPTY_NAME_DESCRIPTION": "The player name cannot be empty.",
+      "PLAYER_EXISTS_TITLE": "⚠️ Existing Player",
+      "PLAYER_ADDED_TITLE": "✅ Player Added",
+      "PLAYER_ADDED_DESCRIPTION": "{name} was added successfully!",
+      "PRESENT_TITLE": "✅ Present",
+      "ABSENT_TITLE": "❌ Absent",
+      "PRESENCE_DESCRIPTION": "{name} is now {status}.",
+      "PRESENT_STATUS": "present",
+      "ABSENT_STATUS": "absent",
+      "PAID_TITLE": "💰 Paid",
+      "UNPAID_TITLE": "💸 Pending",
+      "PAYMENT_DESCRIPTION": "{name}'s payment marked as {status}.",
+      "PAID_STATUS": "paid",
+      "UNPAID_STATUS": "pending",
+      "BULK_TITLE": "✅ Bulk Action",
+      "BULK_DESCRIPTION": "{count} players were {action}.",
+      "BULK_PRESENT": "marked as present",
+      "BULK_ABSENT": "marked as absent",
+      "BULK_PAID": "marked as paid",
+      "BULK_UNPAID": "marked as pending"
+    }
+  },
+  "CHAMPIONSHIP": {
+    "TITLE": "Championship",
+    "SUBTITLE": "Manage teams and generate the championship fixtures",
+    "CONFIG": {
+      "TITLE": "Tournament Setup",
+      "TOURNAMENT_NAME": "Tournament Name",
+      "TOURNAMENT_TYPE": "Tournament Type"
+    },
+    "TEAMS": {
+      "TITLE": "Teams",
+      "ADD_TITLE": "Add Team",
+      "EDIT_TITLE": "Edit Team",
+      "NAME_LABEL": "Team Name",
+      "NAME_PLACEHOLDER": "Enter the team name...",
+      "RESPONSIBLE_LABEL": "Manager",
+      "RESPONSIBLE_PLACEHOLDER": "Manager's name...",
+      "ADD_BUTTON": "Add Team",
+      "UPDATE_BUTTON": "Update Team",
+      "CANCEL_BUTTON": "Cancel",
+      "REMOVE_CONFIRM": "Are you sure you want to remove this team?"
+    },
+    "MATCHES": {
+      "TITLE": "Fixture Generation",
+      "GENERATE_BUTTON": "Generate Fixtures",
+      "INSUFFICIENT_TEAMS": "Add at least 2 teams to generate fixtures",
+      "SUCCESS_GENERATED": "Fixtures generated successfully!"
+    },
+    "STATS": {
+      "TEAMS": "Teams",
+      "MATCHES": "Matches"
+    },
+    "MESSAGES": {
+      "TEAM_ADDED": "Team added to the championship!",
+      "TEAM_UPDATED": "Team updated successfully!",
+      "TEAM_REMOVED": "Team removed from the championship.",
+      "MATCHES_GENERATED": "Fixtures generated for {count} teams!"
+    }
+  },
+  "TEAM_DRAW": {
+    "TITLE": "Team Draw",
+    "SUBTITLE": "Split the players into balanced teams",
+    "SETTINGS": {
+      "PLAYERS_PER_TEAM": "Players per Team",
+      "NAMING_OPTION": "Naming Option",
+      "NAMING_OPTIONS": {
+        "NUMERIC": "Numeric",
+        "COLORS": "Colors",
+        "ANIMALS": "Animals",
+        "CITIES": "Cities"
+      }
+    },
+    "ACTIONS": {
+      "GENERATE_TEAMS": "Generate Teams",
+      "CLEAR_TEAMS": "Clear Teams",
+      "SHUFFLE_TEAMS": "Shuffle Teams"
+    },
+    "BALANCING": {
+      "METHOD_LABEL": "Balancing Method",
+      "METHOD_PLACEHOLDER": "Select the method",
+      "METHOD_INTELLIGENT": "Smart (Recommended)",
+      "METHOD_SNAKE": "Snake Draft",
+      "METHOD_RANDOM": "Random",
+      "TOLERANCE_LABEL": "Balancing Tolerance",
+      "TOLERANCE_PLACEHOLDER": "Select the tolerance",
+      "TOLERANCE_STRICT": "Strict (±5%)",
+      "TOLERANCE_MEDIUM": "Medium (±10%)",
+      "TOLERANCE_FLEXIBLE": "Flexible (±15%)"
+    },
+    "INSTRUCTIONS": {
+      "TITLE": "Important Instructions",
+      "HIGHLIGHT_LABEL": "New:",
+      "HIGHLIGHT": "Smart balancing algorithm for fairer teams!"
+    },
+    "RESULT": {
+      "TITLE": "Drawn Teams",
+      "TEAM_LABEL": "Team",
+      "STRENGTH_LABEL": "Strength",
+      "READY_TITLE": "Ready for the Draw?",
+      "READY_DESCRIPTION": "Click \"Generate Teams\" to build the sides from the players who are present."
+    },
+    "EMPTY_STATE": {
+      "TITLE": "No players confirmed yet",
+      "DESCRIPTION_PREFIX": "To draw the teams, first mark who is present today in the",
+      "DESCRIPTION_LINK": "Attendance List",
+      "GO_TO_PRESENCE": "Go to Attendance List",
+      "GO_TO_PLAYER_FORM": "Register Players",
+      "STEPS_HINT": "Step 1: Register → Step 2: Attendance → Step 3: Draw"
+    },
+    "MESSAGES": {
+      "TEAMS_GENERATED": "Teams generated successfully!",
+      "INSUFFICIENT_PLAYERS": "Add more players to generate teams",
+      "TEAMS_CLEARED": "Teams cleared successfully!",
+      "INVALID_CONFIGURATION": "Invalid configuration",
+      "TEAM_GENERATION_FAILED": "Failed to generate teams",
+      "INSUFFICIENT_PLAYERS_DETAIL": "You need at least {count} outfield players present to generate teams.",
+      "INVALID_PLAYERS_PER_TEAM": "The number of players per team must be greater than zero.",
+      "GENERATION_ERROR": "Something went wrong while generating the teams. Check the number of players and the settings.",
+      "GENERATION_UNEXPECTED_ERROR": "An unexpected error occurred while drawing the teams.",
+      "TEAMS_GENERATED_DETAIL": "The teams were drawn successfully!"
+    },
+    "GOALKEEPERS": {
+      "TITLE": "Available Goalkeepers",
+      "RATING_LABEL": "Rating"
+    },
+    "PLAYER_SINGULAR": "Player",
+    "PLAYER_PLURAL": "Players"
+  },
+  "PLAYER_LIST": {
+    "TITLE": "Player List",
+    "SUBTITLE": "View and manage the registered players",
+    "SEARCH_PLACEHOLDER": "Search players...",
+    "EMPTY": "No players registered",
+    "EMPTY_DESCRIPTION": "Register the first player to get started"
+  },
+  "STATISTICS": {
+    "TITLE": "Statistics",
+    "SUBTITLE": "Follow the players' statistics",
+    "SECTIONS": {
+      "ATTENDANCE": "Attendance",
+      "RATINGS": "Ratings",
+      "POSITIONS": "Positions",
+      "PAYMENTS": "Payments"
+    },
+    "CHARTS": {
+      "ATTENDANCE_RATE": "Attendance Rate",
+      "RATING_DISTRIBUTION": "Rating Distribution",
+      "POSITION_DISTRIBUTION": "Distribution by Position",
+      "PAYMENT_STATUS": "Payment Status"
+    }
+  },
+  "COMMON": {
+    "LANGUAGE": {
+      "LABEL": "Language",
+      "PT_BR": "Português (Brasil)",
+      "EN_US": "English (US)",
+      "ES": "Español"
+    },
+    "BUTTONS": {
+      "SAVE": "Save",
+      "UPDATE": "Update",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "CONFIRM": "Confirm",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "PREVIOUS": "Previous",
+      "CLOSE": "Close",
+      "EDIT": "Edit",
+      "REMOVE": "Remove",
+      "ADD": "Add",
+      "CLEAR": "Clear",
+      "RESET": "Reset",
+      "GENERATE": "Generate",
+      "EXPORT": "Export",
+      "IMPORT": "Import"
+    },
+    "STATES": {
+      "LOADING": "Loading...",
+      "SAVING": "Saving...",
+      "UPDATING": "Updating...",
+      "DELETING": "Deleting...",
+      "GENERATING": "Generating...",
+      "NO_DATA": "No data found",
+      "ERROR": "Error",
+      "SUCCESS": "Success",
+      "WARNING": "Warning",
+      "INFO": "Information"
+    },
+    "VALIDATION": {
+      "REQUIRED": "Required field",
+      "INVALID_EMAIL": "Invalid e-mail",
+      "MIN_LENGTH": "At least {min} characters",
+      "MAX_LENGTH": "At most {max} characters",
+      "INVALID_FORMAT": "Invalid format"
+    },
+    "ERRORS": {
+      "GENERAL": "An unexpected error occurred",
+      "NETWORK": "Connection error",
+      "VALIDATION": "Invalid data",
+      "NOT_FOUND": "Resource not found",
+      "UNAUTHORIZED": "Unauthorized access",
+      "FORBIDDEN": "Access denied"
+    },
+    "SUCCESS": {
+      "SAVED": "Data saved successfully!",
+      "UPDATED": "Data updated successfully!",
+      "DELETED": "Data deleted successfully!",
+      "GENERATED": "Data generated successfully!"
+    }
+  }
+}

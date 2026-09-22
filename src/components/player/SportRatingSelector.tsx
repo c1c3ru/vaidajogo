@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { usePlayerStore } from '@/stores/usePlayerStore';
-import { TEXTS } from '@/constants/texts';
+import { useTexts } from '@/hooks/useTexts';
 import { LottieAnimation } from '@/components/LottieAnimation';
 import { 
   Users, 
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 const SportRatingSelector = () => {
+  const TEXTS = useTexts();
   const { toast } = useToast();
   const { 
     currentSport, 

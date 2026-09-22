@@ -14,12 +14,16 @@ const Statistics = lazy(() => import('@/components/Statistics'));
 const Championship = lazy(() => import('@/components/pages/Championship'));
 
 import { useDocumentLanguage } from '@/hooks/useDocumentLanguage';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 function App() {
   useDocumentLanguage();
 
   return (
     <div className="App">
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSelector />
+      </div>
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

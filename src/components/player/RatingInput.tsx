@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { TEXTS } from '@/constants/texts';
+import { useTexts } from '@/hooks/useTexts';
 import { Star, Hash, AlertCircle } from 'lucide-react';
 
 interface RatingInputProps {
@@ -19,6 +19,8 @@ const RatingInput: React.FC<RatingInputProps> = ({
   onChange,
   error
 }) => {
+  const TEXTS = useTexts();
+
   const getRatingSystemConfig = (systemId: string) => {
     switch (systemId) {
       case 'stars':

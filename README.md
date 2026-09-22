@@ -52,7 +52,24 @@ O projeto suporta múltiplos idiomas:
 - 🇺🇸 Inglês (EUA)
 - 🇪🇸 Espanhol
 
-A detecção de idioma é automática baseada no navegador, mas pode ser alterada manualmente pelo usuário.
+A detecção de idioma é automática baseada no navegador, e o seletor de idioma fica
+disponível no canto superior direito de todas as telas.
+
+### Como os textos funcionam
+
+- `src/constants/texts.ts` é a fonte de verdade da interface, em português.
+- `src/i18n/locales/texts/en-US.json` e `es.json` traduzem essa mesma árvore; o que
+  não estiver traduzido cai automaticamente no português.
+- Nos componentes, use o hook `useTexts()` em vez de importar `TEXTS` diretamente —
+  a estrutura é idêntica (`TEXTS.PRESENCE.TITLE`) e o texto acompanha o idioma ativo.
+
+Para adicionar um texto novo: crie a chave em `texts.ts`, traduza nos dois arquivos
+de locale e consuma pelo hook. O teste em `src/hooks/__tests__/useTexts.test.tsx`
+falha se um arquivo de tradução declarar uma chave que não existe na árvore padrão.
+
+> As posições dos jogadores (`src/constants/texts.ts` → `SPORTS.*.POSITIONS`) não são
+> traduzidas de propósito: elas são gravadas no cadastro do jogador e comparadas com
+> `PositionEnum`, então traduzi-las invalidaria os dados já salvos.
 
 ## ♿ Acessibilidade
 

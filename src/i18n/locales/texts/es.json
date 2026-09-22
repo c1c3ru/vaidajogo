@@ -1,0 +1,498 @@
+{
+  "PAGE_TITLES": {
+    "DASHBOARD": "VaiDaJogo",
+    "PLAYER_FORM": "Registro de Jugador",
+    "PLAYER_LIST": "Lista de Jugadores",
+    "PRESENCE": "Control de Asistencia",
+    "TEAM_DRAW": "Sorteo de Equipos",
+    "STATISTICS": "Estadísticas",
+    "CHAMPIONSHIP": "Campeonato"
+  },
+  "DASHBOARD": {
+    "WELCOME": "Bienvenido a VaiDaJogo",
+    "DESCRIPTION": "Gestiona tus jugadores, controla la asistencia, organiza sorteos y sigue las estadísticas de forma simple y eficiente. Elige una de las opciones de abajo para empezar.",
+    "MAIN_FEATURES": "Funcionalidades Principales",
+    "TAGLINE": "Gestor completo de jugadores, asistencia y sorteo de equipos.",
+    "CORE_SECTION": "Módulos Esenciales",
+    "ADVANCED_SECTION": "Recursos Avanzados",
+    "ACCESS_MODULE": "Abrir Módulo",
+    "MENU": {
+      "PLAYER_FORM": "Registra a los jugadores indicando posiciones y nivel (1 a 5 estrellas)",
+      "PRESENCE": "Marca la lista de asistencia del día y controla los pagos",
+      "TEAM_DRAW": "Sortea automáticamente equipos equilibrados por nivel de habilidad",
+      "PLAYER_LIST": "Gestiona la lista completa y los datos de los jugadores",
+      "STATISTICS": "Sigue la asistencia, los pagos y las métricas de los jugadores",
+      "CHAMPIONSHIP": "Organiza torneos completos con fase de grupos y eliminatorias"
+    },
+    "TIPS": {
+      "TITLE": "Consejos para Organizar tu Partido",
+      "FIRST_STEPS_TITLE": "Primeros Pasos",
+      "FIRST_STEPS_1": "Registra a los jugadores indicando sus posiciones y estrellas de nivel",
+      "FIRST_STEPS_2": "Marca la lista de asistencia para saber quién viene el día del partido",
+      "FIRST_STEPS_3": "Usa el sorteo automático para generar equipos equilibrados y sin favoritismos",
+      "ADVANCED_TITLE": "Recursos Avanzados",
+      "ADVANCED_1": "Controla los pagos y las mensualidades en el módulo de asistencia",
+      "ADVANCED_2": "Monta un campeonato completo para tu grupo con fase de grupos y final",
+      "ADVANCED_3": "Exporta informes y comparte los enfrentamientos por WhatsApp con un toque"
+    },
+    "DONATION": {
+      "TITLE": "Apoya el Proyecto",
+      "DESCRIPTION": "¿Te gustó la app? ¡Regálame cualquier cantidad vía PIX! 🎉",
+      "HINT": "👆 Toca para copiar la clave PIX",
+      "COPIED_TITLE": "💚 ¡Clave PIX Copiada!",
+      "COPIED_DESCRIPTION": "La clave PIX se copió al portapapeles. ¡Gracias por el apoyo!"
+    }
+  },
+  "ONBOARDING": {
+    "TITLE": "Guía Rápida: Organiza tu Partido en 3 Pasos",
+    "SUBTITLE": "¿Primera vez por aquí? Sigue este paso a paso simple para sortear tus equipos.",
+    "REOPEN": "Ver la Guía Rápida de Inicio (3 pasos)",
+    "CLOSE": "Cerrar guía",
+    "STEP_LABEL": "Paso",
+    "STEPS": {
+      "REGISTER": {
+        "TITLE": "Registra a los Jugadores",
+        "DESCRIPTION": "Agrega los nombres y el nivel de habilidad (estrellas) de los jugadores de tu grupo.",
+        "ACTION": "Registrar"
+      },
+      "PRESENCE": {
+        "TITLE": "Marca la Asistencia",
+        "DESCRIPTION": "Confirma quién juega hoy y controla los pagos.",
+        "ACTION": "Lista de Asistencia"
+      },
+      "DRAW": {
+        "TITLE": "Sortea los Equipos",
+        "DESCRIPTION": "Genera automáticamente equipos equilibrados por nivel en segundos.",
+        "ACTION": "Sortear Ahora"
+      }
+    }
+  },
+  "PLAYER_FORM": {
+    "TITLE": "Registro de Jugador",
+    "SUBTITLE": "Completa los datos del jugador",
+    "NAME": {
+      "LABEL": "Nombre Completo",
+      "PLACEHOLDER": "Escribe el nombre completo",
+      "ERROR_REQUIRED": "El nombre es obligatorio",
+      "ERROR_MIN_LENGTH": "El nombre debe tener al menos 3 caracteres"
+    },
+    "NICKNAME": {
+      "LABEL": "Apodo (Opcional)",
+      "PLACEHOLDER": "Escribe el apodo"
+    },
+    "BIRTH_DATE": {
+      "LABEL": "Fecha de Nacimiento",
+      "PLACEHOLDER": "Selecciona la fecha"
+    },
+    "SPORT": {
+      "LABEL": "Deporte",
+      "PLACEHOLDER": "Selecciona el deporte",
+      "ERROR_REQUIRED": "El deporte es obligatorio",
+      "LOCKED_MESSAGE": "El deporte queda bloqueado tras el primer registro. Usa \"Limpiar\" para cambiarlo."
+    },
+    "POSITIONS": {
+      "LABEL": "Posiciones",
+      "PLACEHOLDER": "Selecciona las posiciones",
+      "ERROR_REQUIRED": "Debes seleccionar al menos una posición"
+    },
+    "RATING": {
+      "LABEL": "Valoración",
+      "PLACEHOLDER": "Selecciona la valoración",
+      "ERROR_REQUIRED": "La valoración es obligatoria",
+      "LOCKED_MESSAGE": "El sistema de valoración queda bloqueado tras el primer registro. Usa \"Limpiar\" para cambiarlo."
+    },
+    "IS_GUEST": {
+      "LABEL": "Jugador Invitado",
+      "DESCRIPTION": "Marca si es un jugador invitado"
+    },
+    "INCLUDE_IN_DRAW": {
+      "LABEL": "Incluir en el Sorteo",
+      "DESCRIPTION": "Marca para incluirlo en el sorteo de equipos"
+    },
+    "BUTTONS": {
+      "SAVE": "Guardar Jugador",
+      "UPDATE": "Actualizar Jugador",
+      "CLEAR": "Limpiar Formulario",
+      "CANCEL": "Cancelar",
+      "BACK": "Volver al Panel"
+    },
+    "MESSAGES": {
+      "SUCCESS_SAVE": "¡Jugador guardado con éxito!",
+      "SUCCESS_UPDATE": "¡Jugador actualizado con éxito!",
+      "ERROR_SAVE": "Error al guardar el jugador",
+      "ERROR_UPDATE": "Error al actualizar el jugador",
+      "CONFIRM_CLEAR": "¿Seguro que quieres limpiar el formulario?",
+      "SELECT_SPORT_FIRST": "Selecciona primero un deporte para ver el sistema de valoración disponible"
+    }
+  },
+  "SPORTS": {
+    "SOCCER": {
+      "NAME": "Fútbol",
+      "DESCRIPTION": "Deporte de equipo con 11 jugadores por lado",
+      "POSITIONS": {
+        "GOALKEEPER": "Portero",
+        "DEFENDER": "Defensa",
+        "MIDFIELDER": "Centrocampista",
+        "FORWARD": "Delantero"
+      }
+    },
+    "FUTSAL": {
+      "NAME": "Futsal",
+      "DESCRIPTION": "Fútbol sala con 5 jugadores por lado",
+      "POSITIONS": {
+        "FIXO": "Cierre",
+        "ALA": "Ala",
+        "PIVO": "Pívot"
+      }
+    },
+    "VOLLEYBALL": {
+      "NAME": "Vóleibol",
+      "DESCRIPTION": "Deporte de red con 6 jugadores por lado",
+      "POSITIONS": {
+        "SETTER": "Colocador",
+        "LIBERO": "Líbero",
+        "CENTER": "Central",
+        "WING_SPIKER": "Receptor",
+        "OPPOSITE": "Opuesto"
+      }
+    },
+    "BASKETBALL": {
+      "NAME": "Baloncesto",
+      "DESCRIPTION": "Deporte de canasta con 5 jugadores por lado",
+      "POSITIONS": {
+        "POINT_GUARD": "Base",
+        "SHOOTING_GUARD": "Escolta",
+        "POWER_FORWARD": "Ala-pívot",
+        "CENTER": "Pívot"
+      }
+    },
+    "HANDBALL": {
+      "NAME": "Balonmano",
+      "DESCRIPTION": "Deporte de pista con 7 jugadores por lado",
+      "POSITIONS": {
+        "WING": "Extremo",
+        "BACK": "Central",
+        "PIVOT": "Pívot"
+      }
+    }
+  },
+  "RATING_SYSTEMS": {
+    "STARS": {
+      "NAME": "Estrellas (1-5)",
+      "DESCRIPTION": "Sistema de valoración por estrellas",
+      "LEVELS": {
+        "1": "Principiante",
+        "2": "Básico",
+        "3": "Intermedio",
+        "4": "Avanzado",
+        "5": "Excelente"
+      }
+    },
+    "HALF_STARS": {
+      "NAME": "Estrellas y Medias (1-5)",
+      "DESCRIPTION": "Sistema de valoración por estrellas con medias",
+      "LEVELS": {
+        "1": "Principiante",
+        "1.5": "Principiante+",
+        "2": "Básico",
+        "2.5": "Básico+",
+        "3": "Intermedio",
+        "3.5": "Intermedio+",
+        "4": "Avanzado",
+        "4.5": "Avanzado+",
+        "5": "Excelente"
+      }
+    },
+    "NUMERIC_10": {
+      "NAME": "Numérico (1-10)",
+      "DESCRIPTION": "Sistema de valoración numérico del 1 al 10",
+      "LEVELS": {
+        "1": "Principiante",
+        "2": "Básico",
+        "3": "Intermedio",
+        "4": "Intermedio+",
+        "5": "Avanzado",
+        "6": "Avanzado+",
+        "7": "Muy Bueno",
+        "8": "Muy Bueno+",
+        "9": "Excelente",
+        "10": "Excepcional"
+      }
+    },
+    "NUMERIC_5": {
+      "NAME": "Numérico (1-5)",
+      "DESCRIPTION": "Sistema de valoración numérico del 1 al 5",
+      "LEVELS": {
+        "1": "Principiante",
+        "2": "Básico",
+        "3": "Intermedio",
+        "4": "Avanzado",
+        "5": "Excelente"
+      }
+    }
+  },
+  "PRESENCE": {
+    "TITLE": "Control de Asistencia",
+    "SUBTITLE": "Gestiona la asistencia y los pagos de los jugadores",
+    "STATS": {
+      "TOTAL": "Total",
+      "PRESENT": "Presentes",
+      "ABSENT": "Ausentes",
+      "PAID": "Pagados",
+      "UNPAID": "Pendientes"
+    },
+    "FILTERS": {
+      "ALL": "Todos",
+      "PRESENT": "Presentes",
+      "ABSENT": "Ausentes",
+      "PAID": "Pagados",
+      "UNPAID": "Pendientes",
+      "SEARCH_PLACEHOLDER": "Buscar jugadores..."
+    },
+    "BULK_ACTIONS": {
+      "MARK_ALL_PRESENT": "Marcar Todos Presentes",
+      "MARK_ALL_ABSENT": "Marcar Todos Ausentes",
+      "MARK_ALL_PAID": "Marcar Todos Pagados",
+      "MARK_ALL_UNPAID": "Marcar Todos Pendientes"
+    },
+    "STATUS": {
+      "PRESENT": "Presente",
+      "ABSENT": "Ausente",
+      "PAID": "Pagado",
+      "UNPAID": "Pendiente"
+    },
+    "DATE_LABEL": "Fecha",
+    "ADD_PLAYER": {
+      "TITLE": "Agregar Jugador",
+      "PLACEHOLDER": "Escribe el nombre del nuevo jugador...",
+      "BUTTON": "Agregar"
+    },
+    "FILTERS_TITLE": "Filtros y Búsqueda",
+    "LIST_TITLE": "Lista de Jugadores",
+    "EMPTY": {
+      "TITLE": "No se encontraron jugadores",
+      "NO_PLAYERS": "Agrega jugadores para empezar",
+      "ADJUST_FILTERS": "Prueba a ajustar los filtros"
+    },
+    "MESSAGES": {
+      "PLAYER_ADDED": "¡Jugador agregado con éxito!",
+      "PLAYER_EXISTS": "Este jugador ya está registrado en el sistema.",
+      "PRESENCE_TOGGLED": "¡Asistencia actualizada con éxito!",
+      "PAYMENT_TOGGLED": "¡Estado de pago actualizado!",
+      "BULK_ACTION_SUCCESS": "¡Acción en lote realizada con éxito!"
+    },
+    "TOASTS": {
+      "EMPTY_NAME_TITLE": "❌ Error",
+      "EMPTY_NAME_DESCRIPTION": "El nombre del jugador no puede estar vacío.",
+      "PLAYER_EXISTS_TITLE": "⚠️ Jugador Existente",
+      "PLAYER_ADDED_TITLE": "✅ Jugador Agregado",
+      "PLAYER_ADDED_DESCRIPTION": "¡{name} se agregó con éxito!",
+      "PRESENT_TITLE": "✅ Presente",
+      "ABSENT_TITLE": "❌ Ausente",
+      "PRESENCE_DESCRIPTION": "{name} ahora está {status}.",
+      "PRESENT_STATUS": "presente",
+      "ABSENT_STATUS": "ausente",
+      "PAID_TITLE": "💰 Pagado",
+      "UNPAID_TITLE": "💸 Pendiente",
+      "PAYMENT_DESCRIPTION": "El pago de {name} se marcó como {status}.",
+      "PAID_STATUS": "pagado",
+      "UNPAID_STATUS": "pendiente",
+      "BULK_TITLE": "✅ Acción en Lote",
+      "BULK_DESCRIPTION": "{count} jugadores fueron {action}.",
+      "BULK_PRESENT": "marcados como presentes",
+      "BULK_ABSENT": "marcados como ausentes",
+      "BULK_PAID": "marcados como pagados",
+      "BULK_UNPAID": "marcados como pendientes"
+    }
+  },
+  "CHAMPIONSHIP": {
+    "TITLE": "Campeonato",
+    "SUBTITLE": "Gestiona los equipos y genera los enfrentamientos del campeonato",
+    "CONFIG": {
+      "TITLE": "Configuración del Torneo",
+      "TOURNAMENT_NAME": "Nombre del Torneo",
+      "TOURNAMENT_TYPE": "Tipo de Torneo"
+    },
+    "TEAMS": {
+      "TITLE": "Equipos",
+      "ADD_TITLE": "Agregar Equipo",
+      "EDIT_TITLE": "Editar Equipo",
+      "NAME_LABEL": "Nombre del Equipo",
+      "NAME_PLACEHOLDER": "Escribe el nombre del equipo...",
+      "RESPONSIBLE_LABEL": "Responsable",
+      "RESPONSIBLE_PLACEHOLDER": "Nombre del responsable...",
+      "ADD_BUTTON": "Agregar Equipo",
+      "UPDATE_BUTTON": "Actualizar Equipo",
+      "CANCEL_BUTTON": "Cancelar",
+      "REMOVE_CONFIRM": "¿Seguro que quieres eliminar este equipo?"
+    },
+    "MATCHES": {
+      "TITLE": "Generación de Enfrentamientos",
+      "GENERATE_BUTTON": "Generar Enfrentamientos",
+      "INSUFFICIENT_TEAMS": "Agrega al menos 2 equipos para generar enfrentamientos",
+      "SUCCESS_GENERATED": "¡Enfrentamientos generados con éxito!"
+    },
+    "STATS": {
+      "TEAMS": "Equipos",
+      "MATCHES": "Partidos"
+    },
+    "MESSAGES": {
+      "TEAM_ADDED": "¡Equipo agregado al campeonato!",
+      "TEAM_UPDATED": "¡Equipo actualizado con éxito!",
+      "TEAM_REMOVED": "Equipo eliminado del campeonato.",
+      "MATCHES_GENERATED": "¡Enfrentamientos generados para {count} equipos!"
+    }
+  },
+  "TEAM_DRAW": {
+    "TITLE": "Sorteo de Equipos",
+    "SUBTITLE": "Organiza a los jugadores en equipos equilibrados",
+    "SETTINGS": {
+      "PLAYERS_PER_TEAM": "Jugadores por Equipo",
+      "NAMING_OPTION": "Opción de Nomenclatura",
+      "NAMING_OPTIONS": {
+        "NUMERIC": "Numérica",
+        "COLORS": "Colores",
+        "ANIMALS": "Animales",
+        "CITIES": "Ciudades"
+      }
+    },
+    "ACTIONS": {
+      "GENERATE_TEAMS": "Generar Equipos",
+      "CLEAR_TEAMS": "Limpiar Equipos",
+      "SHUFFLE_TEAMS": "Mezclar Equipos"
+    },
+    "BALANCING": {
+      "METHOD_LABEL": "Método de Equilibrio",
+      "METHOD_PLACEHOLDER": "Selecciona el método",
+      "METHOD_INTELLIGENT": "Inteligente (Recomendado)",
+      "METHOD_SNAKE": "Snake Draft",
+      "METHOD_RANDOM": "Aleatorio",
+      "TOLERANCE_LABEL": "Tolerancia de Equilibrio",
+      "TOLERANCE_PLACEHOLDER": "Selecciona la tolerancia",
+      "TOLERANCE_STRICT": "Estricta (±5%)",
+      "TOLERANCE_MEDIUM": "Media (±10%)",
+      "TOLERANCE_FLEXIBLE": "Flexible (±15%)"
+    },
+    "INSTRUCTIONS": {
+      "TITLE": "Instrucciones Importantes",
+      "HIGHLIGHT_LABEL": "Nuevo:",
+      "HIGHLIGHT": "¡Algoritmo de equilibrio inteligente para equipos más parejos!"
+    },
+    "RESULT": {
+      "TITLE": "Equipos Sorteados",
+      "TEAM_LABEL": "Equipo",
+      "STRENGTH_LABEL": "Fuerza",
+      "READY_TITLE": "¿Listo para el Sorteo?",
+      "READY_DESCRIPTION": "Haz clic en \"Generar Equipos\" para formar los equipos con los jugadores presentes."
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Ningún jugador confirmado todavía",
+      "DESCRIPTION_PREFIX": "Para sortear los equipos, primero marca qué jugadores están presentes hoy en la",
+      "DESCRIPTION_LINK": "Lista de Asistencia",
+      "GO_TO_PRESENCE": "Ir a la Lista de Asistencia",
+      "GO_TO_PLAYER_FORM": "Registrar Jugadores",
+      "STEPS_HINT": "Paso 1: Registra → Paso 2: Asistencia → Paso 3: Sorteo"
+    },
+    "MESSAGES": {
+      "TEAMS_GENERATED": "¡Equipos generados con éxito!",
+      "INSUFFICIENT_PLAYERS": "Agrega más jugadores para generar equipos",
+      "TEAMS_CLEARED": "¡Equipos limpiados con éxito!",
+      "INVALID_CONFIGURATION": "Configuración inválida",
+      "TEAM_GENERATION_FAILED": "Error al generar los equipos",
+      "INSUFFICIENT_PLAYERS_DETAIL": "Necesitas al menos {count} jugadores de campo presentes para generar equipos.",
+      "INVALID_PLAYERS_PER_TEAM": "El número de jugadores por equipo debe ser mayor que cero.",
+      "GENERATION_ERROR": "Ocurrió un error al generar los equipos. Revisa el número de jugadores y la configuración.",
+      "GENERATION_UNEXPECTED_ERROR": "Ocurrió un error inesperado al sortear los equipos.",
+      "TEAMS_GENERATED_DETAIL": "¡Los equipos se sortearon con éxito!"
+    },
+    "GOALKEEPERS": {
+      "TITLE": "Porteros Disponibles",
+      "RATING_LABEL": "Valoración"
+    },
+    "PLAYER_SINGULAR": "Jugador",
+    "PLAYER_PLURAL": "Jugadores"
+  },
+  "PLAYER_LIST": {
+    "TITLE": "Lista de Jugadores",
+    "SUBTITLE": "Consulta y gestiona los jugadores registrados",
+    "SEARCH_PLACEHOLDER": "Buscar jugadores...",
+    "EMPTY": "Ningún jugador registrado",
+    "EMPTY_DESCRIPTION": "Registra al primer jugador para empezar"
+  },
+  "STATISTICS": {
+    "TITLE": "Estadísticas",
+    "SUBTITLE": "Sigue las estadísticas de los jugadores",
+    "SECTIONS": {
+      "ATTENDANCE": "Asistencia",
+      "RATINGS": "Valoraciones",
+      "POSITIONS": "Posiciones",
+      "PAYMENTS": "Pagos"
+    },
+    "CHARTS": {
+      "ATTENDANCE_RATE": "Tasa de Asistencia",
+      "RATING_DISTRIBUTION": "Distribución de Valoraciones",
+      "POSITION_DISTRIBUTION": "Distribución por Posiciones",
+      "PAYMENT_STATUS": "Estado de Pagos"
+    }
+  },
+  "COMMON": {
+    "LANGUAGE": {
+      "LABEL": "Idioma",
+      "PT_BR": "Português (Brasil)",
+      "EN_US": "English (US)",
+      "ES": "Español"
+    },
+    "BUTTONS": {
+      "SAVE": "Guardar",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "CANCEL": "Cancelar",
+      "CONFIRM": "Confirmar",
+      "BACK": "Volver",
+      "NEXT": "Siguiente",
+      "PREVIOUS": "Anterior",
+      "CLOSE": "Cerrar",
+      "EDIT": "Editar",
+      "REMOVE": "Eliminar",
+      "ADD": "Agregar",
+      "CLEAR": "Limpiar",
+      "RESET": "Restablecer",
+      "GENERATE": "Generar",
+      "EXPORT": "Exportar",
+      "IMPORT": "Importar"
+    },
+    "STATES": {
+      "LOADING": "Cargando...",
+      "SAVING": "Guardando...",
+      "UPDATING": "Actualizando...",
+      "DELETING": "Eliminando...",
+      "GENERATING": "Generando...",
+      "NO_DATA": "No se encontraron datos",
+      "ERROR": "Error",
+      "SUCCESS": "Éxito",
+      "WARNING": "Aviso",
+      "INFO": "Información"
+    },
+    "VALIDATION": {
+      "REQUIRED": "Campo obligatorio",
+      "INVALID_EMAIL": "Correo electrónico inválido",
+      "MIN_LENGTH": "Mínimo de {min} caracteres",
+      "MAX_LENGTH": "Máximo de {max} caracteres",
+      "INVALID_FORMAT": "Formato inválido"
+    },
+    "ERRORS": {
+      "GENERAL": "Ocurrió un error inesperado",
+      "NETWORK": "Error de conexión",
+      "VALIDATION": "Datos inválidos",
+      "NOT_FOUND": "Recurso no encontrado",
+      "UNAUTHORIZED": "Acceso no autorizado",
+      "FORBIDDEN": "Acceso denegado"
+    },
+    "SUCCESS": {
+      "SAVED": "¡Datos guardados con éxito!",
+      "UPDATED": "¡Datos actualizados con éxito!",
+      "DELETED": "¡Datos eliminados con éxito!",
+      "GENERATED": "¡Datos generados con éxito!"
+    }
+  }
+}

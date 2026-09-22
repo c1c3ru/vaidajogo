@@ -14,10 +14,11 @@ import { springConfig } from '@/utils/animations';
 import { BackToDashboard } from './BackToDashboard';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Player } from "@/types";
-import { TEXTS } from "@/constants";
+import { useTexts } from "@/hooks/useTexts";
 import { Label } from "./ui/label";
 
 const TeamDraw = () => {
+  const TEXTS = useTexts();
   const navigate = useNavigate();
   const { players, updatePlayer } = usePlayerStore();
   const { toast } = useToast();
@@ -63,7 +64,7 @@ const TeamDraw = () => {
       if (availableFieldPlayers.length < playersPerTeam) {
         toast({
           title: TEXTS.TEAM_DRAW.MESSAGES.INSUFFICIENT_PLAYERS,
-          description: `Você precisa de pelo menos ${playersPerTeam} jogadores de linha presentes para gerar times.`,
+          description: TEXTS.TEAM_DRAW.MESSAGES.INSUFFICIENT_PLAYERS_DETAIL.replace("{count}", String(playersPerTeam)),
           variant: "destructive",
         });
         return;
@@ -71,7 +72,7 @@ const TeamDraw = () => {
       if (playersPerTeam <= 0) {
         toast({
           title: TEXTS.TEAM_DRAW.MESSAGES.INVALID_CONFIGURATION,
-          description: "O número de jogadores por time deve ser maior que zero.",
+          description: TEXTS.TEAM_DRAW.MESSAGES.INVALID_PLAYERS_PER_TEAM,
           variant: "destructive",
         });
         return;
@@ -83,7 +84,7 @@ const TeamDraw = () => {
       if (!result.success) {
         toast({
           title: TEXTS.TEAM_DRAW.MESSAGES.TEAM_GENERATION_FAILED,
-          description: result.error || "Ocorreu um erro ao gerar os times. Verifique o número de jogadores e a configuração.",
+          description: result.error || TEXTS.TEAM_DRAW.MESSAGES.GENERATION_ERROR,
           variant: "destructive",
         });
         return;
@@ -91,14 +92,14 @@ const TeamDraw = () => {
 
       toast({
         title: TEXTS.TEAM_DRAW.MESSAGES.TEAMS_GENERATED,
-        description: "Os times foram sorteados com sucesso!",
+        description: TEXTS.TEAM_DRAW.MESSAGES.TEAMS_GENERATED_DETAIL,
         className: "bg-green-500 text-white",
       });
     } catch (error) {
       console.error("Erro ao gerar times:", error);
       toast({
         title: TEXTS.TEAM_DRAW.MESSAGES.TEAM_GENERATION_FAILED,
-        description: "Ocorreu um erro inesperado ao sortear os times.",
+        description: TEXTS.TEAM_DRAW.MESSAGES.GENERATION_UNEXPECTED_ERROR,
         variant: "destructive",
       });
     } finally {
@@ -130,11 +131,11 @@ const TeamDraw = () => {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-heading font-semibold text-foreground">
-              Nenhum jogador confirmado ainda
+              {TEXTS.TEAM_DRAW.EMPTY_STATE.TITLE}
             </h2>
             <p className="text-sm text-muted-foreground font-body max-w-sm leading-relaxed">
-              Para sortear os times, primeiro marque quais jogadores estão presentes hoje na
-              <strong className="text-foreground"> Lista de Presença</strong>.
+              {TEXTS.TEAM_DRAW.EMPTY_STATE.DESCRIPTION_PREFIX}
+              <strong className="text-foreground"> {TEXTS.TEAM_DRAW.EMPTY_STATE.DESCRIPTION_LINK}</strong>.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -143,7 +144,7 @@ const TeamDraw = () => {
               className="font-heading text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Users className="w-4 h-4" />
-              Ir para Lista de Presença
+              {TEXTS.TEAM_DRAW.EMPTY_STATE.GO_TO_PRESENCE}
             </Button>
             <Button
               variant="outline"
@@ -151,17 +152,17 @@ const TeamDraw = () => {
               className="font-heading text-xs uppercase tracking-wider flex items-center gap-2 border-border/50"
             >
               <AlertCircle className="w-4 h-4" />
-              Cadastrar Jogadores
+              {TEXTS.TEAM_DRAW.EMPTY_STATE.GO_TO_PLAYER_FORM}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground/60 font-body">
-            Passo 1: Cadastre → Passo 2: Presença → Passo 3: Sorteio
+            {TEXTS.TEAM_DRAW.EMPTY_STATE.STEPS_HINT}
           </p>
         </motion.div>
       );
     }
     return null;
-  }, [players, navigate]);
+  }, [players, navigate, TEXTS]);
 
 
   return (
@@ -188,7 +189,7 @@ const TeamDraw = () => {
                 <SelectContent>
                   {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                     <SelectItem key={num} value={String(num)}>
-                      {num} Jogador{num > 1 ? 'es' : ''}
+                      {num} {num > 1 ? TEXTS.TEAM_DRAW.PLAYER_PLURAL : TEXTS.TEAM_DRAW.PLAYER_SINGULAR}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -208,11 +209,11 @@ const TeamDraw = () => {
         {/* Alerta de Instruções */}
         <Alert variant="default" className="bg-blue-50 border-blue-200 text-blue-800 rounded-lg shadow-sm">
           <Info className="h-5 w-5 text-blue-600" aria-hidden="true" />
-          <AlertTitle className="text-lg font-semibold">Instruções Importantes</AlertTitle>
+          <AlertTitle className="text-lg font-semibold">{TEXTS.TEAM_DRAW.INSTRUCTIONS.TITLE}</AlertTitle>
           <AlertDescription className="text-sm">
             {TEXTS.TEAM_DRAW.SUBTITLE}
             <br />
-            <strong className="text-green-700">Novo:</strong> Algoritmo de balanceamento inteligente para times mais equilibrados!
+            <strong className="text-green-700">{TEXTS.TEAM_DRAW.INSTRUCTIONS.HIGHLIGHT_LABEL}</strong> {TEXTS.TEAM_DRAW.INSTRUCTIONS.HIGHLIGHT}
           </AlertDescription>
         </Alert>
 
@@ -227,28 +228,28 @@ const TeamDraw = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Método de Balanceamento</Label>
+                <Label className="text-sm font-medium text-gray-700">{TEXTS.TEAM_DRAW.BALANCING.METHOD_LABEL}</Label>
                 <Select value="intelligent" onValueChange={() => { }}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o método" />
+                    <SelectValue placeholder={TEXTS.TEAM_DRAW.BALANCING.METHOD_PLACEHOLDER} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="intelligent">Inteligente (Recomendado)</SelectItem>
-                    <SelectItem value="snake">Snake Draft</SelectItem>
-                    <SelectItem value="random">Aleatório</SelectItem>
+                    <SelectItem value="intelligent">{TEXTS.TEAM_DRAW.BALANCING.METHOD_INTELLIGENT}</SelectItem>
+                    <SelectItem value="snake">{TEXTS.TEAM_DRAW.BALANCING.METHOD_SNAKE}</SelectItem>
+                    <SelectItem value="random">{TEXTS.TEAM_DRAW.BALANCING.METHOD_RANDOM}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-700">Tolerância de Balanceamento</Label>
+                <Label className="text-sm font-medium text-gray-700">{TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_LABEL}</Label>
                 <Select value="medium" onValueChange={() => { }}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione a tolerância" />
+                    <SelectValue placeholder={TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_PLACEHOLDER} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="strict">Estrito (±5%)</SelectItem>
-                    <SelectItem value="medium">Médio (±10%)</SelectItem>
-                    <SelectItem value="flexible">Flexível (±15%)</SelectItem>
+                    <SelectItem value="strict">{TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_STRICT}</SelectItem>
+                    <SelectItem value="medium">{TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_MEDIUM}</SelectItem>
+                    <SelectItem value="flexible">{TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_FLEXIBLE}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -264,7 +265,7 @@ const TeamDraw = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-xl font-semibold text-gray-800 flex items-center gap-2">
                 <Shield className="h-5 w-5 text-green-600" />
-                Goleiros Disponíveis
+                {TEXTS.TEAM_DRAW.GOALKEEPERS.TITLE}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -278,7 +279,7 @@ const TeamDraw = () => {
                     <div className="flex-1">
                       <div className="font-medium text-gray-800">{goalkeeper.name}</div>
                       <div className="text-sm text-gray-600">
-                        Avaliação: {goalkeeper.rating}/5
+                        {TEXTS.TEAM_DRAW.GOALKEEPERS.RATING_LABEL}: {goalkeeper.rating}/5
                       </div>
                     </div>
                   </div>
@@ -290,7 +291,7 @@ const TeamDraw = () => {
 
         {teams.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Times Sorteados</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">{TEXTS.TEAM_DRAW.RESULT.TITLE}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <AnimatePresence>
                 {teams.map((team, index) => (
@@ -304,9 +305,9 @@ const TeamDraw = () => {
                     <Card className="shadow-lg border border-gray-100 rounded-xl">
                       <CardHeader className="pb-3">
                         <CardTitle className="flex justify-between items-center text-xl font-semibold text-gray-800">
-                          Time {index + 1}
+                          {TEXTS.TEAM_DRAW.RESULT.TEAM_LABEL} {index + 1}
                           <span className="text-base font-bold text-blue-600">
-                            Força: {calculateTeamStrength(team).toFixed(1)}
+                            {TEXTS.TEAM_DRAW.RESULT.STRENGTH_LABEL}: {calculateTeamStrength(team).toFixed(1)}
                           </span>
                         </CardTitle>
                       </CardHeader>
@@ -336,9 +337,9 @@ const TeamDraw = () => {
 
         {teams.length === 0 && !noPlayersMessage && (
           <div className="lg:col-span-3 text-center p-6 bg-white rounded-lg shadow-lg border border-gray-100">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Pronto para o Sorteio?</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">{TEXTS.TEAM_DRAW.RESULT.READY_TITLE}</h3>
             <p className="text-gray-500">
-              Clique em "Sortear Times" para gerar as equipes com base nos jogadores presentes.
+              {TEXTS.TEAM_DRAW.RESULT.READY_DESCRIPTION}
             </p>
           </div>
         )}
