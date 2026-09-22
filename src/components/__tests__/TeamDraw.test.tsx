@@ -66,7 +66,18 @@ describe('TeamDraw', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByText('Nenhum jogador presente para o sorteio.')).toBeInTheDocument();
+        expect(screen.getByText('Nenhum jogador confirmado ainda')).toBeInTheDocument();
+    });
+
+    it('should offer navigation shortcuts on the empty state', () => {
+        render(
+            <BrowserRouter>
+                <TeamDraw />
+            </BrowserRouter>
+        );
+
+        expect(screen.getByRole('button', { name: /Ir para Lista de Presença/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Cadastrar Jogadores/i })).toBeInTheDocument();
     });
 
     it('should allow generating teams when players are present', () => {
