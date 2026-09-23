@@ -1,28 +1,28 @@
 {
   "PAGE_TITLES": {
     "DASHBOARD": "VaiDaJogo",
-    "PLAYER_FORM": "Player Registration",
-    "PLAYER_LIST": "Player List",
-    "PRESENCE": "Attendance Control",
+    "PLAYER_FORM": "Registration",
+    "PLAYER_LIST": "Players",
+    "PRESENCE": "Check-In",
     "TEAM_DRAW": "Team Draw",
     "STATISTICS": "Statistics",
-    "CHAMPIONSHIP": "Championship"
+    "CHAMPIONSHIP": "Championships"
   },
   "DASHBOARD": {
     "WELCOME": "Welcome to VaiDaJogo",
     "DESCRIPTION": "Manage your players, track attendance, organize team draws and follow statistics in a simple and efficient way. Pick one of the options below to get started.",
     "MAIN_FEATURES": "Main Features",
-    "TAGLINE": "A complete manager for players, attendance and team draws.",
+    "TAGLINE": "Welcome to VAIDAJOGO.",
     "CORE_SECTION": "Essential Modules",
     "ADVANCED_SECTION": "Advanced Features",
-    "ACCESS_MODULE": "Open Module",
+    "ACCESS_MODULE": "Open",
     "MENU": {
-      "PLAYER_FORM": "Register players with their positions and skill level (1 to 5 stars)",
-      "PRESENCE": "Check today's attendance list and keep track of payments",
-      "TEAM_DRAW": "Automatically draw balanced teams based on skill level",
-      "PLAYER_LIST": "Manage the full list and details of your players",
-      "STATISTICS": "Follow attendance, payments and player metrics",
-      "CHAMPIONSHIP": "Run complete tournaments with group and knockout stages"
+      "PLAYER_FORM": "Register new players with position and skill level",
+      "PRESENCE": "Confirm today's attendance and payments",
+      "TEAM_DRAW": "Generate balanced teams automatically",
+      "PLAYER_LIST": "Manage every registered player",
+      "STATISTICS": "Attendance and performance metrics",
+      "CHAMPIONSHIP": "Tournament and stage control"
     },
     "TIPS": {
       "TITLE": "Tips for Organizing Your Game",
@@ -232,8 +232,8 @@
     }
   },
   "PRESENCE": {
-    "TITLE": "Attendance Control",
-    "SUBTITLE": "Manage attendance and payments",
+    "TITLE": "Check-In",
+    "SUBTITLE": "Confirm today's attendance and payments",
     "STATS": {
       "TOTAL": "Total",
       "PRESENT": "Present",
@@ -303,6 +303,18 @@
       "BULK_ABSENT": "marked as absent",
       "BULK_PAID": "marked as paid",
       "BULK_UNPAID": "marked as pending"
+    },
+    "CHECKIN": {
+      "PRESENT_LABEL": "PRESENT",
+      "PAID_LABEL": "PAID (draw)",
+      "LEGEND_PRESENCE": "Attendance",
+      "LEGEND_PAID": "Paid (joins the draw)",
+      "EMPTY_TITLE": "No players registered",
+      "EMPTY_ACTION": "Register players",
+      "TOAST_PRESENT": "{name} confirmed!",
+      "TOAST_ABSENT": "{name} removed from the list",
+      "TOAST_PAID": "{name} — paid! Joins the draw 💚",
+      "TOAST_UNPAID": "{name} — payment removed"
     }
   },
   "CHAMPIONSHIP": {
@@ -354,7 +366,9 @@
         "COLORS": "Colors",
         "ANIMALS": "Animals",
         "CITIES": "Cities"
-      }
+      },
+      "AVAILABLE_SQUAD": "Available squad",
+      "PLAYERS_COUNT": "{count} players"
     },
     "ACTIONS": {
       "GENERATE_TEAMS": "Generate Teams",
@@ -371,27 +385,29 @@
       "TOLERANCE_PLACEHOLDER": "Select the tolerance",
       "TOLERANCE_STRICT": "Strict (±5%)",
       "TOLERANCE_MEDIUM": "Medium (±10%)",
-      "TOLERANCE_FLEXIBLE": "Flexible (±15%)"
+      "TOLERANCE_FLEXIBLE": "Flexible (±15%)",
+      "SECTION_TITLE": "Advanced settings"
     },
     "INSTRUCTIONS": {
       "TITLE": "Important Instructions",
-      "HIGHLIGHT_LABEL": "New:",
-      "HIGHLIGHT": "Smart balancing algorithm for fairer teams!"
+      "HIGHLIGHT_LABEL": "Draw rule:",
+      "HIGHLIGHT": "only players with attendance and payment confirmed join the draw. Payment is marked on the Check-In screen."
     },
     "RESULT": {
       "TITLE": "Drawn Teams",
       "TEAM_LABEL": "Team",
       "STRENGTH_LABEL": "Strength",
       "READY_TITLE": "Ready for the Draw?",
-      "READY_DESCRIPTION": "Click \"Generate Teams\" to build the sides from the players who are present."
+      "READY_DESCRIPTION": "Click \"Generate Teams\" to build the sides from the players who are present.",
+      "POWER_LABEL": "PWR"
     },
     "EMPTY_STATE": {
       "TITLE": "No players confirmed yet",
-      "DESCRIPTION_PREFIX": "To draw the teams, first mark who is present today in the",
-      "DESCRIPTION_LINK": "Attendance List",
-      "GO_TO_PRESENCE": "Go to Attendance List",
+      "DESCRIPTION_PREFIX": "Before drawing, confirm who is playing on the",
+      "DESCRIPTION_LINK": "Check-In",
+      "GO_TO_PRESENCE": "Go to Check-In",
       "GO_TO_PLAYER_FORM": "Register Players",
-      "STEPS_HINT": "Step 1: Register → Step 2: Attendance → Step 3: Draw"
+      "STEPS_HINT": "Step 1: Register · Step 2: Check-In · Step 3: Draw"
     },
     "MESSAGES": {
       "TEAMS_GENERATED": "Teams generated successfully!",
@@ -399,7 +415,7 @@
       "TEAMS_CLEARED": "Teams cleared successfully!",
       "INVALID_CONFIGURATION": "Invalid configuration",
       "TEAM_GENERATION_FAILED": "Failed to generate teams",
-      "INSUFFICIENT_PLAYERS_DETAIL": "You need at least {count} outfield players present to generate teams.",
+      "INSUFFICIENT_PLAYERS_DETAIL": "You need at least {count} outfield players present with payment confirmed to generate teams.",
       "INVALID_PLAYERS_PER_TEAM": "The number of players per team must be greater than zero.",
       "GENERATION_ERROR": "Something went wrong while generating the teams. Check the number of players and the settings.",
       "GENERATION_UNEXPECTED_ERROR": "An unexpected error occurred while drawing the teams.",
@@ -413,11 +429,21 @@
     "PLAYER_PLURAL": "Players"
   },
   "PLAYER_LIST": {
-    "TITLE": "Player List",
-    "SUBTITLE": "View and manage the registered players",
+    "TITLE": "Players",
+    "SUBTITLE": "Manage every registered player",
     "SEARCH_PLACEHOLDER": "Search players...",
-    "EMPTY": "No players registered",
-    "EMPTY_DESCRIPTION": "Register the first player to get started"
+    "EMPTY": "No records found.",
+    "EMPTY_DESCRIPTION": "Register the first player to get started",
+    "ADD_PLAYER": "Register player",
+    "COUNT": "{count} players",
+    "CARD": {
+      "RATING_LABEL": "Rating",
+      "PRESENT": "Present",
+      "OFFLINE": "Offline",
+      "PAID": "Paid",
+      "PENDING": "Pending",
+      "GUEST": "Guest"
+    }
   },
   "STATISTICS": {
     "TITLE": "Statistics",

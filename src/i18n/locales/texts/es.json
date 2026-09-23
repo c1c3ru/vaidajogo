@@ -1,28 +1,28 @@
 {
   "PAGE_TITLES": {
     "DASHBOARD": "VaiDaJogo",
-    "PLAYER_FORM": "Registro de Jugador",
-    "PLAYER_LIST": "Lista de Jugadores",
-    "PRESENCE": "Control de Asistencia",
-    "TEAM_DRAW": "Sorteo de Equipos",
+    "PLAYER_FORM": "Registro",
+    "PLAYER_LIST": "Jugadores",
+    "PRESENCE": "Check-In",
+    "TEAM_DRAW": "Sorteo",
     "STATISTICS": "Estadísticas",
-    "CHAMPIONSHIP": "Campeonato"
+    "CHAMPIONSHIP": "Campeonatos"
   },
   "DASHBOARD": {
     "WELCOME": "Bienvenido a VaiDaJogo",
     "DESCRIPTION": "Gestiona tus jugadores, controla la asistencia, organiza sorteos y sigue las estadísticas de forma simple y eficiente. Elige una de las opciones de abajo para empezar.",
     "MAIN_FEATURES": "Funcionalidades Principales",
-    "TAGLINE": "Gestor completo de jugadores, asistencia y sorteo de equipos.",
+    "TAGLINE": "Bienvenido a VAIDAJOGO.",
     "CORE_SECTION": "Módulos Esenciales",
     "ADVANCED_SECTION": "Recursos Avanzados",
-    "ACCESS_MODULE": "Abrir Módulo",
+    "ACCESS_MODULE": "Abrir",
     "MENU": {
-      "PLAYER_FORM": "Registra a los jugadores indicando posiciones y nivel (1 a 5 estrellas)",
-      "PRESENCE": "Marca la lista de asistencia del día y controla los pagos",
-      "TEAM_DRAW": "Sortea automáticamente equipos equilibrados por nivel de habilidad",
-      "PLAYER_LIST": "Gestiona la lista completa y los datos de los jugadores",
-      "STATISTICS": "Sigue la asistencia, los pagos y las métricas de los jugadores",
-      "CHAMPIONSHIP": "Organiza torneos completos con fase de grupos y eliminatorias"
+      "PLAYER_FORM": "Registra nuevos jugadores con posición y nivel",
+      "PRESENCE": "Confirma la asistencia y los pagos del día",
+      "TEAM_DRAW": "Genera equipos equilibrados automáticamente",
+      "PLAYER_LIST": "Gestiona todos los jugadores registrados",
+      "STATISTICS": "Métricas de asistencia y rendimiento",
+      "CHAMPIONSHIP": "Control de torneos y fases"
     },
     "TIPS": {
       "TITLE": "Consejos para Organizar tu Partido",
@@ -232,8 +232,8 @@
     }
   },
   "PRESENCE": {
-    "TITLE": "Control de Asistencia",
-    "SUBTITLE": "Gestiona la asistencia y los pagos de los jugadores",
+    "TITLE": "Check-In",
+    "SUBTITLE": "Confirma la asistencia y los pagos del día",
     "STATS": {
       "TOTAL": "Total",
       "PRESENT": "Presentes",
@@ -303,6 +303,18 @@
       "BULK_ABSENT": "marcados como ausentes",
       "BULK_PAID": "marcados como pagados",
       "BULK_UNPAID": "marcados como pendientes"
+    },
+    "CHECKIN": {
+      "PRESENT_LABEL": "PRESENTES",
+      "PAID_LABEL": "PAGADOS (sorteo)",
+      "LEGEND_PRESENCE": "Asistencia",
+      "LEGEND_PAID": "Pagado (entra en el sorteo)",
+      "EMPTY_TITLE": "Ningún jugador registrado",
+      "EMPTY_ACTION": "Registrar jugadores",
+      "TOAST_PRESENT": "¡{name} confirmado!",
+      "TOAST_ABSENT": "{name} eliminado de la lista",
+      "TOAST_PAID": "{name} — ¡pagado! Entra en el sorteo 💚",
+      "TOAST_UNPAID": "{name} — pago eliminado"
     }
   },
   "CHAMPIONSHIP": {
@@ -354,7 +366,9 @@
         "COLORS": "Colores",
         "ANIMALS": "Animales",
         "CITIES": "Ciudades"
-      }
+      },
+      "AVAILABLE_SQUAD": "Plantel disponible",
+      "PLAYERS_COUNT": "{count} jugadores"
     },
     "ACTIONS": {
       "GENERATE_TEAMS": "Generar Equipos",
@@ -371,27 +385,29 @@
       "TOLERANCE_PLACEHOLDER": "Selecciona la tolerancia",
       "TOLERANCE_STRICT": "Estricta (±5%)",
       "TOLERANCE_MEDIUM": "Media (±10%)",
-      "TOLERANCE_FLEXIBLE": "Flexible (±15%)"
+      "TOLERANCE_FLEXIBLE": "Flexible (±15%)",
+      "SECTION_TITLE": "Configuración avanzada"
     },
     "INSTRUCTIONS": {
       "TITLE": "Instrucciones Importantes",
-      "HIGHLIGHT_LABEL": "Nuevo:",
-      "HIGHLIGHT": "¡Algoritmo de equilibrio inteligente para equipos más parejos!"
+      "HIGHLIGHT_LABEL": "Regla del sorteo:",
+      "HIGHLIGHT": "solo entran en el sorteo los jugadores con asistencia y pago confirmados. El pago se marca en la pantalla de Check-In."
     },
     "RESULT": {
       "TITLE": "Equipos Sorteados",
       "TEAM_LABEL": "Equipo",
       "STRENGTH_LABEL": "Fuerza",
       "READY_TITLE": "¿Listo para el Sorteo?",
-      "READY_DESCRIPTION": "Haz clic en \"Generar Equipos\" para formar los equipos con los jugadores presentes."
+      "READY_DESCRIPTION": "Haz clic en \"Generar Equipos\" para formar los equipos con los jugadores presentes.",
+      "POWER_LABEL": "PWR"
     },
     "EMPTY_STATE": {
       "TITLE": "Ningún jugador confirmado todavía",
-      "DESCRIPTION_PREFIX": "Para sortear los equipos, primero marca qué jugadores están presentes hoy en la",
-      "DESCRIPTION_LINK": "Lista de Asistencia",
-      "GO_TO_PRESENCE": "Ir a la Lista de Asistencia",
+      "DESCRIPTION_PREFIX": "Antes de sortear, confirma la asistencia de los jugadores en la pantalla de",
+      "DESCRIPTION_LINK": "Check-In",
+      "GO_TO_PRESENCE": "Ir al Check-In",
       "GO_TO_PLAYER_FORM": "Registrar Jugadores",
-      "STEPS_HINT": "Paso 1: Registra → Paso 2: Asistencia → Paso 3: Sorteo"
+      "STEPS_HINT": "Paso 1: Registrar · Paso 2: Check-In · Paso 3: Sortear"
     },
     "MESSAGES": {
       "TEAMS_GENERATED": "¡Equipos generados con éxito!",
@@ -399,7 +415,7 @@
       "TEAMS_CLEARED": "¡Equipos limpiados con éxito!",
       "INVALID_CONFIGURATION": "Configuración inválida",
       "TEAM_GENERATION_FAILED": "Error al generar los equipos",
-      "INSUFFICIENT_PLAYERS_DETAIL": "Necesitas al menos {count} jugadores de campo presentes para generar equipos.",
+      "INSUFFICIENT_PLAYERS_DETAIL": "Necesitas al menos {count} jugadores de campo presentes y con el pago confirmado para generar equipos.",
       "INVALID_PLAYERS_PER_TEAM": "El número de jugadores por equipo debe ser mayor que cero.",
       "GENERATION_ERROR": "Ocurrió un error al generar los equipos. Revisa el número de jugadores y la configuración.",
       "GENERATION_UNEXPECTED_ERROR": "Ocurrió un error inesperado al sortear los equipos.",
@@ -413,11 +429,21 @@
     "PLAYER_PLURAL": "Jugadores"
   },
   "PLAYER_LIST": {
-    "TITLE": "Lista de Jugadores",
-    "SUBTITLE": "Consulta y gestiona los jugadores registrados",
+    "TITLE": "Jugadores",
+    "SUBTITLE": "Gestiona todos los jugadores registrados",
     "SEARCH_PLACEHOLDER": "Buscar jugadores...",
-    "EMPTY": "Ningún jugador registrado",
-    "EMPTY_DESCRIPTION": "Registra al primer jugador para empezar"
+    "EMPTY": "Ningún registro encontrado.",
+    "EMPTY_DESCRIPTION": "Registra al primer jugador para empezar",
+    "ADD_PLAYER": "Registrar jugador",
+    "COUNT": "{count} jugadores",
+    "CARD": {
+      "RATING_LABEL": "Clasificación",
+      "PRESENT": "Presente",
+      "OFFLINE": "Offline",
+      "PAID": "Pagado",
+      "PENDING": "Pendiente",
+      "GUEST": "Invitado"
+    }
   },
   "STATISTICS": {
     "TITLE": "Estadísticas",

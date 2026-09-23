@@ -8,12 +8,12 @@ export const TEXTS = {
   // ===== TÍTULOS DE PÁGINAS =====
   PAGE_TITLES: {
     DASHBOARD: 'VaiDaJogo',
-    PLAYER_FORM: 'Cadastro de Jogador',
-    PLAYER_LIST: 'Lista de Jogadores',
-    PRESENCE: 'Controle de Presença',
-    TEAM_DRAW: 'Sorteio de Times',
+    PLAYER_FORM: 'Cadastro',
+    PLAYER_LIST: 'Jogadores',
+    PRESENCE: 'Check-In',
+    TEAM_DRAW: 'Sorteio',
     STATISTICS: 'Estatísticas',
-    CHAMPIONSHIP: 'Campeonato',
+    CHAMPIONSHIP: 'Campeonatos',
   },
 
   // ===== TEXTS DO DASHBOARD =====
@@ -21,19 +21,19 @@ export const TEXTS = {
     WELCOME: 'Bem-vindo ao VaiDaJogo',
     DESCRIPTION: 'Gerencie seus jogadores, controle presenças, organize sorteios e acompanhe estatísticas de forma simples e eficiente. Escolha uma das opções abaixo para começar.',
     MAIN_FEATURES: 'Funcionalidades Principais',
-    TAGLINE: 'Gerenciador completo de jogadores, presenças e sorteio de times.',
+    TAGLINE: 'Seja bem-vindo ao VAIDAJOGO.',
     CORE_SECTION: 'Módulos Essenciais',
     ADVANCED_SECTION: 'Recursos Avançados',
-    ACCESS_MODULE: 'Acessar Módulo',
+    ACCESS_MODULE: 'Acessar',
 
     // Descrições dos cards do menu
     MENU: {
-      PLAYER_FORM: 'Cadastre os atletas especificando posições e nível (1 a 5 estrelas)',
-      PRESENCE: 'Marque a lista de presença do dia e controle os pagamentos',
-      TEAM_DRAW: 'Sorteie automaticamente equipes equilibradas por nível de habilidade',
-      PLAYER_LIST: 'Gerencie a lista completa e informações dos atletas',
-      STATISTICS: 'Acompanhe a frequência, pagamentos e métricas dos jogadores',
-      CHAMPIONSHIP: 'Organize torneios completos no formato grupos e mata-mata',
+      PLAYER_FORM: 'Cadastre novos jogadores com posição e nível',
+      PRESENCE: 'Confirme presença e pagamentos do dia',
+      TEAM_DRAW: 'Gere times equilibrados automaticamente',
+      PLAYER_LIST: 'Gerencie todos os atletas cadastrados',
+      STATISTICS: 'Métricas de frequência e desempenho',
+      CHAMPIONSHIP: 'Controle de torneios e fases',
     },
 
     // Painel de dicas
@@ -280,8 +280,22 @@ export const TEXTS = {
 
   // ===== TEXTS DE PRESENÇA =====
   PRESENCE: {
-    TITLE: 'Controle de Presença',
-    SUBTITLE: 'Gerencie a presença e pagamento dos jogadores',
+    TITLE: 'Check-In',
+    SUBTITLE: 'Confirme presença e pagamentos do dia',
+
+    // Cabeçalho do Check-In (mesmos contadores e legenda do app mobile)
+    CHECKIN: {
+      PRESENT_LABEL: 'PRESENTES',
+      PAID_LABEL: 'PAGOS (sorteio)',
+      LEGEND_PRESENCE: 'Presença',
+      LEGEND_PAID: 'Pago (entra no sorteio)',
+      EMPTY_TITLE: 'Nenhum jogador cadastrado',
+      EMPTY_ACTION: 'Cadastrar jogadores',
+      TOAST_PRESENT: '{name} confirmado!',
+      TOAST_ABSENT: '{name} removido da lista',
+      TOAST_PAID: '{name} — pago! Entra no sorteio 💚',
+      TOAST_UNPAID: '{name} — pagamento removido',
+    },
 
     // Estatísticas
     STATS: {
@@ -426,11 +440,13 @@ export const TEXTS = {
 
   // ===== TEXTS DE SORTEIO =====
   TEAM_DRAW: {
-    TITLE: 'Sorteio de Times',
+    TITLE: 'Sorteio das Equipes',
     SUBTITLE: 'Organize os jogadores em times equilibrados',
 
     // Configurações
     SETTINGS: {
+      AVAILABLE_SQUAD: 'Efetivo disponível',
+      PLAYERS_COUNT: '{count} jogadores',
       PLAYERS_PER_TEAM: 'Jogadores por Time',
       NAMING_OPTION: 'Opção de Nomenclatura',
       NAMING_OPTIONS: {
@@ -460,6 +476,7 @@ export const TEXTS = {
 
     // Balanceamento
     BALANCING: {
+      SECTION_TITLE: 'Configurações avançadas',
       METHOD_LABEL: 'Método de Balanceamento',
       METHOD_PLACEHOLDER: 'Selecione o método',
       METHOD_INTELLIGENT: 'Inteligente (Recomendado)',
@@ -475,8 +492,8 @@ export const TEXTS = {
     // Instruções
     INSTRUCTIONS: {
       TITLE: 'Instruções Importantes',
-      HIGHLIGHT_LABEL: 'Novo:',
-      HIGHLIGHT: 'Algoritmo de balanceamento inteligente para times mais equilibrados!',
+      HIGHLIGHT_LABEL: 'Regra do sorteio:',
+      HIGHLIGHT: 'apenas jogadores com presença e pagamento confirmados entram no sorteio. O pagamento é marcado na tela de Check-In.',
     },
 
     // Resultado
@@ -484,6 +501,7 @@ export const TEXTS = {
       TITLE: 'Times Sorteados',
       TEAM_LABEL: 'Time',
       STRENGTH_LABEL: 'Força',
+      POWER_LABEL: 'PWR',
       READY_TITLE: 'Pronto para o Sorteio?',
       READY_DESCRIPTION: 'Clique em "Sortear Times" para gerar as equipes com base nos jogadores presentes.',
     },
@@ -491,11 +509,11 @@ export const TEXTS = {
     // Estado vazio
     EMPTY_STATE: {
       TITLE: 'Nenhum jogador confirmado ainda',
-      DESCRIPTION_PREFIX: 'Para sortear os times, primeiro marque quais jogadores estão presentes hoje na',
-      DESCRIPTION_LINK: 'Lista de Presença',
-      GO_TO_PRESENCE: 'Ir para Lista de Presença',
+      DESCRIPTION_PREFIX: 'Antes de sortear, confirme a presença dos jogadores na tela de',
+      DESCRIPTION_LINK: 'Check-In',
+      GO_TO_PRESENCE: 'Ir para o Check-In',
       GO_TO_PLAYER_FORM: 'Cadastrar Jogadores',
-      STEPS_HINT: 'Passo 1: Cadastre → Passo 2: Presença → Passo 3: Sorteio',
+      STEPS_HINT: 'Passo 1: Cadastrar · Passo 2: Check-In · Passo 3: Sortear',
     },
 
     // Mensagens
@@ -505,7 +523,7 @@ export const TEXTS = {
       TEAMS_CLEARED: 'Times limpos com sucesso!',
       INVALID_CONFIGURATION: 'Configuração inválida',
       TEAM_GENERATION_FAILED: 'Falha ao gerar times',
-      INSUFFICIENT_PLAYERS_DETAIL: 'Você precisa de pelo menos {count} jogadores de linha presentes para gerar times.',
+      INSUFFICIENT_PLAYERS_DETAIL: 'Você precisa de pelo menos {count} jogadores de linha presentes e com pagamento confirmado para gerar times.',
       INVALID_PLAYERS_PER_TEAM: 'O número de jogadores por time deve ser maior que zero.',
       GENERATION_ERROR: 'Ocorreu um erro ao gerar os times. Verifique o número de jogadores e a configuração.',
       GENERATION_UNEXPECTED_ERROR: 'Ocorreu um erro inesperado ao sortear os times.',
@@ -515,11 +533,23 @@ export const TEXTS = {
 
   // ===== TEXTS DA LISTA DE JOGADORES =====
   PLAYER_LIST: {
-    TITLE: 'Lista de Jogadores',
-    SUBTITLE: 'Visualize e gerencie os jogadores cadastrados',
+    TITLE: 'Jogadores',
+    SUBTITLE: 'Gerencie todos os atletas cadastrados',
     SEARCH_PLACEHOLDER: 'Buscar jogadores...',
-    EMPTY: 'Nenhum jogador cadastrado',
+    EMPTY: 'Nenhum registro encontrado.',
     EMPTY_DESCRIPTION: 'Cadastre o primeiro jogador para começar',
+    ADD_PLAYER: 'Cadastrar jogador',
+    COUNT: '{count} jogadores',
+
+    // Cartão do jogador (mesmos rótulos do app mobile)
+    CARD: {
+      RATING_LABEL: 'Classificação',
+      PRESENT: 'Presente',
+      OFFLINE: 'Offline',
+      PAID: 'Pago',
+      PENDING: 'Pendente',
+      GUEST: 'Convidado',
+    },
   },
 
   // ===== TEXTS DE ESTATÍSTICAS =====

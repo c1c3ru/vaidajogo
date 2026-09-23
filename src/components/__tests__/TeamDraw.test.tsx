@@ -55,7 +55,7 @@ describe('TeamDraw', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByText('Sorteio de Times')).toBeInTheDocument();
+        expect(screen.getByText('Sorteio das Equipes')).toBeInTheDocument();
         expect(screen.getByText('Gerar Times')).toBeInTheDocument();
     });
 
@@ -76,18 +76,26 @@ describe('TeamDraw', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByRole('button', { name: /Ir para Lista de Presença/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Ir para o Check-In/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Cadastrar Jogadores/i })).toBeInTheDocument();
     });
 
+    /** Jogadores confirmados: presentes, pagos e incluídos no sorteio. */
+    const buildPlayers = (overrides: Record<string, unknown> = {}) =>
+        ['Atacante', 'Defensor', 'Meio', 'Atacante', 'Defensor'].map((position, index) => ({
+            id: index + 1,
+            name: `Player ${index + 1}`,
+            nickname: '',
+            rating: 3,
+            present: true,
+            paid: true,
+            includeInDraw: true,
+            selectedPositions: [position],
+            ...overrides,
+        }));
+
     it('should allow generating teams when players are present', () => {
-        const mockPlayers = [
-            { id: 1, name: 'Player 1', present: true, includeInDraw: true, selectedPositions: ['Atacante'] },
-            { id: 2, name: 'Player 2', present: true, includeInDraw: true, selectedPositions: ['Defensor'] },
-            { id: 3, name: 'Player 3', present: true, includeInDraw: true, selectedPositions: ['Meio'] },
-            { id: 4, name: 'Player 4', present: true, includeInDraw: true, selectedPositions: ['Atacante'] },
-            { id: 5, name: 'Player 5', present: true, includeInDraw: true, selectedPositions: ['Defensor'] },
-        ];
+        const mockPlayers = buildPlayers();
 
         (usePlayerStore as any).mockReturnValue({
             players: mockPlayers,
@@ -114,6 +122,23 @@ describe('TeamDraw', () => {
         expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({
             title: 'Times gerados com sucesso!',
         }));
+    });
+
+    it('should keep unpaid players out of the draw', () => {
+        // Mesma regra do app mobile: só entra no sorteio quem pagou.
+        (usePlayerStore as any).mockReturnValue({
+            players: buildPlayers({ paid: false }),
+            updatePlayer: mockUpdatePlayer,
+        });
+
+        render(
+            <BrowserRouter>
+                <TeamDraw />
+            </BrowserRouter>
+        );
+
+        expect(screen.getByText('Nenhum jogador confirmado ainda')).toBeInTheDocument();
+        expect(screen.getByText('Gerar Times')).toBeDisabled();
     });
 
     it('should display generated teams', () => {

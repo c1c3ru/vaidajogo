@@ -1,22 +1,61 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, DollarSign, UserCheck, X, Plus, Search, Filter, Users, Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { DollarSign, Fingerprint, Plus, Search, Filter, UserPlus, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { BackToDashboard } from "./BackToDashboard";
-import { DynamicTitle } from "./DynamicTitle";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { Player, Rating } from "@/types";
 import { SportEnum } from "@/utils/enums";
 import { useTexts } from "@/hooks/useTexts";
 import i18n from "@/i18n/config";
 
+/**
+ * Progresso circular de presença — equivalente ao `CircularProgressIndicator`
+ * usado no cabeçalho do Check-In no app mobile.
+ */
+const PresenceRing = ({ value, total }: { value: number; total: number }) => {
+  const ratio = total > 0 ? value / total : 0;
+  const radius = 26;
+  const circumference = 2 * Math.PI * radius;
+
+  return (
+    <div className="relative h-16 w-16 flex-shrink-0">
+      <svg className="h-16 w-16 -rotate-90" viewBox="0 0 64 64" aria-hidden="true">
+        <circle
+          cx="32"
+          cy="32"
+          r={radius}
+          fill="none"
+          strokeWidth="4"
+          className="stroke-border"
+        />
+        <circle
+          cx="32"
+          cy="32"
+          r={radius}
+          fill="none"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - ratio)}
+          className="stroke-primary transition-[stroke-dashoffset] duration-500"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center font-heading text-sm font-bold text-primary">
+        {Math.round(ratio * 100)}%
+      </span>
+    </div>
+  );
+};
+
 const PresenceList = () => {
   const { players, addPlayer, updatePlayer } = usePlayerStore();
   const TEXTS = useTexts();
+  const navigate = useNavigate();
   const newPlayerNameRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'present' | 'absent' | 'paid' | 'unpaid'>('all');
@@ -40,14 +79,14 @@ const PresenceList = () => {
     return matchesSearch && matchesFilter;
   });
 
-  // Estatísticas
+  // Contadores do cabeçalho — os mesmos do mobile: presentes e pagos sobre o total
   const stats = {
     total: players.length,
     present: players.filter(p => p.present).length,
-    absent: players.filter(p => !p.present).length,
     paid: players.filter(p => p.paid).length,
-    unpaid: players.filter(p => !p.paid).length,
   };
+
+  const displayName = (player: Player) => player.nickname || player.name;
 
   const handleAddPlayer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +97,6 @@ const PresenceList = () => {
         title: TEXTS.PRESENCE.TOASTS.EMPTY_NAME_TITLE,
         description: TEXTS.PRESENCE.TOASTS.EMPTY_NAME_DESCRIPTION,
         variant: "destructive",
-        className: "bg-gradient-to-r from-red-500 to-rose-600 text-white border-red-600 shadow-lg",
       });
       return;
     }
@@ -72,7 +110,6 @@ const PresenceList = () => {
         title: TEXTS.PRESENCE.TOASTS.PLAYER_EXISTS_TITLE,
         description: TEXTS.PRESENCE.MESSAGES.PLAYER_EXISTS,
         variant: "destructive",
-        className: "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
       });
       return;
     }
@@ -100,47 +137,38 @@ const PresenceList = () => {
     toast({
       title: TEXTS.PRESENCE.TOASTS.PLAYER_ADDED_TITLE,
       description: TEXTS.PRESENCE.TOASTS.PLAYER_ADDED_DESCRIPTION.replace("{name}", newPlayerName),
-      className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
       duration: 3000,
     });
   };
 
   const togglePresence = (id: string) => {
     const player = players.find((player) => player.id === id);
-    if (player) {
-      const newStatus = !player.present;
-      updatePlayer(id, { present: newStatus });
+    if (!player) return;
 
-      toast({
-        title: newStatus ? TEXTS.PRESENCE.TOASTS.PRESENT_TITLE : TEXTS.PRESENCE.TOASTS.ABSENT_TITLE,
-        description: TEXTS.PRESENCE.TOASTS.PRESENCE_DESCRIPTION
-          .replace("{name}", player.name)
-          .replace("{status}", newStatus ? TEXTS.PRESENCE.TOASTS.PRESENT_STATUS : TEXTS.PRESENCE.TOASTS.ABSENT_STATUS),
-        className: newStatus
-          ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
-          : "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-gray-600 shadow-lg",
-        duration: 2000,
-      });
-    }
+    const newStatus = !player.present;
+    updatePlayer(id, { present: newStatus });
+
+    toast({
+      title: newStatus ? TEXTS.PRESENCE.TOASTS.PRESENT_TITLE : TEXTS.PRESENCE.TOASTS.ABSENT_TITLE,
+      description: (newStatus ? TEXTS.PRESENCE.CHECKIN.TOAST_PRESENT : TEXTS.PRESENCE.CHECKIN.TOAST_ABSENT)
+        .replace("{name}", displayName(player)),
+      duration: 2000,
+    });
   };
 
   const togglePayment = (id: string) => {
     const player = players.find((player) => player.id === id);
-    if (player) {
-      const newStatus = !player.paid;
-      updatePlayer(id, { paid: newStatus });
+    if (!player) return;
 
-      toast({
-        title: newStatus ? TEXTS.PRESENCE.TOASTS.PAID_TITLE : TEXTS.PRESENCE.TOASTS.UNPAID_TITLE,
-        description: TEXTS.PRESENCE.TOASTS.PAYMENT_DESCRIPTION
-          .replace("{name}", player.name)
-          .replace("{status}", newStatus ? TEXTS.PRESENCE.TOASTS.PAID_STATUS : TEXTS.PRESENCE.TOASTS.UNPAID_STATUS),
-        className: newStatus
-          ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg"
-          : "bg-gradient-to-r from-orange-500 to-amber-600 text-white border-orange-600 shadow-lg",
-        duration: 2000,
-      });
-    }
+    const newStatus = !player.paid;
+    updatePlayer(id, { paid: newStatus });
+
+    toast({
+      title: newStatus ? TEXTS.PRESENCE.TOASTS.PAID_TITLE : TEXTS.PRESENCE.TOASTS.UNPAID_TITLE,
+      description: (newStatus ? TEXTS.PRESENCE.CHECKIN.TOAST_PAID : TEXTS.PRESENCE.CHECKIN.TOAST_UNPAID)
+        .replace("{name}", displayName(player)),
+      duration: 2000,
+    });
   };
 
   const handleBulkAction = (action: 'present' | 'absent' | 'paid' | 'unpaid') => {
@@ -172,89 +200,94 @@ const PresenceList = () => {
       description: TEXTS.PRESENCE.TOASTS.BULK_DESCRIPTION
         .replace("{count}", String(actionPlayers.length))
         .replace("{action}", actionText[action]),
-      className: "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-blue-600 shadow-lg",
     });
   };
 
+  const filterButtons: { key: typeof filterStatus; label: string }[] = [
+    { key: 'all', label: TEXTS.PRESENCE.FILTERS.ALL },
+    { key: 'present', label: TEXTS.PRESENCE.FILTERS.PRESENT },
+    { key: 'absent', label: TEXTS.PRESENCE.FILTERS.ABSENT },
+    { key: 'paid', label: TEXTS.PRESENCE.FILTERS.PAID },
+    { key: 'unpaid', label: TEXTS.PRESENCE.FILTERS.UNPAID },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <BackToDashboard />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto space-y-6"
+        className="max-w-5xl mx-auto space-y-6"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          {/* <DynamicTitle /> */}
-          <div className="text-right">
-            <p className="text-sm text-gray-600">{TEXTS.PRESENCE.DATE_LABEL}: {new Date().toLocaleDateString(i18n.resolvedLanguage ?? 'pt-BR')}</p>
-            <p className="text-xs text-gray-500">{TEXTS.PRESENCE.TITLE}</p>
-          </div>
-        </div>
+        {/* Cabeçalho — mesmos contadores do Check-In no mobile */}
+        <Card className="bg-card/80 backdrop-blur-xl border border-border/60">
+          <CardContent className="p-6 space-y-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.2em] text-foreground">
+                  {TEXTS.PRESENCE.TITLE}
+                </h1>
+                <p className="font-body text-xs text-muted-foreground mt-1">
+                  {TEXTS.PRESENCE.DATE_LABEL}: {new Date().toLocaleDateString(i18n.resolvedLanguage ?? 'pt-BR')}
+                </p>
+              </div>
+              <PresenceRing value={stats.present} total={stats.total} />
+            </div>
 
-        {/* Estatísticas */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <Card className="border-2 border-blue-200">
-            <CardContent className="p-4 text-center">
-              <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
-              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.TOTAL}</p>
-            </CardContent>
-          </Card>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3">
+                <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {TEXTS.PRESENCE.CHECKIN.PRESENT_LABEL}
+                </p>
+                <p className="font-heading text-2xl font-bold text-primary">
+                  {stats.present}
+                  <span className="text-sm font-normal text-muted-foreground"> / {stats.total}</span>
+                </p>
+              </div>
+              <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-3">
+                <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {TEXTS.PRESENCE.CHECKIN.PAID_LABEL}
+                </p>
+                <p className="font-heading text-2xl font-bold text-green-500">
+                  {stats.paid}
+                  <span className="text-sm font-normal text-muted-foreground"> / {stats.total}</span>
+                </p>
+              </div>
+            </div>
 
-          <Card className="border-2 border-green-200">
-            <CardContent className="p-4 text-center">
-              <Check className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-green-600">{stats.present}</p>
-              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.PRESENT}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-red-200">
-            <CardContent className="p-4 text-center">
-              <X className="h-8 w-8 text-red-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-red-600">{stats.absent}</p>
-              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.ABSENT}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-emerald-200">
-            <CardContent className="p-4 text-center">
-              <DollarSign className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-emerald-600">{stats.paid}</p>
-              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.PAID}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-orange-200">
-            <CardContent className="p-4 text-center">
-              <DollarSign className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-orange-600">{stats.unpaid}</p>
-              <p className="text-sm text-gray-600">{TEXTS.PRESENCE.STATS.UNPAID}</p>
-            </CardContent>
-          </Card>
-        </div>
+            {/* Legenda dos dois botões de cada linha */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-body text-xs text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <Fingerprint className="h-4 w-4 text-primary" aria-hidden="true" />
+                {TEXTS.PRESENCE.CHECKIN.LEGEND_PRESENCE}
+              </span>
+              <span className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-green-500" aria-hidden="true" />
+                {TEXTS.PRESENCE.CHECKIN.LEGEND_PAID}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Adicionar Jogador */}
         {isAdmin && (
-          <Card className="border-2 border-green-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plus className="h-5 w-5 text-green-600" />
+          <Card className="bg-card/60 backdrop-blur-xl border border-border/50">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-[0.2em] text-foreground">
+                <Plus className="h-4 w-4 text-primary" />
                 {TEXTS.PRESENCE.ADD_PLAYER.TITLE}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleAddPlayer} className="flex gap-4">
+              <form onSubmit={handleAddPlayer} className="flex flex-col sm:flex-row gap-3">
                 <Input
                   name="newPlayerName"
                   placeholder={TEXTS.PRESENCE.ADD_PLAYER.PLACEHOLDER}
                   ref={newPlayerNameRef}
-                  className="flex-1 border-2 border-green-200 focus:border-green-500"
+                  className="flex-1"
                 />
-                <Button type="submit" className="bg-green-600 hover:bg-green-700">
+                <Button type="submit" className="font-heading text-xs uppercase tracking-wider">
                   <Plus className="mr-2 h-4 w-4" />
                   {TEXTS.PRESENCE.ADD_PLAYER.BUTTON}
                 </Button>
@@ -264,103 +297,53 @@ const PresenceList = () => {
         )}
 
         {/* Filtros e Busca */}
-        <Card className="border-2 border-purple-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-purple-600" />
+        <Card className="bg-card/60 backdrop-blur-xl border border-border/50">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-[0.2em] text-foreground">
+              <Filter className="h-4 w-4 text-secondary" />
               {TEXTS.PRESENCE.FILTERS_TITLE}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder={TEXTS.PRESENCE.FILTERS.SEARCH_PLACEHOLDER}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-2 border-purple-200 focus:border-purple-500"
-                  />
-                </div>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={TEXTS.PRESENCE.FILTERS.SEARCH_PLACEHOLDER}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
 
-              <div className="flex gap-2">
-                <Button
-                  variant={filterStatus === 'all' ? 'default' : 'outline'}
-                  onClick={() => setFilterStatus('all')}
-                  size="sm"
-                >
-                  {TEXTS.PRESENCE.FILTERS.ALL}
-                </Button>
-                <Button
-                  variant={filterStatus === 'present' ? 'default' : 'outline'}
-                  onClick={() => setFilterStatus('present')}
-                  size="sm"
-                  className="bg-green-100 text-green-700 hover:bg-green-200"
-                >
-                  {TEXTS.PRESENCE.FILTERS.PRESENT}
-                </Button>
-                <Button
-                  variant={filterStatus === 'absent' ? 'default' : 'outline'}
-                  onClick={() => setFilterStatus('absent')}
-                  size="sm"
-                  className="bg-red-100 text-red-700 hover:bg-red-200"
-                >
-                  {TEXTS.PRESENCE.FILTERS.ABSENT}
-                </Button>
-                <Button
-                  variant={filterStatus === 'paid' ? 'default' : 'outline'}
-                  onClick={() => setFilterStatus('paid')}
-                  size="sm"
-                  className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                >
-                  {TEXTS.PRESENCE.FILTERS.PAID}
-                </Button>
-                <Button
-                  variant={filterStatus === 'unpaid' ? 'default' : 'outline'}
-                  onClick={() => setFilterStatus('unpaid')}
-                  size="sm"
-                  className="bg-orange-100 text-orange-700 hover:bg-orange-200"
-                >
-                  {TEXTS.PRESENCE.FILTERS.UNPAID}
-                </Button>
+              <div className="flex flex-wrap gap-2">
+                {filterButtons.map(({ key, label }) => (
+                  <Button
+                    key={key}
+                    variant={filterStatus === key ? 'default' : 'outline'}
+                    onClick={() => setFilterStatus(key)}
+                    size="sm"
+                    className="font-body text-xs"
+                  >
+                    {label}
+                  </Button>
+                ))}
               </div>
             </div>
 
             {/* Ações em Lote */}
             {isAdmin && filteredPlayers.length > 0 && (
               <div className="flex gap-2 flex-wrap">
-                <Button
-                  onClick={() => handleBulkAction('present')}
-                  size="sm"
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  <Check className="mr-2 h-4 w-4" />
+                <Button onClick={() => handleBulkAction('present')} size="sm" variant="outline" className="font-body text-xs">
                   {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_PRESENT}
                 </Button>
-                <Button
-                  onClick={() => handleBulkAction('absent')}
-                  size="sm"
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  <X className="mr-2 h-4 w-4" />
+                <Button onClick={() => handleBulkAction('absent')} size="sm" variant="outline" className="font-body text-xs">
                   {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_ABSENT}
                 </Button>
-                <Button
-                  onClick={() => handleBulkAction('paid')}
-                  size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700"
-                >
-                  <DollarSign className="mr-2 h-4 w-4" />
+                <Button onClick={() => handleBulkAction('paid')} size="sm" variant="outline" className="font-body text-xs">
                   {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_PAID}
                 </Button>
-                <Button
-                  onClick={() => handleBulkAction('unpaid')}
-                  size="sm"
-                  className="bg-orange-600 hover:bg-orange-700"
-                >
-                  <DollarSign className="mr-2 h-4 w-4" />
+                <Button onClick={() => handleBulkAction('unpaid')} size="sm" variant="outline" className="font-body text-xs">
                   {TEXTS.PRESENCE.BULK_ACTIONS.MARK_ALL_UNPAID}
                 </Button>
               </div>
@@ -369,110 +352,98 @@ const PresenceList = () => {
         </Card>
 
         {/* Lista de Jogadores */}
-        <Card className="border-2 border-gray-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserCheck className="h-5 w-5 text-gray-600" />
-              {TEXTS.PRESENCE.LIST_TITLE} ({filteredPlayers.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {filteredPlayers.length === 0 ? (
-              <div className="text-center py-8">
-                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">{TEXTS.PRESENCE.EMPTY.TITLE}</p>
-                <p className="text-sm text-gray-400">
-                  {players.length === 0 ? TEXTS.PRESENCE.EMPTY.NO_PLAYERS : TEXTS.PRESENCE.EMPTY.ADJUST_FILTERS}
-                </p>
+        {players.length === 0 ? (
+          <Card className="bg-card/60 backdrop-blur-xl border border-border/50">
+            <CardContent className="flex flex-col items-center gap-5 py-14 text-center">
+              <div className="rounded-full border border-primary/20 bg-primary/10 p-4">
+                <Users className="h-9 w-9 text-primary" aria-hidden="true" />
               </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredPlayers.map((player, index) => (
-                  <motion.div
-                    key={player.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${player.present ? 'bg-green-100' : 'bg-red-100'
+              <p className="font-body text-sm text-muted-foreground">
+                {TEXTS.PRESENCE.CHECKIN.EMPTY_TITLE}
+              </p>
+              <Button
+                onClick={() => navigate('/player-form')}
+                className="font-heading text-xs uppercase tracking-wider"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                {TEXTS.PRESENCE.CHECKIN.EMPTY_ACTION}
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="bg-card/60 backdrop-blur-xl border border-border/50">
+            <CardHeader className="pb-3">
+              <CardTitle className="font-heading text-sm uppercase tracking-[0.2em] text-foreground">
+                {TEXTS.PRESENCE.LIST_TITLE} ({filteredPlayers.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {filteredPlayers.length === 0 ? (
+                <div className="py-10 text-center">
+                  <p className="font-body text-sm text-muted-foreground">{TEXTS.PRESENCE.EMPTY.TITLE}</p>
+                  <p className="font-body text-xs text-muted-foreground/70 mt-1">
+                    {TEXTS.PRESENCE.EMPTY.ADJUST_FILTERS}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredPlayers.map((player, index) => (
+                    <motion.div
+                      key={player.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: Math.min(index, 10) * 0.04 }}
+                      className={`flex items-center gap-4 rounded-xl border bg-background/60 p-4 transition-colors ${
+                        player.present ? 'border-primary/60' : 'border-border/60'
+                      }`}
+                    >
+                      {/* Botão de presença — a "digital" do Check-In no mobile */}
+                      <button
+                        type="button"
+                        onClick={() => togglePresence(player.id)}
+                        aria-pressed={player.present}
+                        aria-label={`${TEXTS.PRESENCE.CHECKIN.LEGEND_PRESENCE}: ${displayName(player)}`}
+                        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors ${
+                          player.present
+                            ? 'border-primary bg-primary/15 text-primary'
+                            : 'border-border text-muted-foreground hover:border-primary/50'
+                        }`}
+                      >
+                        <Fingerprint className="h-5 w-5" aria-hidden="true" />
+                      </button>
+
+                      <div className="min-w-0 flex-1">
+                        <p className={`font-heading text-base font-bold truncate ${
+                          player.present ? 'text-primary' : 'text-foreground'
                         }`}>
-                        <UserCheck className={`h-4 w-4 ${player.present ? 'text-green-600' : 'text-red-600'
-                          }`} />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-800">{player.name}</p>
-                        {player.nickname && (
-                          <p className="text-sm text-gray-600">({player.nickname})</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      {/* Status de Pagamento */}
-                      <div className="flex items-center gap-2">
-                        <DollarSign className={`h-4 w-4 ${player.paid ? 'text-emerald-600' : 'text-orange-600'
-                          }`} />
-                        <Badge variant={player.paid ? 'default' : 'secondary'}>
-                          {player.paid ? TEXTS.PRESENCE.STATUS.PAID : TEXTS.PRESENCE.STATUS.UNPAID}
-                        </Badge>
+                          {displayName(player)}
+                        </p>
+                        <p className="font-body text-xs text-muted-foreground truncate">
+                          {player.selectedPositions.join(', ')}
+                        </p>
                       </div>
 
-                      {/* Status de Presença */}
-                      <div className="flex items-center gap-2">
-                        {player.present ? (
-                          <>
-                            <Check className="h-4 w-4 text-green-600" />
-                            <Badge className="bg-green-100 text-green-700">{TEXTS.PRESENCE.STATUS.PRESENT}</Badge>
-                          </>
-                        ) : (
-                          <>
-                            <X className="h-4 w-4 text-red-600" />
-                            <Badge className="bg-red-100 text-red-700">{TEXTS.PRESENCE.STATUS.ABSENT}</Badge>
-                          </>
-                        )}
-                      </div>
-
-                      {/* Ações */}
-                      {isAdmin && (
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => togglePayment(player.id)}
-                            size="sm"
-                            variant="outline"
-                            className={`${player.paid
-                              ? 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'
-                              : 'border-orange-200 text-orange-600 hover:bg-orange-50'
-                              }`}
-                          >
-                            <DollarSign className="h-4 w-4" />
-                          </Button>
-
-                          <Button
-                            onClick={() => togglePresence(player.id)}
-                            size="sm"
-                            variant="outline"
-                            className={`${player.present
-                              ? 'border-green-200 text-green-600 hover:bg-green-50'
-                              : 'border-red-200 text-red-600 hover:bg-red-50'
-                              }`}
-                          >
-                            {player.present ? (
-                              <Check className="h-4 w-4" />
-                            ) : (
-                              <X className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      {/* Botão de pagamento — quem paga entra no sorteio */}
+                      <button
+                        type="button"
+                        onClick={() => togglePayment(player.id)}
+                        aria-pressed={player.paid}
+                        aria-label={`${TEXTS.PRESENCE.CHECKIN.LEGEND_PAID}: ${displayName(player)}`}
+                        className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors ${
+                          player.paid
+                            ? 'border-green-500 bg-green-500/15 text-green-500'
+                            : 'border-border text-muted-foreground hover:border-green-500/50'
+                        }`}
+                      >
+                        <DollarSign className="h-5 w-5" aria-hidden="true" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </motion.div>
     </div>
   );

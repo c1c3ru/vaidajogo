@@ -174,13 +174,13 @@ const PlayerForm = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="border-2 border-blue-200 shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b-2 border-blue-200">
-            <CardTitle className="flex items-center gap-3 text-2xl font-bold text-blue-800">
+        <Card className="border-2 border-blue-500/30 shadow-xl">
+          <CardHeader className="bg-card/60 border-b-2 border-blue-500/30">
+            <CardTitle className="flex items-center gap-3 text-2xl font-bold text-blue-400">
               <User className="h-8 w-8" />
               {TEXTS.PLAYER_FORM.TITLE}
             </CardTitle>
-            <p className="text-blue-600 font-medium">
+            <p className="text-blue-400 font-medium">
               {TEXTS.PLAYER_FORM.SUBTITLE}
             </p>
           </CardHeader>
@@ -191,9 +191,9 @@ const PlayerForm = () => {
               <SportRatingSelector />
 
               {/* Informações Pessoais */}
-              <Card className="border-2 border-purple-200">
+              <Card className="border-2 border-purple-500/30">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-purple-800">
+                  <CardTitle className="flex items-center gap-2 text-purple-400">
                     <User className="h-5 w-5" />
                     Informações Pessoais
                   </CardTitle>
@@ -213,15 +213,15 @@ const PlayerForm = () => {
                         className={cn(
                           "border-2 transition-all duration-200",
                           errors.name
-                            ? "border-red-300 focus:border-red-500 bg-red-50"
-                            : "border-gray-300 focus:border-purple-500 focus:bg-purple-50"
+                            ? "border-red-500/30 focus:border-red-500 bg-red-500/10"
+                            : "border-border focus:border-purple-500 focus:bg-purple-500/10"
                         )}
                       />
                       {errors.name && (
                         <motion.p
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
-                          className="text-sm text-red-600 flex items-center gap-1"
+                          className="text-sm text-red-400 flex items-center gap-1"
                         >
                           <AlertCircle className="h-4 w-4" />
                           {errors.name}
@@ -239,7 +239,7 @@ const PlayerForm = () => {
                         value={formData.nickname}
                         onChange={(e) => handleInputChange('nickname', e.target.value)}
                         placeholder={TEXTS.PLAYER_FORM.NICKNAME.PLACEHOLDER}
-                        className="border-2 border-gray-300 focus:border-purple-500 focus:bg-purple-50 transition-all duration-200"
+                        className="border-2 border-border focus:border-purple-500 focus:bg-purple-500/10 transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -257,8 +257,8 @@ const PlayerForm = () => {
                             "w-full justify-start text-left font-normal border-2 transition-all duration-200",
                             !date && "text-muted-foreground",
                             date
-                              ? "border-purple-300 focus:border-purple-500 focus:bg-purple-50"
-                              : "border-gray-300 focus:border-purple-500 focus:bg-purple-50"
+                              ? "border-purple-500/30 focus:border-purple-500 focus:bg-purple-500/10"
+                              : "border-border focus:border-purple-500 focus:bg-purple-500/10"
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -306,9 +306,9 @@ const PlayerForm = () => {
 
               {/* Posições */}
               {currentSport && (
-                <Card className="border-2 border-green-200">
+                <Card className="border-2 border-green-500/30">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-green-800">
+                    <CardTitle className="flex items-center gap-2 text-green-400">
                       <Users className="h-5 w-5" />
                       {TEXTS.PLAYER_FORM.POSITIONS.LABEL}
                     </CardTitle>
@@ -326,9 +326,9 @@ const PlayerForm = () => {
 
               {/* Avaliação */}
               {currentRatingSystem && (
-                <Card className="border-2 border-orange-200">
+                <Card className="border-2 border-orange-500/30">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-orange-800">
+                    <CardTitle className="flex items-center gap-2 text-orange-400">
                       <Star className="h-5 w-5" />
                       {TEXTS.PLAYER_FORM.RATING.LABEL}
                     </CardTitle>
@@ -345,14 +345,14 @@ const PlayerForm = () => {
               )}
 
               {!currentSport && (
-                <Card className="border-2 border-gray-200">
+                <Card className="border-2 border-border">
                   <CardContent className="p-6">
                     <div className="text-center py-8">
-                      <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                      <Star className="h-12 w-12 text-muted-foreground/70 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-muted-foreground mb-2">
                         Sistema de Avaliação
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {TEXTS.PLAYER_FORM.MESSAGES.SELECT_SPORT_FIRST}
                       </p>
                     </div>
@@ -373,7 +373,7 @@ const PlayerForm = () => {
                   type="button"
                   onClick={handleClearForm}
                   variant="outline"
-                  className="flex-1 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200"
+                  className="flex-1 border-2 border-orange-500/30 text-orange-400 hover:bg-orange-500/10 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200"
                 >
                   {TEXTS.PLAYER_FORM.BUTTONS.CLEAR}
                 </Button>

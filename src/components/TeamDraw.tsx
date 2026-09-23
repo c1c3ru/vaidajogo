@@ -4,18 +4,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
-import { Shuffle, Info, Shield, Users, AlertCircle, Settings } from "lucide-react";
+import { Slider } from "./ui/slider";
+import { Shuffle, Info, Shield, Users, AlertCircle, Settings, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTeamDrawStore } from "@/stores/useTeamDrawStore";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { PositionEnum } from "@/utils/enums";
-import clsx from "clsx";
 import { springConfig } from '@/utils/animations';
 import { BackToDashboard } from './BackToDashboard';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Player } from "@/types";
 import { useTexts } from "@/hooks/useTexts";
 import { Label } from "./ui/label";
+
+/** Limites do slider de jogadores por time — os mesmos do app mobile. */
+const MIN_PLAYERS_PER_TEAM = 4;
+const MAX_PLAYERS_PER_TEAM = 11;
 
 const TeamDraw = () => {
   const TEXTS = useTexts();
@@ -43,7 +47,33 @@ const TeamDraw = () => {
     });
   }, [players, updatePlayer]); // Dependências: jogadores e função de atualização
 
-  // Calcula a força média de um time
+  const isGoalkeeper = (player: Player) =>
+    player.selectedPositions.includes(PositionEnum.GOALKEEPER);
+
+  /**
+   * Regra de negócio (a mesma do mobile, em
+   * `mobile/lib/features/team_draw/presentation/pages/team_draw_page.dart`):
+   * apenas jogadores com presença E pagamento confirmados participam do sorteio.
+   * O botão de pagamento fica na tela de Check-In.
+   */
+  const confirmedPlayers = useMemo(
+    () => players.filter(p => p.present && p.paid && p.includeInDraw),
+    [players]
+  );
+
+  // Particularidade da web: os goleiros são listados à parte e não entram no
+  // sorteio dos jogadores de linha, como já era o comportamento desta tela.
+  const availableFieldPlayers = useMemo(
+    () => confirmedPlayers.filter(p => !isGoalkeeper(p)),
+    [confirmedPlayers]
+  );
+
+  const availableGoalkeepers = useMemo(
+    () => confirmedPlayers.filter(isGoalkeeper),
+    [confirmedPlayers]
+  );
+
+  // Calcula a força média de um time (o "PWR" exibido no mobile)
   const calculateTeamStrength = (team: Player[]) => {
     if (!team || team.length === 0) return 0;
     const totalRating = team.reduce((acc, player) => acc + (player.rating || 0), 0); // Garante que rating seja um número
@@ -54,13 +84,6 @@ const TeamDraw = () => {
   const handleGenerateTeams = async () => {
     setIsGenerating(true); // Ativa o estado de carregamento
     try {
-      // Filtra jogadores de linha (não goleiros) que estão presentes e incluídos no sorteio
-      const availableFieldPlayers = players.filter(p =>
-        p.includeInDraw &&
-        p.present &&
-        !p.selectedPositions.includes(PositionEnum.GOALKEEPER)
-      );
-
       if (availableFieldPlayers.length < playersPerTeam) {
         toast({
           title: TEXTS.TEAM_DRAW.MESSAGES.INSUFFICIENT_PLAYERS,
@@ -93,7 +116,6 @@ const TeamDraw = () => {
       toast({
         title: TEXTS.TEAM_DRAW.MESSAGES.TEAMS_GENERATED,
         description: TEXTS.TEAM_DRAW.MESSAGES.TEAMS_GENERATED_DETAIL,
-        className: "bg-green-500 text-white",
       });
     } catch (error) {
       console.error("Erro ao gerar times:", error);
@@ -107,62 +129,52 @@ const TeamDraw = () => {
     }
   };
 
-  // Memoiza a lista de goleiros disponíveis
-  const availableGoalkeepers = useMemo(() => {
-    return players.filter(p =>
-      p.present &&
-      p.selectedPositions.includes(PositionEnum.GOALKEEPER)
-    );
-  }, [players]);
-
   // Memoiza a mensagem de estado vazio para jogadores
   const noPlayersMessage = useMemo(() => {
-    const totalPresentPlayers = players.filter(p => p.present).length;
-    if (totalPresentPlayers === 0) {
-      return (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-col items-center justify-center gap-6 py-14 px-8 rounded-xl border border-primary/20 bg-card/60 backdrop-blur-xl shadow-[0_0_30px_rgba(0,179,255,0.08)] text-center"
-        >
-          <div className="p-4 rounded-full bg-primary/10 border border-primary/20">
-            <AlertCircle className="h-10 w-10 text-primary" aria-hidden="true" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-heading font-semibold text-foreground">
-              {TEXTS.TEAM_DRAW.EMPTY_STATE.TITLE}
-            </h2>
-            <p className="text-sm text-muted-foreground font-body max-w-sm leading-relaxed">
-              {TEXTS.TEAM_DRAW.EMPTY_STATE.DESCRIPTION_PREFIX}
-              <strong className="text-foreground"> {TEXTS.TEAM_DRAW.EMPTY_STATE.DESCRIPTION_LINK}</strong>.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              onClick={() => navigate('/presence')}
-              className="font-heading text-xs uppercase tracking-wider flex items-center gap-2"
-            >
-              <Users className="w-4 h-4" />
-              {TEXTS.TEAM_DRAW.EMPTY_STATE.GO_TO_PRESENCE}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/player-form')}
-              className="font-heading text-xs uppercase tracking-wider flex items-center gap-2 border-border/50"
-            >
-              <AlertCircle className="w-4 h-4" />
-              {TEXTS.TEAM_DRAW.EMPTY_STATE.GO_TO_PLAYER_FORM}
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground/60 font-body">
-            {TEXTS.TEAM_DRAW.EMPTY_STATE.STEPS_HINT}
+    if (confirmedPlayers.length > 0) return null;
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col items-center justify-center gap-6 py-14 px-8 rounded-xl border border-primary/20 bg-card/60 backdrop-blur-xl shadow-[0_0_30px_rgba(0,240,255,0.08)] text-center"
+      >
+        <div className="p-4 rounded-full bg-primary/10 border border-primary/20">
+          <AlertCircle className="h-10 w-10 text-primary" aria-hidden="true" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-heading font-semibold text-foreground">
+            {TEXTS.TEAM_DRAW.EMPTY_STATE.TITLE}
+          </h2>
+          <p className="text-sm text-muted-foreground font-body max-w-sm leading-relaxed">
+            {TEXTS.TEAM_DRAW.EMPTY_STATE.DESCRIPTION_PREFIX}
+            <strong className="text-foreground"> {TEXTS.TEAM_DRAW.EMPTY_STATE.DESCRIPTION_LINK}</strong>.
           </p>
-        </motion.div>
-      );
-    }
-    return null;
-  }, [players, navigate, TEXTS]);
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            onClick={() => navigate('/presence')}
+            className="font-heading text-xs uppercase tracking-wider flex items-center gap-2"
+          >
+            <Users className="w-4 h-4" />
+            {TEXTS.TEAM_DRAW.EMPTY_STATE.GO_TO_PRESENCE}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/player-form')}
+            className="font-heading text-xs uppercase tracking-wider flex items-center gap-2 border-border/50"
+          >
+            <UserPlus className="w-4 h-4" />
+            {TEXTS.TEAM_DRAW.EMPTY_STATE.GO_TO_PLAYER_FORM}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground/60 font-body">
+          {TEXTS.TEAM_DRAW.EMPTY_STATE.STEPS_HINT}
+        </p>
+      </motion.div>
+    );
+  }, [confirmedPlayers, navigate, TEXTS]);
 
 
   return (
@@ -170,65 +182,90 @@ const TeamDraw = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springConfig}
-      className="min-h-screen p-4 sm:p-0"
+      className="min-h-screen p-4 sm:p-6"
     >
       <BackToDashboard />
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Controles de Sorteio */}
-        <Card className="shadow-lg border border-gray-100 rounded-xl">
-          <CardContent className="p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">{TEXTS.TEAM_DRAW.TITLE}</h1>
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-              <Select
-                value={String(playersPerTeam)}
-                onValueChange={(value) => setPlayersPerTeam(Number(value))}
-              >
-                <SelectTrigger className="w-full sm:w-[200px] h-12 rounded-lg border-gray-300 focus:ring-blue-200 focus:border-blue-400 transition-all duration-200">
-                  <SelectValue placeholder={TEXTS.TEAM_DRAW.SETTINGS.PLAYERS_PER_TEAM} />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <SelectItem key={num} value={String(num)}>
-                      {num} {num > 1 ? TEXTS.TEAM_DRAW.PLAYER_PLURAL : TEXTS.TEAM_DRAW.PLAYER_SINGULAR}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={handleGenerateTeams}
-                disabled={isGenerating || players.filter(p => p.present).length === 0}
-                className="w-full sm:w-auto h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 transition-colors duration-200 rounded-lg shadow-md"
-              >
-                <Shuffle className="mr-2 h-5 w-5" aria-hidden="true" />
-                {isGenerating ? TEXTS.COMMON.STATES.GENERATING : TEXTS.TEAM_DRAW.ACTIONS.GENERATE_TEAMS}
-              </Button>
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Painel de configuração — mesmo bloco do app mobile */}
+        <Card className="bg-card/80 backdrop-blur-xl border border-border/60">
+          <CardContent className="p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div>
+                <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.2em] text-foreground">
+                  {TEXTS.TEAM_DRAW.TITLE}
+                </h1>
+                <p className="font-body text-xs text-muted-foreground mt-1">
+                  {TEXTS.TEAM_DRAW.SUBTITLE}
+                </p>
+              </div>
+              <div className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3">
+                <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {TEXTS.TEAM_DRAW.SETTINGS.AVAILABLE_SQUAD}
+                </p>
+                <p className="font-heading text-2xl font-bold text-primary">
+                  {TEXTS.TEAM_DRAW.SETTINGS.PLAYERS_COUNT.replace("{count}", String(availableFieldPlayers.length))}
+                </p>
+              </div>
             </div>
+
+            {/* Jogadores por time: slider de 4 a 11, como no mobile */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <Label className="font-body text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  {TEXTS.TEAM_DRAW.SETTINGS.PLAYERS_PER_TEAM}
+                </Label>
+                <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 font-heading text-xs font-bold text-primary">
+                  {playersPerTeam} v {playersPerTeam}
+                </span>
+              </div>
+              <Slider
+                value={[playersPerTeam]}
+                min={MIN_PLAYERS_PER_TEAM}
+                max={MAX_PLAYERS_PER_TEAM}
+                step={1}
+                onValueChange={([value]) => setPlayersPerTeam(value)}
+                aria-label={TEXTS.TEAM_DRAW.SETTINGS.PLAYERS_PER_TEAM}
+              />
+              <div className="flex justify-between font-body text-[10px] text-muted-foreground">
+                <span>{MIN_PLAYERS_PER_TEAM}</span>
+                <span>{MAX_PLAYERS_PER_TEAM}</span>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleGenerateTeams}
+              disabled={isGenerating || availableFieldPlayers.length === 0}
+              className="w-full h-12 font-heading text-sm uppercase tracking-[0.2em]"
+            >
+              <Shuffle className="mr-2 h-5 w-5" aria-hidden="true" />
+              {isGenerating ? TEXTS.COMMON.STATES.GENERATING : TEXTS.TEAM_DRAW.ACTIONS.GENERATE_TEAMS}
+            </Button>
           </CardContent>
         </Card>
 
         {/* Alerta de Instruções */}
-        <Alert variant="default" className="bg-blue-50 border-blue-200 text-blue-800 rounded-lg shadow-sm">
-          <Info className="h-5 w-5 text-blue-600" aria-hidden="true" />
-          <AlertTitle className="text-lg font-semibold">{TEXTS.TEAM_DRAW.INSTRUCTIONS.TITLE}</AlertTitle>
-          <AlertDescription className="text-sm">
-            {TEXTS.TEAM_DRAW.SUBTITLE}
-            <br />
-            <strong className="text-green-700">{TEXTS.TEAM_DRAW.INSTRUCTIONS.HIGHLIGHT_LABEL}</strong> {TEXTS.TEAM_DRAW.INSTRUCTIONS.HIGHLIGHT}
+        <Alert variant="default" className="bg-card/60 border-primary/30 backdrop-blur-xl">
+          <Info className="h-5 w-5 text-primary" aria-hidden="true" />
+          <AlertTitle className="font-heading text-sm uppercase tracking-[0.2em] text-foreground">
+            {TEXTS.TEAM_DRAW.INSTRUCTIONS.TITLE}
+          </AlertTitle>
+          <AlertDescription className="font-body text-sm text-muted-foreground">
+            <strong className="text-primary">{TEXTS.TEAM_DRAW.INSTRUCTIONS.HIGHLIGHT_LABEL}</strong> {TEXTS.TEAM_DRAW.INSTRUCTIONS.HIGHLIGHT}
           </AlertDescription>
         </Alert>
 
         {/* Configurações Avançadas */}
-        <Card className="shadow-lg border border-gray-100 rounded-xl">
+        <Card className="bg-card/60 backdrop-blur-xl border border-border/50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-              <Settings className="h-5 w-5 text-blue-600" />
-              Configurações Avançadas
+            <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-[0.2em] text-foreground">
+              <Settings className="h-4 w-4 text-primary" />
+              {TEXTS.TEAM_DRAW.BALANCING.SECTION_TITLE}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm font-medium text-gray-700">{TEXTS.TEAM_DRAW.BALANCING.METHOD_LABEL}</Label>
+              <div className="space-y-2">
+                <Label className="font-body text-xs text-muted-foreground">{TEXTS.TEAM_DRAW.BALANCING.METHOD_LABEL}</Label>
                 <Select value="intelligent" onValueChange={() => { }}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={TEXTS.TEAM_DRAW.BALANCING.METHOD_PLACEHOLDER} />
@@ -240,8 +277,8 @@ const TeamDraw = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-700">{TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_LABEL}</Label>
+              <div className="space-y-2">
+                <Label className="font-body text-xs text-muted-foreground">{TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_LABEL}</Label>
                 <Select value="medium" onValueChange={() => { }}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={TEXTS.TEAM_DRAW.BALANCING.TOLERANCE_PLACEHOLDER} />
@@ -261,10 +298,10 @@ const TeamDraw = () => {
 
         {/* Seção de Goleiros Disponíveis */}
         {availableGoalkeepers.length > 0 && (
-          <Card className="shadow-lg border border-gray-100 rounded-xl">
+          <Card className="bg-card/60 backdrop-blur-xl border border-border/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-                <Shield className="h-5 w-5 text-green-600" />
+              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-[0.2em] text-foreground">
+                <Shield className="h-4 w-4 text-accent" />
                 {TEXTS.TEAM_DRAW.GOALKEEPERS.TITLE}
               </CardTitle>
             </CardHeader>
@@ -273,13 +310,15 @@ const TeamDraw = () => {
                 {availableGoalkeepers.map((goalkeeper) => (
                   <div
                     key={goalkeeper.id}
-                    className="p-4 bg-green-50 rounded-lg border border-green-200 flex items-center gap-3"
+                    className="p-4 rounded-lg border border-accent/30 bg-accent/5 flex items-center gap-3"
                   >
-                    <Shield className="h-5 w-5 text-green-600" aria-hidden="true" />
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-800">{goalkeeper.name}</div>
-                      <div className="text-sm text-gray-600">
-                        {TEXTS.TEAM_DRAW.GOALKEEPERS.RATING_LABEL}: {goalkeeper.rating}/5
+                    <Shield className="h-5 w-5 text-accent" aria-hidden="true" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-heading font-bold text-foreground truncate">
+                        {goalkeeper.nickname || goalkeeper.name}
+                      </div>
+                      <div className="font-body text-xs text-muted-foreground">
+                        {goalkeeper.rating} ★
                       </div>
                     </div>
                   </div>
@@ -291,7 +330,9 @@ const TeamDraw = () => {
 
         {teams.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">{TEXTS.TEAM_DRAW.RESULT.TITLE}</h2>
+            <h2 className="mb-4 font-heading text-lg font-bold uppercase tracking-[0.2em] text-foreground">
+              {TEXTS.TEAM_DRAW.RESULT.TITLE}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <AnimatePresence>
                 {teams.map((team, index) => (
@@ -302,12 +343,12 @@ const TeamDraw = () => {
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ ...springConfig, delay: index * 0.05 }}
                   >
-                    <Card className="shadow-lg border border-gray-100 rounded-xl">
+                    <Card className="bg-card/80 backdrop-blur-xl border border-border/60">
                       <CardHeader className="pb-3">
-                        <CardTitle className="flex justify-between items-center text-xl font-semibold text-gray-800">
-                          {TEXTS.TEAM_DRAW.RESULT.TEAM_LABEL} {index + 1}
-                          <span className="text-base font-bold text-blue-600">
-                            {TEXTS.TEAM_DRAW.RESULT.STRENGTH_LABEL}: {calculateTeamStrength(team).toFixed(1)}
+                        <CardTitle className="flex justify-between items-center gap-2 font-heading text-base uppercase tracking-[0.15em] text-foreground">
+                          <span>{TEXTS.TEAM_DRAW.RESULT.TEAM_LABEL} {index + 1}</span>
+                          <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                            {TEXTS.TEAM_DRAW.RESULT.POWER_LABEL} {calculateTeamStrength(team).toFixed(1)}
                           </span>
                         </CardTitle>
                       </CardHeader>
@@ -316,12 +357,18 @@ const TeamDraw = () => {
                           {team.map((player) => (
                             <div
                               key={player.id}
-                              className="p-3 bg-gray-50 rounded-lg border border-gray-100 flex items-center gap-2"
+                              className="p-3 rounded-lg border border-border/50 bg-background/60 flex items-center gap-3"
                             >
-                              <Users className="h-4 w-4 text-gray-500" aria-hidden="true" />
-                              <div className="font-medium text-gray-800">{player.name}</div>
-                              <span className="ml-auto text-sm text-gray-600">
-                                ({player.selectedPositions.join(", ")})
+                              {isGoalkeeper(player) ? (
+                                <Shield className="h-4 w-4 text-accent flex-shrink-0" aria-hidden="true" />
+                              ) : (
+                                <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+                              )}
+                              <div className="font-body text-sm text-foreground truncate">
+                                {player.nickname || player.name}
+                              </div>
+                              <span className="ml-auto font-body text-xs text-muted-foreground whitespace-nowrap">
+                                {player.rating} ★
                               </span>
                             </div>
                           ))}
@@ -336,9 +383,11 @@ const TeamDraw = () => {
         )}
 
         {teams.length === 0 && !noPlayersMessage && (
-          <div className="lg:col-span-3 text-center p-6 bg-white rounded-lg shadow-lg border border-gray-100">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">{TEXTS.TEAM_DRAW.RESULT.READY_TITLE}</h3>
-            <p className="text-gray-500">
+          <div className="text-center p-8 rounded-xl border border-border/50 bg-card/60 backdrop-blur-xl">
+            <h3 className="mb-3 font-heading text-base uppercase tracking-[0.2em] text-foreground">
+              {TEXTS.TEAM_DRAW.RESULT.READY_TITLE}
+            </h3>
+            <p className="font-body text-sm text-muted-foreground">
               {TEXTS.TEAM_DRAW.RESULT.READY_DESCRIPTION}
             </p>
           </div>
