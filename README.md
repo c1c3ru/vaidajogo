@@ -110,12 +110,15 @@ src/
 ## 🎯 Páginas Principais
 
 - **Dashboard** (`/dashboard`) - Painel principal com acesso a todas as funcionalidades
-- **Cadastro de Jogadores** (`/player-form`) - Formulário para adicionar novos jogadores
-- **Lista de Jogadores** (`/players`) - Visualização e gerenciamento de jogadores
-- **Controle de Presença** (`/presence`) - Marcar presenças e pagamentos
-- **Sorteio de Times** (`/team-draw`) - Organizar jogadores em times balanceados
+- **Cadastro** (`/player-form`) - Formulário para adicionar novos jogadores
+- **Jogadores** (`/players`) - Visualização e gerenciamento de jogadores
+- **Check-In** (`/presence`) - Confirmar presença e pagamento do dia
+- **Sorteio** (`/team-draw`) - Organizar jogadores em times balanceados
 - **Estatísticas** (`/statistics`) - Relatórios e análises
 - **Campeonatos** (`/championship`) - Gerenciar torneios e competições
+
+> Só entram no sorteio os jogadores com **presença e pagamento confirmados** no Check-In —
+> a mesma regra do app mobile.
 
 ## 🚀 Como Executar
 
@@ -150,11 +153,19 @@ npm run lint     # Verificar código
 
 ## 🎨 Design System
 
-- **Cores principais**: Gradientes em azul e ciano
-- **Componentes**: Sistema consistente baseado em shadcn/ui
-- **Responsividade**: Design mobile-first
-- **Animações**: Transições suaves com Framer Motion
-- **Ícones**: Lucide React para interface moderna
+A web usa o mesmo visual do app mobile (Flutter, em `mobile/`): tema escuro fixo, definido no
+bloco `.dark` de `src/index.css` com as cores de `mobile/lib/core/theme/app_theme.dart`.
+
+- **Cores**: fundo `#050511`, texto `#E0E7FF`, primária `#00F0FF`, secundária `#7000FF`, destaque `#FF003C`
+- **Tipografia**: *Chakra Petch* para títulos, *Jura* para corpo de texto
+- **Componentes**: sistema consistente baseado em shadcn/ui, sempre pelos tokens do tema
+- **Responsividade**: design mobile-first
+- **Animações**: transições suaves com Framer Motion
+- **Ícones**: Lucide React
+
+> O acompanhamento da equiparação entre web e mobile fica em [`STATUS_EQUIPARACAO.md`](STATUS_EQUIPARACAO.md).
+> Ao criar telas novas, use os tokens do tema (`bg-card`, `text-foreground`, `text-muted-foreground`,
+> `border-border`, `text-primary`…) em vez de cores fixas do Tailwind, que não acompanham o tema.
 
 ## 💾 Persistência de Dados
 

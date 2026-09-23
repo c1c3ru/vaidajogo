@@ -35,15 +35,16 @@ const Statistics = () => {
   const [selectedMetric, setSelectedMetric] = useState<'presence' | 'position' | 'rating'>('presence');
 
   // Cores personalizadas para os gráficos
+  // Mesma paleta do app mobile (`mobile/lib/core/theme/app_theme.dart`)
   const COLORS = [
-    "#0088FE", // Azul
-    "#00C49F", // Verde
+    "#00F0FF", // Primária (ciano)
+    "#7000FF", // Secundária (roxo)
+    "#FF003C", // Destaque (vermelho)
+    "#4CAF50", // Verde (pagamento)
     "#FFBB28", // Laranja
-    "#FF8042", // Laranja avermelhado
-    "#8884D8", // Roxo claro
-    "#82CA9D", // Verde claro
-    "#FF6B6B", // Vermelho
-    "#6B66FF", // Azul violeta
+    "#00B3FF", // Azul
+    "#FF6B6B", // Vermelho claro
+    "#8F9BB3", // Neutro
   ];
 
   // Calcula estatísticas gerais
@@ -80,7 +81,7 @@ const Statistics = () => {
               labelLine={false}
               label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               outerRadius={80}
-              fill="#8884d8"
+              fill="#00F0FF"
               dataKey="value"
             >
               {data.map((entry, index) => (
@@ -99,7 +100,7 @@ const Statistics = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+            <Line type="monotone" dataKey="value" stroke="#00F0FF" strokeWidth={2} />
           </LineChart>
         );
       
@@ -111,7 +112,7 @@ const Statistics = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Area type="monotone" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+            <Area type="monotone" dataKey="value" stroke="#00F0FF" fill="#00F0FF" fillOpacity={0.6} />
           </AreaChart>
         );
       
@@ -123,7 +124,7 @@ const Statistics = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="value" fill="#8884d8">
+            <Bar dataKey="value" fill="#00F0FF">
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
@@ -157,18 +158,18 @@ const Statistics = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springConfig}
-      className="min-h-screen p-4 sm:p-0"
+      className="min-h-screen p-4 sm:p-6"
     >
       <BackToDashboard />
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Cabeçalho */}
-        <Card className="shadow-lg border border-gray-100 rounded-xl">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-t-xl">
-            <CardTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-              <Activity className="h-6 w-6 text-purple-600" />
+        <Card className="shadow-lg border border-border rounded-xl">
+          <CardHeader className="bg-card/60 rounded-t-xl">
+            <CardTitle className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <Activity className="h-6 w-6 text-purple-400" />
               {TEXTS.PAGE_TITLES.STATISTICS}
             </CardTitle>
-            <p className="text-gray-600 mt-2">
+            <p className="text-muted-foreground mt-2">
               Visualize estatísticas detalhadas sobre jogadores, presenças e desempenho.
             </p>
           </CardHeader>
@@ -176,49 +177,49 @@ const Statistics = () => {
 
         {/* Estatísticas Gerais */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="shadow-lg border border-blue-100 rounded-xl">
+          <Card className="shadow-lg border border-blue-500/30 rounded-xl">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <Users className="h-8 w-8 text-blue-600" />
+                <Users className="h-8 w-8 text-blue-400" />
                 <div>
-                  <p className="text-sm text-gray-600">Total de Jogadores</p>
-                  <p className="text-2xl font-bold text-gray-800">{generalStats.total}</p>
+                  <p className="text-sm text-muted-foreground">Total de Jogadores</p>
+                  <p className="text-2xl font-bold text-foreground">{generalStats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border border-green-100 rounded-xl">
+          <Card className="shadow-lg border border-green-500/30 rounded-xl">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <UserCheck className="h-8 w-8 text-green-600" />
+                <UserCheck className="h-8 w-8 text-green-400" />
                 <div>
-                  <p className="text-sm text-gray-600">Presentes</p>
-                  <p className="text-2xl font-bold text-gray-800">{generalStats.present}</p>
+                  <p className="text-sm text-muted-foreground">Presentes</p>
+                  <p className="text-2xl font-bold text-foreground">{generalStats.present}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border border-red-100 rounded-xl">
+          <Card className="shadow-lg border border-red-500/30 rounded-xl">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <UserX className="h-8 w-8 text-red-600" />
+                <UserX className="h-8 w-8 text-red-400" />
                 <div>
-                  <p className="text-sm text-gray-600">Ausentes</p>
-                  <p className="text-2xl font-bold text-gray-800">{generalStats.absent}</p>
+                  <p className="text-sm text-muted-foreground">Ausentes</p>
+                  <p className="text-2xl font-bold text-foreground">{generalStats.absent}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border border-orange-100 rounded-xl">
+          <Card className="shadow-lg border border-orange-500/30 rounded-xl">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <Award className="h-8 w-8 text-orange-600" />
+                <Award className="h-8 w-8 text-orange-400" />
                 <div>
-                  <p className="text-sm text-gray-600">Avaliação Média</p>
-                  <p className="text-2xl font-bold text-gray-800">{generalStats.averageRating}</p>
+                  <p className="text-sm text-muted-foreground">Avaliação Média</p>
+                  <p className="text-2xl font-bold text-foreground">{generalStats.averageRating}</p>
                 </div>
               </div>
             </CardContent>
@@ -226,17 +227,17 @@ const Statistics = () => {
         </div>
 
         {/* Controles do Gráfico */}
-        <Card className="shadow-lg border border-gray-100 rounded-xl">
+        <Card className="shadow-lg border border-border rounded-xl">
           <CardHeader className="pb-3">
-            <CardTitle className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
+            <CardTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-blue-400" />
               Configurações do Gráfico
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">Tipo de Gráfico</label>
+                <label className="text-sm font-medium text-foreground">Tipo de Gráfico</label>
                 <Select value={chartType} onValueChange={(value: "bar" | "pie" | "line" | "area") => setChartType(value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione o tipo" />
@@ -250,7 +251,7 @@ const Statistics = () => {
                 </Select>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700">Métrica</label>
+                <label className="text-sm font-medium text-foreground">Métrica</label>
                 <Select value={selectedMetric} onValueChange={(value: "presence" | "position" | "rating") => setSelectedMetric(value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione a métrica" />
@@ -267,9 +268,9 @@ const Statistics = () => {
         </Card>
 
         {/* Gráfico */}
-        <Card className="shadow-lg border border-gray-100 rounded-xl">
+        <Card className="shadow-lg border border-border rounded-xl">
           <CardHeader className="pb-3">
-            <CardTitle className="text-xl font-semibold text-gray-800">
+            <CardTitle className="text-xl font-semibold text-foreground">
               Visualização de Dados
             </CardTitle>
           </CardHeader>

@@ -1,29 +1,26 @@
 import React from "react";
-import { Star, Check, Search, ArrowUpDown, Edit2, Save, Trash2, User, Trophy, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Check, CircleDashed, DollarSign, Edit2, Save, Trash2, UserPlus, Users, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackToDashboard } from "./BackToDashboard";
-import { DynamicTitle } from "./DynamicTitle";
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { useTexts } from "@/hooks/useTexts";
-import i18n from "@/i18n/config";
 import { Player } from '@/types';
 
-type Rating = 1 | 2 | 3 | 4 | 5;
-
-const getRatingMax = (player: Player) => {
-  // Assume sistema de 5 estrelas por padrão
-  return 5;
-};
+const RATING_MAX = 5;
 
 const PlayerList = () => {
   const TEXTS = useTexts();
+  const navigate = useNavigate();
   const { players, updatePlayer, deletePlayer, editingPlayer, setEditingPlayer } = usePlayerStore();
   const [editValue, setEditValue] = React.useState('');
   const { toast } = useToast();
+
+  const displayName = (player: Player) => player.nickname || player.name;
 
   const handleEdit = (id: string) => {
     const player = players.find((player) => player.id === id);
@@ -41,7 +38,6 @@ const PlayerList = () => {
       toast({
         title: "✅ Jogador Atualizado",
         description: "O nome do jogador foi atualizado com sucesso!",
-        className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg",
         duration: 3000,
       });
     }
@@ -49,13 +45,13 @@ const PlayerList = () => {
 
   const handleDelete = (id: string) => {
     const player = players.find(p => p.id === id);
-    const playerName = player?.name || "Jogador";
+    const playerName = player ? displayName(player) : "Jogador";
 
     deletePlayer(id);
     toast({
       title: "🗑️ Jogador Removido",
       description: `${playerName} foi removido da lista com sucesso.`,
-      className: "bg-gradient-to-r from-red-500 to-rose-600 text-white border-red-600 shadow-lg",
+      variant: "destructive",
       duration: 4000,
     });
   };
@@ -66,44 +62,40 @@ const PlayerList = () => {
     toast({
       title: "❌ Edição Cancelada",
       description: "As alterações foram descartadas.",
-      className: "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-gray-600 shadow-lg",
       duration: 2000,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <BackToDashboard />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto"
+        className="max-w-4xl mx-auto space-y-6"
       >
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-            <div className="flex items-center justify-between">
-              {/* <DynamicTitle /> */}
-              <div className="text-right">
-                <p className="text-sm text-gray-600">{TEXTS.PRESENCE.DATE_LABEL}: {new Date().toLocaleDateString(i18n.resolvedLanguage ?? 'pt-BR')}</p>
-                <p className="text-xs text-gray-500">{TEXTS.PLAYER_LIST.TITLE}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full">
-                  <Users className="h-5 w-5" />
-                  <span className="font-semibold">{players.length} Jogadores</span>
-                </div>
-              </div>
-            </div>
+        {/* Cabeçalho — equivale à AppBar "JOGADORES" do app mobile */}
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="font-heading text-2xl font-bold uppercase tracking-[0.2em] text-foreground">
+              {TEXTS.PLAYER_LIST.TITLE}
+            </h1>
+            <p className="font-body text-xs text-muted-foreground mt-1">
+              {TEXTS.PLAYER_LIST.COUNT.replace("{count}", String(players.length))}
+            </p>
           </div>
-        </motion.div>
+          <Button
+            onClick={() => navigate('/player-form')}
+            variant="outline"
+            className="font-heading text-xs uppercase tracking-wider border-secondary/50 text-secondary hover:bg-secondary/10 hover:text-secondary"
+          >
+            <UserPlus className="mr-2 h-4 w-4" />
+            {TEXTS.PLAYER_LIST.ADD_PLAYER}
+          </Button>
+        </div>
 
         {/* Lista de Jogadores */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <AnimatePresence>
             {players.map((player, index) => (
               <motion.div
@@ -111,100 +103,109 @@ const PlayerList = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20, scale: 0.95 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.02, y: -2 }}
-                className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 overflow-hidden"
+                transition={{ delay: Math.min(index, 10) * 0.05 }}
               >
-                <Card className="border-0 shadow-none">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-                          <User className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          {editingPlayer?.id === player.id ? (
-                            <div className="flex items-center gap-2">
-                              <Input
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                className="flex-1 border-2 border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
-                                autoFocus
-                              />
-                              <motion.div className="flex gap-2">
-                                <Button
-                                  onClick={handleSave}
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600 text-white"
-                                >
-                                  <Save className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  onClick={handleCancelEdit}
-                                  size="sm"
-                                  variant="outline"
-                                >
-                                  ❌
-                                </Button>
-                              </motion.div>
-                            </div>
-                          ) : (
-                            <CardTitle className="text-lg font-semibold text-gray-800">
-                              {player.name}
-                            </CardTitle>
-                          )}
-                        </div>
-                      </div>
+                <Card
+                  className={`bg-card/80 backdrop-blur-xl transition-colors ${
+                    player.present
+                      ? 'border-2 border-primary shadow-[0_0_10px_rgba(0,240,255,0.25)]'
+                      : 'border border-border/60'
+                  }`}
+                >
+                  <CardContent className="p-4 flex items-center gap-4">
+                    {/* Avatar com a inicial, como no PlayerCard do mobile */}
+                    <div
+                      className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 bg-background font-heading text-xl font-bold ${
+                        player.present
+                          ? 'border-primary text-primary'
+                          : 'border-muted-foreground/50 text-muted-foreground'
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {player.name.charAt(0).toUpperCase() || '?'}
+                    </div>
 
-                      {editingPlayer?.id !== player.id && (
+                    <div className="min-w-0 flex-1">
+                      {editingPlayer?.id === player.id ? (
                         <div className="flex items-center gap-2">
-                          <motion.div
-                            whileHover={{ scale: 1.1, rotate: 5 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            <Button
-                              onClick={() => handleEdit(player.id)}
-                              size="sm"
-                              variant="outline"
-                              className="border-blue-200 text-blue-600 hover:bg-blue-50"
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                          </motion.div>
-
-                          <motion.div
-                            whileHover={{ scale: 1.1, rotate: -5 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            <Button
-                              onClick={() => handleDelete(player.id)}
-                              size="sm"
-                              variant="destructive"
-                              className="bg-red-500 hover:bg-red-600 text-white"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </motion.div>
+                          <Input
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="flex-1"
+                            autoFocus
+                          />
+                          <Button onClick={handleSave} size="sm" aria-label="Salvar">
+                            <Save className="h-4 w-4" />
+                          </Button>
+                          <Button onClick={handleCancelEdit} size="sm" variant="outline" aria-label="Cancelar">
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
+                      ) : (
+                        <>
+                          <p className="font-heading text-lg font-bold text-foreground truncate">
+                            {displayName(player)}
+                          </p>
+                          <p className="font-body text-xs text-muted-foreground">
+                            {TEXTS.PLAYER_LIST.CARD.RATING_LABEL}: {player.rating}/{RATING_MAX} ★
+                          </p>
+                          {player.selectedPositions.length > 0 && (
+                            <p className="font-body text-[10px] font-bold uppercase tracking-wider text-secondary truncate">
+                              {player.selectedPositions.join(' · ')}
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
-                  </CardHeader>
 
-                  <CardContent className="pt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-yellow-500" />
-                        <span className="text-sm text-gray-600">
-                          Avaliação: <span className="font-semibold text-gray-800">{player.rating}/{getRatingMax(player)}</span>
+                    {editingPlayer?.id !== player.id && (
+                      <div className="flex flex-col items-end gap-2">
+                        {/* Selos de presença e pagamento, iguais aos do mobile */}
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-body text-[10px] font-bold uppercase tracking-wider ${
+                            player.present
+                              ? 'border-primary bg-primary/15 text-primary'
+                              : 'border-border text-muted-foreground'
+                          }`}
+                        >
+                          {player.present
+                            ? <Check className="h-3 w-3" aria-hidden="true" />
+                            : <CircleDashed className="h-3 w-3" aria-hidden="true" />}
+                          {player.present ? TEXTS.PLAYER_LIST.CARD.PRESENT : TEXTS.PLAYER_LIST.CARD.OFFLINE}
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-body text-[10px] font-bold uppercase tracking-wider ${
+                            player.paid
+                              ? 'border-secondary bg-secondary/15 text-secondary'
+                              : 'border-accent/50 text-accent'
+                          }`}
+                        >
+                          <DollarSign className="h-3 w-3" aria-hidden="true" />
+                          {player.paid ? TEXTS.PLAYER_LIST.CARD.PAID : TEXTS.PLAYER_LIST.CARD.PENDING}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className={`h-4 w-4 ${player.selected ? 'text-green-500' : 'text-gray-400'}`} />
-                        <span className="text-sm text-gray-600">
-                          Selecionado: <span className={`font-semibold ${player.selected ? 'text-green-600' : 'text-gray-500'}`}>{player.selected ? "Sim" : "Não"}</span>
-                        </span>
+                    )}
+
+                    {editingPlayer?.id !== player.id && (
+                      <div className="flex flex-shrink-0 items-center gap-2">
+                        <Button
+                          onClick={() => handleEdit(player.id)}
+                          size="sm"
+                          variant="outline"
+                          aria-label={`${TEXTS.COMMON.BUTTONS.EDIT} ${displayName(player)}`}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          onClick={() => handleDelete(player.id)}
+                          size="sm"
+                          variant="destructive"
+                          aria-label={`${TEXTS.COMMON.BUTTONS.DELETE} ${displayName(player)}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -213,15 +214,17 @@ const PlayerList = () => {
 
           {players.length === 0 && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-12"
+              className="rounded-xl border border-border/50 bg-card/60 p-10 text-center backdrop-blur-xl"
             >
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">{TEXTS.PLAYER_LIST.EMPTY}</h3>
-                <p className="text-gray-500">{TEXTS.PLAYER_LIST.EMPTY_DESCRIPTION}</p>
-              </div>
+              <Users className="mx-auto mb-4 h-14 w-14 text-muted-foreground/50" aria-hidden="true" />
+              <h3 className="font-heading text-lg uppercase tracking-[0.2em] text-foreground">
+                {TEXTS.PLAYER_LIST.EMPTY}
+              </h3>
+              <p className="mt-2 font-body text-sm text-muted-foreground">
+                {TEXTS.PLAYER_LIST.EMPTY_DESCRIPTION}
+              </p>
             </motion.div>
           )}
         </div>

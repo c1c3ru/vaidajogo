@@ -193,7 +193,7 @@ const Championship = () => {
   const showGroupStandings = format === TournamentFormat.GROUPS_WITH_KNOCKOUTS && groups && groups.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <BackToDashboard />
 
       <motion.div
@@ -220,7 +220,7 @@ const Championship = () => {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Campeonato
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-muted-foreground mt-1">
                 Gerencie seu torneio de forma intuitiva
               </p>
             </div>
@@ -229,11 +229,11 @@ const Championship = () => {
           {/* Barra de Progresso */}
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Progresso do Torneio</span>
-              <span className="text-sm font-bold text-blue-600">{progress}%</span>
+              <span className="text-sm font-medium text-foreground">Progresso do Torneio</span>
+              <span className="text-sm font-bold text-blue-400">{progress}%</span>
             </div>
             <Progress value={progress} className="h-3" />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
               <span>Configuração</span>
               <span>Times</span>
               <span>Confrontos</span>
@@ -251,9 +251,9 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <Alert className="border-orange-200 bg-orange-50">
-                <AlertCircle className="h-4 w-4 text-orange-600" />
-                <AlertDescription className="text-orange-800">
+              <Alert className="border-orange-500/30 bg-orange-500/10">
+                <AlertCircle className="h-4 w-4 text-orange-400" />
+                <AlertDescription className="text-orange-400">
                   Adicione pelo menos 2 times para começar o campeonato
                 </AlertDescription>
               </Alert>
@@ -266,9 +266,9 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <Alert className="border-blue-200 bg-blue-50">
-                <Play className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800">
+              <Alert className="border-blue-500/30 bg-blue-500/10">
+                <Play className="h-4 w-4 text-blue-400" />
+                <AlertDescription className="text-blue-400">
                   Configure o formato do torneio e gere os confrontos
                 </AlertDescription>
               </Alert>
@@ -281,9 +281,9 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <Alert className="border-yellow-200 bg-yellow-50">
-                <Clock className="h-4 w-4 text-yellow-600" />
-                <AlertDescription className="text-yellow-800">
+              <Alert className="border-yellow-500/30 bg-yellow-500/10">
+                <Clock className="h-4 w-4 text-yellow-400" />
+                <AlertDescription className="text-yellow-400">
                   Preencha os resultados das partidas para avançar
                 </AlertDescription>
               </Alert>
@@ -296,9 +296,9 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <Alert className="border-green-200 bg-green-50">
-                <Award className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
+              <Alert className="border-green-500/30 bg-green-500/10">
+                <Award className="h-4 w-4 text-green-400" />
+                <AlertDescription className="text-green-400">
                   🏆 <strong>{champion.name}</strong> é o campeão!
                 </AlertDescription>
               </Alert>
@@ -312,9 +312,9 @@ const Championship = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="border-2 border-blue-200 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
-              <CardTitle className="flex items-center gap-2 text-blue-800">
+          <Card className="border-2 border-blue-500/30 shadow-lg">
+            <CardHeader className="bg-card/60">
+              <CardTitle className="flex items-center gap-2 text-blue-400">
                 <Settings className="h-5 w-5" />
                 Configuração do Torneio
               </CardTitle>
@@ -335,9 +335,9 @@ const Championship = () => {
             transition={{ duration: 0.5 }}
           >
             {/* Adicionar Times */}
-            <Card className="border-2 border-green-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
-                <CardTitle className="flex items-center gap-2 text-green-800">
+            <Card className="border-2 border-green-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-green-400">
                   <Users className="h-5 w-5" />
                   {editingTeam ? 'Editar Time' : 'Adicionar Time'}
                 </CardTitle>
@@ -350,7 +350,7 @@ const Championship = () => {
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                     placeholder="Digite o nome do time..."
-                    className="border-2 border-green-200 focus:border-green-500 focus:ring-green-200"
+                    className="border-2 border-green-500/30 focus:border-green-500 focus:ring-green-500/40"
                   />
                 </div>
                 <div className="space-y-2">
@@ -360,7 +360,7 @@ const Championship = () => {
                     value={responsible}
                     onChange={(e) => setResponsible(e.target.value)}
                     placeholder="Nome do responsável..."
-                    className="border-2 border-green-200 focus:border-green-500 focus:ring-green-200"
+                    className="border-2 border-green-500/30 focus:border-green-500 focus:ring-green-500/40"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -379,7 +379,7 @@ const Championship = () => {
                       <Button
                         onClick={handleCancelEdit}
                         variant="outline"
-                        className="border-orange-200 text-orange-600 hover:bg-orange-50"
+                        className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10"
                       >
                         Cancelar
                       </Button>
@@ -390,9 +390,9 @@ const Championship = () => {
             </Card>
 
             {/* Lista de Times */}
-            <Card className="border-2 border-purple-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50">
-                <CardTitle className="flex items-center gap-2 text-purple-800">
+            <Card className="border-2 border-purple-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-purple-400">
                   <Users className="h-5 w-5" />
                   Times ({teams.length})
                 </CardTitle>
@@ -419,9 +419,9 @@ const Championship = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             {/* Geração de Confrontos */}
-            <Card className="border-2 border-orange-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50">
-                <CardTitle className="flex items-center gap-2 text-orange-800">
+            <Card className="border-2 border-orange-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-orange-400">
                   <Trophy className="h-5 w-5" />
                   Geração de Confrontos
                 </CardTitle>
@@ -429,20 +429,20 @@ const Championship = () => {
               <CardContent className="p-6 space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Formato:</span>
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    <span className="text-sm text-muted-foreground">Formato:</span>
+                    <Badge variant="secondary" className="bg-blue-500/10 text-blue-400">
                       {format.replace(/_/g, ' ')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Times:</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <span className="text-sm text-muted-foreground">Times:</span>
+                    <Badge variant="secondary" className="bg-green-500/10 text-green-400">
                       {teams.length}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Partidas:</span>
-                    <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                    <span className="text-sm text-muted-foreground">Partidas:</span>
+                    <Badge variant="secondary" className="bg-purple-500/10 text-purple-400">
                       {matches.length}
                     </Badge>
                   </div>
@@ -462,7 +462,7 @@ const Championship = () => {
                 </motion.div>
 
                 {teams.length < 2 && (
-                  <p className="text-sm text-orange-600 text-center flex items-center justify-center gap-1">
+                  <p className="text-sm text-orange-400 text-center flex items-center justify-center gap-1">
                     <AlertCircle className="h-4 w-4" />
                     Adicione pelo menos 2 times
                   </p>
@@ -471,35 +471,35 @@ const Championship = () => {
             </Card>
 
             {/* Estatísticas */}
-            <Card className="border-2 border-blue-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50">
-                <CardTitle className="flex items-center gap-2 text-blue-800">
+            <Card className="border-2 border-blue-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-blue-400">
                   <BarChart3 className="h-5 w-5" />
                   Estatísticas
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-600">
+                  <div className="text-center p-3 bg-blue-500/10 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-400">
                       {matches.filter(m => m.score1 !== undefined && m.score2 !== undefined).length}
                     </p>
-                    <p className="text-sm text-gray-600">Concluídas</p>
+                    <p className="text-sm text-muted-foreground">Concluídas</p>
                   </div>
-                  <div className="text-center p-3 bg-orange-50 rounded-lg">
-                    <p className="text-2xl font-bold text-orange-600">
+                  <div className="text-center p-3 bg-orange-500/10 rounded-lg">
+                    <p className="text-2xl font-bold text-orange-400">
                       {groups.length}
                     </p>
-                    <p className="text-sm text-gray-600">Grupos</p>
+                    <p className="text-sm text-muted-foreground">Grupos</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Modal para Partidas Manuais */}
-            <Card className="border-2 border-indigo-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                <CardTitle className="flex items-center gap-2 text-indigo-800">
+            <Card className="border-2 border-indigo-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-indigo-400">
                   <Plus className="h-5 w-5" />
                   Partidas Manuais
                 </CardTitle>
@@ -518,9 +518,9 @@ const Championship = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             {/* Próximos Passos */}
-            <Card className="border-2 border-yellow-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50">
-                <CardTitle className="flex items-center gap-2 text-yellow-800">
+            <Card className="border-2 border-yellow-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-yellow-400">
                   <Target className="h-5 w-5" />
                   Próximos Passos
                 </CardTitle>
@@ -564,9 +564,9 @@ const Championship = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border-2 border-gray-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50">
-                <CardTitle className="flex items-center gap-2 text-gray-800">
+            <Card className="border-2 border-border shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-foreground">
                   <Trophy className="h-5 w-5" />
                   Partidas
                 </CardTitle>
@@ -575,7 +575,7 @@ const Championship = () => {
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50">
+                      <tr className="bg-background/60">
                         <th className="px-4 py-3 text-left font-medium">Time 1</th>
                         <th className="px-4 py-3 text-center font-medium">Placar</th>
                         <th className="px-4 py-3 text-left font-medium">Time 2</th>
@@ -587,7 +587,7 @@ const Championship = () => {
                       {matches.map((match, idx) => (
                         <motion.tr
                           key={match.id}
-                          className="border-b hover:bg-gray-50"
+                          className="border-b hover:bg-background/60"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
@@ -602,7 +602,7 @@ const Championship = () => {
                                 value={match.score1 ?? ''}
                                 onChange={e => updateMatch(match.id, Number(e.target.value), match.score2 ?? 0)}
                               />
-                              <span className="text-gray-400">x</span>
+                              <span className="text-muted-foreground/70">x</span>
                               <input
                                 type="number"
                                 min={0}
@@ -615,12 +615,12 @@ const Championship = () => {
                           <td className="px-4 py-3 font-medium">{match.team2?.name}</td>
                           <td className="px-4 py-3 text-center">
                             {match.score1 !== undefined && match.score2 !== undefined ? (
-                              <Badge className="bg-green-100 text-green-800">
+                              <Badge className="bg-green-500/10 text-green-400">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 Concluída
                               </Badge>
                             ) : (
-                              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                              <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-400">
                                 <Clock className="h-3 w-3 mr-1" />
                                 Pendente
                               </Badge>
@@ -653,9 +653,9 @@ const Championship = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border-2 border-indigo-200 shadow-lg mb-8">
-              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                <CardTitle className="flex items-center gap-2 text-indigo-800">
+            <Card className="border-2 border-indigo-500/30 shadow-lg mb-8">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-indigo-400">
                   <TrendingUp className="h-5 w-5" />
                   Classificação Geral
                 </CardTitle>
@@ -664,7 +664,7 @@ const Championship = () => {
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm">
                     <thead>
-                      <tr className="bg-indigo-50">
+                      <tr className="bg-indigo-500/10">
                         <th className="px-4 py-2 text-left">#</th>
                         <th className="px-4 py-2 text-left">Time</th>
                         <th className="px-4 py-2 text-center">Pts</th>
@@ -678,7 +678,7 @@ const Championship = () => {
                     </thead>
                     <tbody>
                       {standings.map((s, idx) => (
-                        <tr key={s.team.id} className="border-b hover:bg-indigo-50">
+                        <tr key={s.team.id} className="border-b hover:bg-indigo-500/10">
                           <td className="px-4 py-2 font-medium">{idx + 1}</td>
                           <td className="px-4 py-2 font-medium">{s.team.name}</td>
                           <td className="px-4 py-2 text-center font-bold">{s.points}</td>
@@ -708,9 +708,9 @@ const Championship = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: groupIdx * 0.1 }}
             >
-              <Card className="border-2 border-indigo-200 shadow-lg mb-8">
-                <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                  <CardTitle className="flex items-center gap-2 text-indigo-800">
+              <Card className="border-2 border-indigo-500/30 shadow-lg mb-8">
+                <CardHeader className="bg-card/60">
+                  <CardTitle className="flex items-center gap-2 text-indigo-400">
                     <Star className="h-5 w-5" />
                     {group.name} - Classificação
                   </CardTitle>
@@ -719,7 +719,7 @@ const Championship = () => {
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                       <thead>
-                        <tr className="bg-indigo-50">
+                        <tr className="bg-indigo-500/10">
                           <th className="px-4 py-2 text-left">#</th>
                           <th className="px-4 py-2 text-left">Time</th>
                           <th className="px-4 py-2 text-center">Pts</th>
@@ -733,7 +733,7 @@ const Championship = () => {
                       </thead>
                       <tbody>
                         {standings.map((s, idx) => (
-                          <tr key={s.team.id} className="border-b hover:bg-indigo-50">
+                          <tr key={s.team.id} className="border-b hover:bg-indigo-500/10">
                             <td className="px-4 py-2 font-medium">{idx + 1}</td>
                             <td className="px-4 py-2 font-medium">{s.team.name}</td>
                             <td className="px-4 py-2 text-center font-bold">{s.points}</td>
@@ -761,16 +761,16 @@ const Championship = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="border-2 border-purple-200 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50">
-                <CardTitle className="flex items-center gap-2 text-purple-800">
+            <Card className="border-2 border-purple-500/30 shadow-lg">
+              <CardHeader className="bg-card/60">
+                <CardTitle className="flex items-center gap-2 text-purple-400">
                   <BarChart3 className="h-5 w-5" />
                   Chaveamento do Torneio
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="text-sm text-gray-600 mb-4">
+                  <div className="text-sm text-muted-foreground mb-4">
                     Visualize a estrutura e progresso do torneio
                   </div>
                   <TournamentBracket
